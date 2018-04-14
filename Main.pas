@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ToolWin, ComCtrls, StdCtrls, Buttons, ExtCtrls,
-  XPMan, Vcl.Imaging.jpeg, math, PngSpeedButton;
+  XPMan, Vcl.Imaging.jpeg, math;
 
 type
   TfMain = class(TForm)
