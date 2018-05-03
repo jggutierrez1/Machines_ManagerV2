@@ -12,7 +12,8 @@ uses
   Dialogs, StdCtrls, DB, ADODB,
 
   frxClass, frxDesgn, fs_ipascal, frxExportImage,
-   frxExportCSV,   FRxExportPDF, frxExportText ,
+  frxExportCSV, FRxExportPDF, frxExportText,
+  frxExportXLSX, frxExportXLS,
 
   frxBarcode, frxDBSet, frxRich,
 
@@ -88,6 +89,9 @@ var
   frxCSVExport1: TfrxCSVExport;
   frxTXTExport1: TfrxSimpleTextExport;
   frxSimpleTextExport1: TfrxSimpleTextExport;
+  frxXLSExport1: TfrxXLSExport;
+  frxXLSXExport1: TfrxXLSXExport;
+  frxJPEGExport1: TfrxJPEGExport;
 
   { ***************************************************************** }
   ExpotrPDF: TpPdf;
@@ -161,6 +165,9 @@ begin
   frxCSVExport1 := TfrxCSVExport.Create(nil);
   frxTXTExport1 := TfrxSimpleTextExport.Create(nil);
   frxSimpleTextExport1 := TfrxSimpleTextExport.Create(nil);
+  frxXLSExport1 := TfrxXLSExport.Create(nil);
+  frxXLSXExport1 := TfrxXLSXExport.Create(nil);
+  frxJPEGExport1 := TfrxJPEGExport.Create(nil);
 
   oDS_Fields1 := TDataSource.Create(nil);
   oDS_Fields2 := TDataSource.Create(nil);
@@ -198,7 +205,8 @@ begin
 
     if FileExists(Report.File_Name) = false then
     begin
-      application.MessageBox(Pchar('El Reporte [' + trim(Report.File_Name) + '], no existe.'), '', 0);
+      application.MessageBox(Pchar('El Reporte [' + trim(Report.File_Name) +
+        '], no existe.'), '', 0);
       fUtilesV20.WaitEnd;
       exit;
     end;
@@ -210,10 +218,12 @@ begin
       if Queries[i].Active = true then
       begin
         if Report.MudeActivity = false then
-          fUtilesV20.WaitSetMsg('Espere mientras se procesa la consulta [' + IntToStr(i) + ']:..');
+          fUtilesV20.WaitSetMsg('Espere mientras se procesa la consulta [' +
+            IntToStr(i) + ']:..');
 
-        if UtilesV20.Exec_Select_SQL(Queries[i].Zquery, Queries[i].Sql_String, true, true, Queries[i].Sql_IsProcedure,
-          Queries[i].Sql_ExecNoOpen) = true then
+        if UtilesV20.Exec_Select_SQL(Queries[i].Zquery, Queries[i].Sql_String,
+          true, true, Queries[i].Sql_IsProcedure, Queries[i].Sql_ExecNoOpen) = true
+        then
           Queries[i].oQry_RegCount := Queries[i].Zquery.RecordCount;
 
         if Queries[i].oQry_RegCount <= 0 then
@@ -225,7 +235,8 @@ begin
               if (Report.OnDBDatasetEmptyMessage[i] = '') then
               begin
                 if Report.MudeActivity = false then
-                  Report.OnDBDatasetEmptyMessage[i] := 'No hay datos que correspondan a los parametros especificados';
+                  Report.OnDBDatasetEmptyMessage[i] :=
+                    'No hay datos que correspondan a los parametros especificados';
               end;
 
               fUtilesV20.delay(3 * 1000);
@@ -244,7 +255,8 @@ begin
         begin
           // Queries[i].Zquery.SortType := Queries[i].SortType;
           // Queries[i].Zquery.SortedFields := Queries[i].SortedFields;
-          Queries[i].Zquery.IndexFieldNames := Queries[i].IndexFieldNames + Queries[i].SortType;
+          Queries[i].Zquery.IndexFieldNames := Queries[i].IndexFieldNames +
+            Queries[i].SortType;
           Queries[i].Zquery.Active := true;
         end;
 
@@ -296,7 +308,8 @@ begin
     oReportForm.EngineOptions.EnableThreadSafe := false;
     oReportForm.PrintOptions.ShowDialog := true;
 
-    oReportForm.ShowProgress := fUtilesV20.iif(Report.SilentMode = false, true, false);
+    oReportForm.ShowProgress := fUtilesV20.iif(Report.SilentMode = false,
+      true, false);
 
     oReportForm.LoadFromFile(Report.File_Name);
 
@@ -306,7 +319,8 @@ begin
     begin
       if not fUtilesV20.isEmpty(Report.Vars[i].Name) then
       begin
-        oReportForm.Variables.Variables[Report.Vars[i].Name] := '''' + Report.Vars[i].Value + '''';
+        oReportForm.Variables.Variables[Report.Vars[i].Name] :=
+          '''' + Report.Vars[i].Value + '''';
       end;
     end;
     oReportForm.Variables.EndUpdate;
@@ -357,20 +371,20 @@ begin
         end;
       6:
         begin
-          {frxMail.Subject := 'test attachment ';
-          frxMail.FromName := 'Automatic Email Sender...';
-          frxMail.FromMail := 'johnn.movil@gmail.com';
-          frxMail.Address := 'jg_gutierrez@yahoo.es';
-          frxMail.FromCompany := '...';
-          frxMail.Login := 'johnn.movil@gmail.com';
-          frxMail.Password := 'password';
-          frxMail.SmtpHost := 'smtp.gmail.com';
-          frxMail.SmtpPort := 465;
-          frxMail.useIniFile := false;
-          //frxMail.ExportFilter := TfrxSimpleTextExport;
-          frxMail.ShowDialog := false;
-          oReportForm.Export(frxMail);
-        }
+          { frxMail.Subject := 'test attachment ';
+            frxMail.FromName := 'Automatic Email Sender...';
+            frxMail.FromMail := 'johnn.movil@gmail.com';
+            frxMail.Address := 'jg_gutierrez@yahoo.es';
+            frxMail.FromCompany := '...';
+            frxMail.Login := 'johnn.movil@gmail.com';
+            frxMail.Password := 'password';
+            frxMail.SmtpHost := 'smtp.gmail.com';
+            frxMail.SmtpPort := 465;
+            frxMail.useIniFile := false;
+            //frxMail.ExportFilter := TfrxSimpleTextExport;
+            frxMail.ShowDialog := false;
+            oReportForm.Export(frxMail);
+          }
         end;
     end;
     oReportForm.Clear;
@@ -414,7 +428,7 @@ begin
 
   freeandnil(frxPDFExport1);
   freeandnil(frxCSVExport1);
-  //freeandnil(frxXLSExport1);
+  // freeandnil(frxXLSExport1);
   freeandnil(frxTXTExport1);
   freeandnil(frxSimpleTextExport1);
 

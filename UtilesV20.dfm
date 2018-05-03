@@ -27,11 +27,11 @@ object fUtilesV20: TfUtilesV20
   end
   object oPublicCnn: TFDConnection
     Params.Strings = (
-      'User_Name=remoto'
-      'Password=1234'
-      'Server=192.168.0.80'
+      'User_Name=root'
+      'Server=127.0.0.1'
       'Database=one2009_1'
-      'DriverID=MySQL')
+      'DriverID=MySQL'
+      'CharacterSet=utf8')
     FormatOptions.AssignedValues = [fvSE2Null, fvDataSnapCompatibility, fvQuoteIdentifiers]
     FormatOptions.DataSnapCompatibility = True
     FormatOptions.QuoteIdentifiers = True

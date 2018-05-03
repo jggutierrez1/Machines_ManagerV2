@@ -1,0 +1,38 @@
+unit claves_automaticas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.MySQL,
+  FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, DBGridEh, Vcl.StdCtrls, Vcl.Mask, DBCtrlsEh,
+  DBLookupEh, Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, Vcl.ComCtrls;
+
+type
+  Tfclaves_automaticas = class(TForm)
+    FDConnection1: TFDConnection;
+    oQry_Equipos: TFDTable;
+    FDQuery1: TFDQuery;
+    Label1: TLabel;
+    oDs_Equipos: TDataSource;
+    DBLookupComboboxEh1: TDBLookupComboboxEh;
+    StatusBar1: TStatusBar;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  fclaves_automaticas: Tfclaves_automaticas;
+
+implementation
+
+{$R *.dfm}
+
+end.

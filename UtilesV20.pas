@@ -20,7 +20,7 @@ uses
   IdFTP, IdIPWatch,
   networkFunctions,
   IdTelnet, IdUDPBase, IdUDPClient,
-  //clMailMessage, clMC, clSMTP, clTcpClient, clSocket, clPOP3,
+  // clMailMessage, clMC, clSMTP, clTcpClient, clSocket, clPOP3,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param,
@@ -353,7 +353,7 @@ function Execute_SQL_Command_Tmp(pSQL: string; oSetting_Tmp: Config2): Boolean; 
 function Execute_SQL_Command_Tmp(pSQL: string; oConn_Tmp: TFDConnection): Boolean; Overload;
 function Execute_SQL_Command_Tmp(pScript: TStringList; oConn_Tmp: TFDConnection): Boolean; overload;
 function Execute_SQL_Command_Tmp_Fle(pFilename: string; oConn_Tmp: TFDConnection): Boolean; overload;
-function Exec_Select_SQL(var oQry: TFDQuery; sSql: string; oQryExec: Boolean = true; oQryCreate: Boolean = True;
+function Exec_Select_SQL(var oQry: TFDQuery; sSql: string; oQryExec: Boolean = True; oQryCreate: Boolean = True;
   IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
 function Exec_Select_SQL(var oQry: TFDQuery; sSql: TStringList; oQryExec: Boolean = False; oQryCreate: Boolean = True;
   IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
@@ -365,6 +365,7 @@ function Execute_SQL_Query(var oQry: TFDQuery; sSql: string; oQryExec: Boolean =
 function Execute_SQL_Query(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False)
   : Boolean; overload;
 function Execute_SQL_Query(var oQry: TFDQuery; sSql: TStringList; oQryExec: Boolean = False): Boolean; overload;
+function Is_Super_User(): Boolean;
 
 implementation
 
@@ -599,7 +600,7 @@ begin
   end;
 end;
 
-function Exec_Select_SQL(var oQry: TFDQuery; sSql: string; oQryExec: Boolean = true; oQryCreate: Boolean = True;
+function Exec_Select_SQL(var oQry: TFDQuery; sSql: string; oQryExec: Boolean = True; oQryCreate: Boolean = True;
   IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
 begin
   with fUtilesV20 do
@@ -4548,6 +4549,28 @@ begin
       end;
     end;
   end;
+end;
+
+function Is_Super_User(): Boolean;
+var
+  cSql_Ln: string;
+  oQry_UsrCk: TFDQuery;
+begin
+  Result := True;
+  oQry_UsrCk := TFDQuery.Create(nil);
+
+  cSql_Ln := '';
+  cSql_Ln := cSql_Ln + 'SELECT u_usuario,u_acceso1,BASE64_DECODE(u_clave) AS clave ';
+  cSql_Ln := cSql_Ln + 'FROM usuarios ';
+  cSql_Ln := cSql_Ln + 'WHERE  u_usuario="' + trim(UtilesV20.sUserName) + '"';
+  cSql_Ln := cSql_Ln + 'ORDER BY u_usuario ';
+  UtilesV20.Exec_Select_SQL(oQry_UsrCk, cSql_Ln, True, False);
+
+  if (oQry_UsrCk.FieldByName('u_acceso1').AsInteger = 1) then
+    Result := True
+  else
+    Result := False;
+  freeandnil(oQry_UsrCk);
 end;
 
 end.

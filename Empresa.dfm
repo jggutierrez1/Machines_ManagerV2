@@ -593,21 +593,87 @@ object fEmpresa: TfEmpresa
       ImageIndex = 1
       object Label15: TLabel
         Left = 53
-        Top = 75
+        Top = 28
         Width = 109
         Height = 13
         Caption = 'Cargo Mensual [J.C.J.]:'
       end
       object Label16: TLabel
         Left = 53
-        Top = 128
+        Top = 81
         Width = 122
         Height = 13
         Caption = 'Cargo mensual [S.P.A.C.]:'
       end
+      object Label17: TLabel
+        Left = 383
+        Top = 171
+        Width = 86
+        Height = 13
+        Caption = 'Correlativo Actual:'
+      end
+      object Label1: TLabel
+        Left = 82
+        Top = 171
+        Width = 92
+        Height = 13
+        Caption = 'Correlativo Anterior:'
+      end
+      object Shape1: TShape
+        Left = -14
+        Top = 121
+        Width = 717
+        Height = 2
+      end
+      object Label18: TLabel
+        Left = 212
+        Top = 221
+        Width = 265
+        Height = 13
+        Caption = 'PERMISOS PARA  SISTEMA DE ESCRITORIO'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Shape2: TShape
+        Left = -28
+        Top = 207
+        Width = 717
+        Height = 2
+      end
+      object Label19: TLabel
+        Left = 219
+        Top = 142
+        Width = 268
+        Height = 13
+        Caption = 'CORRELATIVOS DE FACTURA ELECTRONICA'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label20: TLabel
+        Left = 82
+        Top = 267
+        Width = 82
+        Height = 13
+        Caption = 'Clave de montos:'
+      end
+      object Label21: TLabel
+        Left = 383
+        Top = 267
+        Width = 79
+        Height = 13
+        Caption = 'Clave de metros:'
+      end
       object oJCJ: TDBNumberEditEh
         Left = 180
-        Top = 72
+        Top = 25
         Width = 69
         Height = 21
         Hint = 'Cargo de la junta de control de juegos.'
@@ -625,7 +691,7 @@ object fEmpresa: TfEmpresa
       end
       object oSPAC: TDBNumberEditEh
         Left = 180
-        Top = 120
+        Top = 73
         Width = 69
         Height = 21
         Hint = 'cargo de la S.P.A.C.'
@@ -636,6 +702,98 @@ object fEmpresa: TfEmpresa
         DynProps = <>
         EditButtons = <>
         TabOrder = 1
+        Visible = True
+        OnKeyPress = oSPACKeyPress
+      end
+      object oEmp_corre_act: TDBNumberEditEh
+        Left = 473
+        Top = 168
+        Width = 125
+        Height = 28
+        currency = True
+        DataField = 'emp_corre_act'
+        DataSource = oDS_Empresa
+        DecimalPlaces = 0
+        DisplayFormat = '#####0'
+        DynProps = <>
+        EditButtons = <>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        Visible = True
+        OnKeyPress = oSPACKeyPress
+      end
+      object oEmp_corre_ant: TDBNumberEditEh
+        Left = 180
+        Top = 168
+        Width = 125
+        Height = 28
+        currency = True
+        DataField = 'emp_corre_ant'
+        DataSource = oDS_Empresa
+        DecimalPlaces = 0
+        DisplayFormat = '#####0'
+        DynProps = <>
+        EditButtons = <>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -16
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        Visible = True
+        OnKeyPress = oJCJKeyPress
+      end
+      object oEmp_clave_montos: TDBNumberEditEh
+        Left = 180
+        Top = 264
+        Width = 125
+        Height = 32
+        currency = True
+        DataField = 'emp_clave_montos'
+        DataSource = oDS_Empresa
+        DecimalPlaces = 0
+        DisplayFormat = '#####0'
+        DynProps = <>
+        EditButtons = <>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -19
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        Visible = True
+        OnKeyPress = oJCJKeyPress
+      end
+      object oEmp_clave_metros: TDBNumberEditEh
+        Left = 468
+        Top = 264
+        Width = 125
+        Height = 32
+        currency = True
+        DataField = 'emp_clave_metros'
+        DataSource = oDS_Empresa
+        DecimalPlaces = 0
+        DisplayFormat = '#####0'
+        DynProps = <>
+        EditButtons = <>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -19
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
         Visible = True
         OnKeyPress = oSPACKeyPress
       end

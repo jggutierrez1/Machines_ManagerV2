@@ -34,7 +34,8 @@ uses
   ReportePremios in 'ReportePremios.pas' {fReportePremios},
   Base64 in 'Base64.pas',
   UtilesV20 in 'UtilesV20.pas' {fUtilesV20},
-  acceso1 in 'acceso1.pas' {facceso1};
+  acceso1 in 'acceso1.pas' {facceso1},
+  claves_automaticas in 'claves_automaticas.pas' {fclaves_automaticas};
 
 {$R *.res}
 

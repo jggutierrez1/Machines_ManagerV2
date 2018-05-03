@@ -86,6 +86,9 @@
     <Transaction>2016/09/03 00:32:17.000.184,=C:\Shared\Desarrollo\Machines_Manager\Unit1.pas</Transaction>
     <Transaction>2016/09/03 00:39:46.000.748,C:\Shared\Desarrollo\Machines_Manager\acceso1.pas=C:\Shared\Desarrollo\Machines_Manager\Unit1.pas</Transaction>
     <Transaction>2016/09/03 00:39:46.000.748,C:\Shared\Desarrollo\Machines_Manager\acceso1.dfm=C:\Shared\Desarrollo\Machines_Manager\Unit1.dfm</Transaction>
+    <Transaction>2018/04/29 09:48:13.000.025,=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas</Transaction>
+    <Transaction>2018/04/29 13:36:21.000.372,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas=C:\Users\Usuario\Documents\GitHub\Machines_Manager\claves_automaticas.pas</Transaction>
+    <Transaction>2018/04/29 13:36:21.000.372,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.dfm=C:\Users\Usuario\Documents\GitHub\Machines_Manager\claves_automaticas.dfm</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="About.pas"/>
@@ -146,5 +149,7 @@
     <File Path="UtilesV20.dfm"/>
     <File Path="acceso1.pas"/>
     <File Path="acceso1.dfm"/>
+    <File Path="claves_automaticas.pas"/>
+    <File Path="claves_automaticas.dfm"/>
   </ProjectSortOrder>
 </BorlandProject>

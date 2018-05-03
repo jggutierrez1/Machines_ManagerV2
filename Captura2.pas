@@ -12,7 +12,8 @@ uses
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Stan.Param,
   FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.Client,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef,
+  FireDAC.VCLUI.Wait;
 
 type
   TfCaptura2 = class(TForm)
@@ -197,6 +198,7 @@ type
     procedure otOp_tot_spacClick(Sender: TObject);
     procedure otOp_tot_spacExit(Sender: TObject);
     procedure otOperacionBeforePost(DataSet: TDataSet);
+    procedure oMoneyADblClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -228,7 +230,8 @@ var
 
 implementation
 
-uses utilesV20, Denominaciones, Clientes, Empresa, MaquinasTC, Municipios, rutas,
+uses utilesV20, Denominaciones, Clientes, Empresa, MaquinasTC, Municipios,
+  rutas,
   UTEval;
 {$R *.dfm}
 
@@ -299,10 +302,14 @@ begin
     if oQry_Fnd.State <> dsInactive then
     begin
       oQry_Fnd.Refresh;
-      otOperacion.FieldByName('den_fact_e').AsInteger := oQry_Fnd.FieldByName('den_fact_e').AsInteger;
-      otOperacion.FieldByName('den_fact_s').AsInteger := oQry_Fnd.FieldByName('den_fact_s').AsInteger;
-      otOperacion.FieldByName('den_valore').AsSingle := oQry_Fnd.FieldByName('den_valore').AsSingle;
-      otOperacion.FieldByName('den_valors').AsSingle := oQry_Fnd.FieldByName('den_valors').AsSingle;
+      otOperacion.FieldByName('den_fact_e').AsInteger :=
+        oQry_Fnd.FieldByName('den_fact_e').AsInteger;
+      otOperacion.FieldByName('den_fact_s').AsInteger :=
+        oQry_Fnd.FieldByName('den_fact_s').AsInteger;
+      otOperacion.FieldByName('den_valore').AsSingle :=
+        oQry_Fnd.FieldByName('den_valore').AsSingle;
+      otOperacion.FieldByName('den_valors').AsSingle :=
+        oQry_Fnd.FieldByName('den_valors').AsSingle;
     end;
   end;
 end;
@@ -317,10 +324,14 @@ begin
     if oQry_Fnd.State <> dsInactive then
     begin
       oQry_Fnd.Refresh;
-      otOperacion.FieldByName('den_fact_e').AsInteger := oQry_Fnd.FieldByName('den_fact_e').AsInteger;
-      otOperacion.FieldByName('den_fact_s').AsInteger := oQry_Fnd.FieldByName('den_fact_s').AsInteger;
-      otOperacion.FieldByName('den_valore').AsSingle := oQry_Fnd.FieldByName('den_valore').AsSingle;
-      otOperacion.FieldByName('den_valors').AsSingle := oQry_Fnd.FieldByName('den_valors').AsSingle;
+      otOperacion.FieldByName('den_fact_e').AsInteger :=
+        oQry_Fnd.FieldByName('den_fact_e').AsInteger;
+      otOperacion.FieldByName('den_fact_s').AsInteger :=
+        oQry_Fnd.FieldByName('den_fact_s').AsInteger;
+      otOperacion.FieldByName('den_valore').AsSingle :=
+        oQry_Fnd.FieldByName('den_valore').AsSingle;
+      otOperacion.FieldByName('den_valors').AsSingle :=
+        oQry_Fnd.FieldByName('den_valors').AsSingle;
     end;
   end;
 end;
@@ -349,10 +360,14 @@ begin
     if oQry_Fnd.State <> dsInactive then
     begin
       oQry_Fnd.Refresh;
-      otOperacion.FieldByName('den_fact_e').AsInteger := oQry_Fnd.FieldByName('den_fact_e').AsInteger;
-      otOperacion.FieldByName('den_fact_s').AsInteger := oQry_Fnd.FieldByName('den_fact_s').AsInteger;
-      otOperacion.FieldByName('den_valore').AsSingle := oQry_Fnd.FieldByName('den_valore').AsSingle;
-      otOperacion.FieldByName('den_valors').AsSingle := oQry_Fnd.FieldByName('den_valors').AsSingle;
+      otOperacion.FieldByName('den_fact_e').AsInteger :=
+        oQry_Fnd.FieldByName('den_fact_e').AsInteger;
+      otOperacion.FieldByName('den_fact_s').AsInteger :=
+        oQry_Fnd.FieldByName('den_fact_s').AsInteger;
+      otOperacion.FieldByName('den_valore').AsSingle :=
+        oQry_Fnd.FieldByName('den_valore').AsSingle;
+      otOperacion.FieldByName('den_valors').AsSingle :=
+        oQry_Fnd.FieldByName('den_valors').AsSingle;
     end;
   end;
 end;
@@ -367,10 +382,14 @@ begin
     if oQry_Fnd.State <> dsInactive then
     begin
       oQry_Fnd.Refresh;
-      otOperacion.FieldByName('den_fact_e').AsInteger := oQry_Fnd.FieldByName('den_fact_e').AsInteger;
-      otOperacion.FieldByName('den_fact_s').AsInteger := oQry_Fnd.FieldByName('den_fact_s').AsInteger;
-      otOperacion.FieldByName('den_valore').AsSingle := oQry_Fnd.FieldByName('den_valore').AsSingle;
-      otOperacion.FieldByName('den_valors').AsSingle := oQry_Fnd.FieldByName('den_valors').AsSingle;
+      otOperacion.FieldByName('den_fact_e').AsInteger :=
+        oQry_Fnd.FieldByName('den_fact_e').AsInteger;
+      otOperacion.FieldByName('den_fact_s').AsInteger :=
+        oQry_Fnd.FieldByName('den_fact_s').AsInteger;
+      otOperacion.FieldByName('den_valore').AsSingle :=
+        oQry_Fnd.FieldByName('den_valore').AsSingle;
+      otOperacion.FieldByName('den_valors').AsSingle :=
+        oQry_Fnd.FieldByName('den_valors').AsSingle;
     end;
   end;
 end;
@@ -510,7 +529,8 @@ begin
   begin
     if ((otOperacion.State = dsInsert) or (otOperacion.State = dsInsert)) then
     begin
-      Application.MessageBox('El número de máquina no puede estar vacío', 'Búsqueda de Documento', 0);
+      Application.MessageBox('El número de máquina no puede estar vacío',
+        'Búsqueda de Documento', 0);
       if oMaquina.Enabled = true then
         self.oMaquina.SetFocus;
       exit;
@@ -524,7 +544,8 @@ end;
 
 procedure TfCaptura2.otOperacionBeforePost(DataSet: TDataSet);
 begin
-  DataSet.FieldByName('MaqLnk_Id').Value := oQry_Fnd.FieldByName('MaqLnk_Id').AsInteger;
+  DataSet.FieldByName('MaqLnk_Id').Value := oQry_Fnd.FieldByName('MaqLnk_Id')
+    .AsInteger;
   // DataSet.FieldByName('cte_id').Value := oQry_Fnd.FieldByName('cte_id').AsInteger;
   if DataSet.State = dsEdit then
   begin
@@ -573,7 +594,8 @@ begin
   begin
     if Find_In_Op(self.oDocumento.Text) = true then
     begin
-      Application.MessageBox('Número de documento ya existe', 'Búsqueda de Documento', 0);
+      Application.MessageBox('Número de documento ya existe',
+        'Búsqueda de Documento', 0);
       self.otOperacion.FieldByName('op_nodoc').AsString := '';
       self.oDocumento.Text := '';
       self.oDocumento.SetFocus;
@@ -592,8 +614,10 @@ begin
     if fUtilesV20.isEmpty(self.oDoc_Fnd.Text) then
       exit;
     self.oDoc_Fnd.Text := fUtilesV20.PadL(trim(self.oDoc_Fnd.Text), 8, '0');
-    if otOperacion.Locate('op_nodoc', trim(oDoc_Fnd.Text), [loPartialKey, loCaseInsensitive]) = false then
-      Application.MessageBox('Número de documento no existe', 'Búsqueda de Documento', 0)
+    if otOperacion.Locate('op_nodoc', trim(oDoc_Fnd.Text),
+      [loPartialKey, loCaseInsensitive]) = false then
+      Application.MessageBox('Número de documento no existe',
+        'Búsqueda de Documento', 0)
     else
       self.oMaquinaExit(self);
     self.oDoc_Fnd.Text := '';
@@ -647,40 +671,57 @@ begin
     MyOp.Denom_Sal_Fac := oQry_Fnd.FieldByName('den_fact_s').AsInteger;
     MyOp.Denom_Ent_Val := oQry_Fnd.FieldByName('den_valore').AsSingle;
     MyOp.Denom_Sal_Val := oQry_Fnd.FieldByName('den_valors').AsSingle;
-    MyOp.Porc_Loc := fUtilesV20.iif(oQry_Fnd.FieldByName('cte_poc_ret').AsSingle = 0, 1,
-      oQry_Fnd.FieldByName('cte_poc_ret').AsSingle);
+    MyOp.Porc_Loc := fUtilesV20.iif(oQry_Fnd.FieldByName('cte_poc_ret')
+      .AsSingle = 0, 1, oQry_Fnd.FieldByName('cte_poc_ret').AsSingle);
 
-    self.olBruto_Cte.Hint := 'Porcentaje Cliente [' + FormatFloat('##,##0.00', oQry_Fnd.FieldByName('cte_poc_ret')
-      .AsSingle) + '%]';
+    self.olBruto_Cte.Hint := 'Porcentaje Cliente [' + FormatFloat('##,##0.00',
+      oQry_Fnd.FieldByName('cte_poc_ret').AsSingle) + '%]';
     self.olBruto_Cte.ShowHint := true;
-    self.olNeto_Cte.Hint := 'Porcentaje Cliente [' + FormatFloat('##,##0.00', oQry_Fnd.FieldByName('cte_poc_ret')
-      .AsSingle) + '%]';
+    self.olNeto_Cte.Hint := 'Porcentaje Cliente [' + FormatFloat('##,##0.00',
+      oQry_Fnd.FieldByName('cte_poc_ret').AsSingle) + '%]';
     self.olNeto_Cte.ShowHint := true;
-    self.olTot_Colectado.Hint := 'Factor de Conversión [' + IntToStr(MyOp.Denom_Ent_Fac) + '/ $' +
-      FormatFloat('##,##0.00', MyOp.Denom_Ent_Val) + ']';
+    self.olTot_Colectado.Hint := 'Factor de Conversión [' +
+      IntToStr(MyOp.Denom_Ent_Fac) + '/ $' + FormatFloat('##,##0.00',
+      MyOp.Denom_Ent_Val) + ']';
     self.olTot_Colectado.ShowHint := true;
 
-    otOperacion.FieldByName('op_modelo').AsString := oQry_Fnd.FieldByName('maqtc_modelo').AsString;
-    otOperacion.FieldByName('cte_nombre_loc').AsString := oQry_Fnd.FieldByName('cte_nombre_loc').AsString;
-    otOperacion.FieldByName('cte_nombre_com').AsString := oQry_Fnd.FieldByName('cte_nombre_com').AsString;
-    otOperacion.FieldByName('cte_pag_jcj').AsInteger := oQry_Fnd.FieldByName('cte_pag_jcj').AsInteger;
-    otOperacion.FieldByName('cte_pag_spac').AsInteger := oQry_Fnd.FieldByName('cte_pag_spac').AsInteger;
-    otOperacion.FieldByName('cte_pag_impm').AsInteger := oQry_Fnd.FieldByName('cte_pag_impm').AsInteger;
-    otOperacion.FieldByName('op_cporc_Loc').AsInteger := oQry_Fnd.FieldByName('cte_poc_ret').AsInteger;
-    otOperacion.FieldByName('maqtc_denom_e').AsInteger := oQry_Fnd.FieldByName('maqtc_denom_e').AsInteger;
-    otOperacion.FieldByName('maqtc_denom_s').AsInteger := oQry_Fnd.FieldByName('maqtc_denom_s').AsInteger;
-    otOperacion.FieldByName('maqtc_tipomaq').AsInteger := oQry_Fnd.FieldByName('maqtc_tipomaq').AsInteger;
-    otOperacion.FieldByName('den_fact_e').AsInteger := oQry_Fnd.FieldByName('den_fact_e').AsInteger;
-    otOperacion.FieldByName('den_fact_s').AsInteger := oQry_Fnd.FieldByName('den_fact_s').AsInteger;
-    otOperacion.FieldByName('den_valore').AsSingle := oQry_Fnd.FieldByName('den_valore').AsSingle;
-    otOperacion.FieldByName('den_valors').AsSingle := oQry_Fnd.FieldByName('den_valors').AsSingle;
+    otOperacion.FieldByName('op_modelo').AsString :=
+      oQry_Fnd.FieldByName('maqtc_modelo').AsString;
+    otOperacion.FieldByName('cte_nombre_loc').AsString :=
+      oQry_Fnd.FieldByName('cte_nombre_loc').AsString;
+    otOperacion.FieldByName('cte_nombre_com').AsString :=
+      oQry_Fnd.FieldByName('cte_nombre_com').AsString;
+    otOperacion.FieldByName('cte_pag_jcj').AsInteger :=
+      oQry_Fnd.FieldByName('cte_pag_jcj').AsInteger;
+    otOperacion.FieldByName('cte_pag_spac').AsInteger :=
+      oQry_Fnd.FieldByName('cte_pag_spac').AsInteger;
+    otOperacion.FieldByName('cte_pag_impm').AsInteger :=
+      oQry_Fnd.FieldByName('cte_pag_impm').AsInteger;
+    otOperacion.FieldByName('op_cporc_Loc').AsInteger :=
+      oQry_Fnd.FieldByName('cte_poc_ret').AsInteger;
+    otOperacion.FieldByName('maqtc_denom_e').AsInteger :=
+      oQry_Fnd.FieldByName('maqtc_denom_e').AsInteger;
+    otOperacion.FieldByName('maqtc_denom_s').AsInteger :=
+      oQry_Fnd.FieldByName('maqtc_denom_s').AsInteger;
+    otOperacion.FieldByName('maqtc_tipomaq').AsInteger :=
+      oQry_Fnd.FieldByName('maqtc_tipomaq').AsInteger;
+    otOperacion.FieldByName('den_fact_e').AsInteger :=
+      oQry_Fnd.FieldByName('den_fact_e').AsInteger;
+    otOperacion.FieldByName('den_fact_s').AsInteger :=
+      oQry_Fnd.FieldByName('den_fact_s').AsInteger;
+    otOperacion.FieldByName('den_valore').AsSingle :=
+      oQry_Fnd.FieldByName('den_valore').AsSingle;
+    otOperacion.FieldByName('den_valors').AsSingle :=
+      oQry_Fnd.FieldByName('den_valors').AsSingle;
     if (self.otOperacion.State = dsInsert) then
     begin
       if oQry_Fnd.FieldByName('cte_pag_jcj').AsInteger = 0 then
-        otOperacion.FieldByName('Op_tot_impjcj').AsSingle := (oQry_Fnd.FieldByName('emp_cargo_jcj').AsSingle / 4);
+        otOperacion.FieldByName('Op_tot_impjcj').AsSingle :=
+          (oQry_Fnd.FieldByName('emp_cargo_jcj').AsSingle / 4);
 
       if oQry_Fnd.FieldByName('cte_pag_impm').AsInteger = 0 then
-        otOperacion.FieldByName('Op_tot_impmunic').AsSingle := oQry_Fnd.FieldByName('mun_impuesto').AsSingle;
+        otOperacion.FieldByName('Op_tot_impmunic').AsSingle :=
+          oQry_Fnd.FieldByName('mun_impuesto').AsSingle;
     end;
   end;
   if bChangeMeters = false then
@@ -695,7 +736,8 @@ begin
           self.otOp_ea_metroac.visible := true; { Actual }
           self.otOp_ea_metroan.visible := true; { Anterior }
           otOperacion.FieldByName('Op_ea_metroac').AsInteger := 0;
-          otOperacion.FieldByName('Op_ea_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_act').AsInteger;
+          otOperacion.FieldByName('Op_ea_metroan').AsInteger :=
+            oQry_Fnd.FieldByName('maqtc_m1e_act').AsInteger;
           // Salidas A
           otOperacion.FieldByName('Op_sa_metroac').AsInteger := 0;
           otOperacion.FieldByName('Op_sa_metroan').AsInteger := 0;
@@ -710,8 +752,10 @@ begin
           // Entradas A
           self.otOp_ea_metroac.visible := true; { Actual }
           self.otOp_ea_metroan.visible := true; { Anterior }
-          self.otOperacion.FieldByName('Op_ea_metroac').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_act').AsInteger;
-          otOperacion.FieldByName('Op_ea_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_ant').AsInteger;
+          self.otOperacion.FieldByName('Op_ea_metroac').AsInteger :=
+            oQry_Fnd.FieldByName('maqtc_m1e_act').AsInteger;
+          otOperacion.FieldByName('Op_ea_metroan').AsInteger :=
+            oQry_Fnd.FieldByName('maqtc_m1e_ant').AsInteger;
           // Salidas A
           otOperacion.FieldByName('Op_sa_metroac').AsInteger := 0;
           otOperacion.FieldByName('Op_sa_metroan').AsInteger := 0;
@@ -734,11 +778,13 @@ begin
           self.otOp_ea_metroan.visible := true; { Anterior }
           self.otOperacion.FieldByName('Op_ea_metroac').AsInteger := 0
           { &&maquinas.m1e_act };
-          self.otOperacion.FieldByName('Op_ea_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_act').AsInteger;
+          self.otOperacion.FieldByName('Op_ea_metroan').AsInteger :=
+            oQry_Fnd.FieldByName('maqtc_m1e_act').AsInteger;
           // Salidas A
           self.otOperacion.FieldByName('Op_sa_metroac').AsInteger := 0;
           { maquinas.m1s_act }
-          self.otOperacion.FieldByName('Op_sa_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1s_act').AsInteger;
+          self.otOperacion.FieldByName('Op_sa_metroan').AsInteger :=
+            oQry_Fnd.FieldByName('maqtc_m1s_act').AsInteger;
           if oQry_Fnd.FieldByName('maqtc_m1e_ant').AsInteger = 0 then
             self.otOp_ea_metroan.Enabled := true
           else
@@ -748,7 +794,8 @@ begin
           self.otOp_eb_metroac.visible := true; { Actual }
           self.otOp_eb_metroan.visible := true; { Anterior }
           otOperacion.FieldByName('Op_eb_metroac').AsInteger := 0;
-          otOperacion.FieldByName('Op_eb_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m2e_act').AsInteger;
+          otOperacion.FieldByName('Op_eb_metroan').AsInteger :=
+            oQry_Fnd.FieldByName('maqtc_m2e_act').AsInteger;
           // Salidas B
 
           otOperacion.FieldByName('Op_sb_metroac').AsInteger := 0;
@@ -784,6 +831,14 @@ begin
     self.otOp_eb_metroan.visible := false; { Anterior }
     // Salidas B
   End;
+end;
+
+procedure TfCaptura2.oMoneyADblClick(Sender: TObject);
+begin
+  if (trim(otOperacion.FieldByName('maqtc_denom_e').AsString) <> '1') then
+  begin
+    //self.otOp_ea_metroac.
+  end;
 end;
 
 procedure TfCaptura2.oSemanaClick(Sender: TObject);
@@ -989,7 +1044,8 @@ begin
   end;
 end;
 
-function TfCaptura2.Buscar_Maquina(var oQry_Fnd: TFDQuery; pNum_Maq: string): boolean;
+function TfCaptura2.Buscar_Maquina(var oQry_Fnd: TFDQuery;
+  pNum_Maq: string): boolean;
 var
   sSql: string;
 begin
@@ -1038,21 +1094,31 @@ begin
   sSql := sSql + '  a.den_fact_e , ';
   sSql := sSql + '  b.den_fact_s  ';
   sSql := sSql + 'FROM maquinastc ';
-  sSql := sSql + '  INNER JOIN maquinas_lnk ON (maquinastc.maqtc_id = maquinas_lnk.maqtc_id) ';
-  sSql := sSql + '  LEFT JOIN clientes  ON (maquinas_lnk.cte_id = clientes.cte_id) ';
-  sSql := sSql + '  LEFT JOIN empresas   ON (maquinas_lnk.emp_id = empresas.emp_id) ';
-  sSql := sSql + '  LEFT JOIN municipios ON (clientes.mun_id = municipios.mun_id) ';
+  sSql := sSql +
+    '  INNER JOIN maquinas_lnk ON (maquinastc.maqtc_id = maquinas_lnk.maqtc_id) ';
+  sSql := sSql +
+    '  LEFT JOIN clientes  ON (maquinas_lnk.cte_id = clientes.cte_id) ';
+  sSql := sSql +
+    '  LEFT JOIN empresas   ON (maquinas_lnk.emp_id = empresas.emp_id) ';
+  sSql := sSql +
+    '  LEFT JOIN municipios ON (clientes.mun_id = municipios.mun_id) ';
   sSql := sSql + '  LEFT JOIN rutas      ON (clientes.rut_id = rutas.rut_id) ';
-  sSql := sSql + '  LEFT JOIN denominaciones a ON (maquinastc.maqtc_denom_e = a.den_id) ';
-  sSql := sSql + '  LEFT JOIN denominaciones b ON (maquinastc.maqtc_denom_s = b.den_id) ';
+  sSql := sSql +
+    '  LEFT JOIN denominaciones a ON (maquinastc.maqtc_denom_e = a.den_id) ';
+  sSql := sSql +
+    '  LEFT JOIN denominaciones b ON (maquinastc.maqtc_denom_s = b.den_id) ';
   sSql := sSql + 'WHERE  maqtc_tipomaq = 2 ';
-  sSql := sSql + '  AND TRIM(maquinastc.maqtc_chapa) = ' + QuotedStr(trim(pNum_Maq)) + ' ';
-  sSql := sSql + '  AND empresas.emp_id = ' + QuotedStr(IntToStr(utilesV20.iId_Empresa));
+  sSql := sSql + '  AND TRIM(maquinastc.maqtc_chapa) = ' +
+    QuotedStr(trim(pNum_Maq)) + ' ';
+  sSql := sSql + '  AND empresas.emp_id = ' +
+    QuotedStr(IntToStr(utilesV20.iId_Empresa));
   oQry_Fnd.close;
   result := utilesV20.Exec_Select_SQL(oQry_Fnd, sSql, true, true);
   if result = false then
   begin
-    Application.MessageBox('el código de máquina no existe o no tiene un cliente asignado', 'Precausión');
+    Application.MessageBox
+      ('el código de máquina no existe o no tiene un cliente asignado',
+      'Precausión');
     exit;
   end;
 end;
@@ -1111,13 +1177,15 @@ var
   iTot2: single;
 begin
   ipK_porc := fUtilesV20.iif(MyOp.Porc_Loc = 0, 1, MyOp.Porc_Loc);
-  iTot1 := (self.otOp_tot_Audic.Value + self.otOp_tot_impmunic.Value + self.otOp_tot_spac.Value +
-    self.otOp_tot_fono.Value + self.otOp_tot_tec.Value);
+  iTot1 := (self.otOp_tot_Audic.Value + self.otOp_tot_impmunic.Value +
+    self.otOp_tot_spac.Value + self.otOp_tot_fono.Value +
+    self.otOp_tot_tec.Value);
   iTot2 := (self.otOp_tot_dev.Value - self.otOp_tot_otros.Value);
   self.otOp_tot_sub.Value := (self.otOp_tot_colect.Value - iTot1 - iTot2);
 
   self.otOp_tot_itbm.Value := (self.otOp_tot_sub.Value * (MyOp.iItbms / 100));
-  self.otOp_tot_tot.Value := (self.otOp_tot_sub.Value - self.otOp_tot_itbm.Value);
+  self.otOp_tot_tot.Value :=
+    (self.otOp_tot_sub.Value - self.otOp_tot_itbm.Value);
   if ipK_porc = 100 then
   begin
     self.otOp_tot_brutoloc.Value := 0;
@@ -1125,12 +1193,18 @@ begin
   end
   else
   begin
-    self.otOp_tot_brutoloc.Value := (self.otOp_tot_tot.Value * (ipK_porc / 100));
-    self.otOp_tot_brutoemp.Value := (self.otOp_tot_tot.Value - self.otOp_tot_brutoloc.Value);
+    self.otOp_tot_brutoloc.Value :=
+      (self.otOp_tot_tot.Value * (ipK_porc / 100));
+    self.otOp_tot_brutoemp.Value :=
+      (self.otOp_tot_tot.Value - self.otOp_tot_brutoloc.Value);
   end;
-  self.otOp_tot_netoloc.Value := (self.otOp_tot_dev.Value - self.otOp_tot_otros.Value + self.otOp_tot_brutoloc.Value);
-  self.otOp_tot_netoemp.Value := (self.otOp_tot_Audic.Value + self.otOp_tot_impmunic.Value + +self.otOp_tot_spac.Value +
-    self.otOp_tot_fono.Value - self.otOp_tot_tec.Value + self.otOp_tot_brutoemp.Value);
+  self.otOp_tot_netoloc.Value :=
+    (self.otOp_tot_dev.Value - self.otOp_tot_otros.Value +
+    self.otOp_tot_brutoloc.Value);
+  self.otOp_tot_netoemp.Value :=
+    (self.otOp_tot_Audic.Value + self.otOp_tot_impmunic.Value +
+    +self.otOp_tot_spac.Value + self.otOp_tot_fono.Value -
+    self.otOp_tot_tec.Value + self.otOp_tot_brutoemp.Value);
   self.Refresh;
 end;
 
@@ -1274,9 +1348,11 @@ end;
 procedure TfCaptura2.Calc_Dif_Ent(A: boolean);
 begin
   if A = true then
-    MyOp.MetroA_EntDif := (self.otOp_ea_metroac.Value - self.otOp_ea_metroan.Value)
+    MyOp.MetroA_EntDif :=
+      (self.otOp_ea_metroac.Value - self.otOp_ea_metroan.Value)
   else
-    MyOp.MetroB_EntDif := (self.otOp_eb_metroac.Value - self.otOp_eb_metroan.Value);
+    MyOp.MetroB_EntDif :=
+      (self.otOp_eb_metroac.Value - self.otOp_eb_metroan.Value);
 end;
 
 procedure TfCaptura2.otOp_ea_metroacClick(Sender: TObject);

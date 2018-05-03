@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, ToolWin, ComCtrls, StdCtrls, Buttons, ExtCtrls,
-  XPMan, Vcl.Imaging.jpeg, math, PngSpeedButton;
+  XPMan, Vcl.Imaging.jpeg, math;
 
 type
   TfMain = class(TForm)
@@ -46,7 +46,7 @@ type
     Premios2: TMenuItem;
     N6: TMenuItem;
     N9: TMenuItem;
-    PngSpeedButton1: TPngSpeedButton;
+    c1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure Salir1Click(Sender: TObject);
     procedure Acercade1Click(Sender: TObject);
@@ -68,6 +68,8 @@ type
     procedure OperacionesporFecha1Click(Sender: TObject);
     procedure Premios2Click(Sender: TObject);
     procedure Crearcopiadeseguridad1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure c1Click(Sender: TObject);
   private
     { Private declarations }
     FGraphic: TGraphic;
@@ -108,6 +110,13 @@ begin
   Application.CreateForm(TfAsigMaq, fAsigMaq);
   fAsigMaq.showmodal;
   freeandnil(fAsigMaq);
+end;
+
+procedure TfMain.c1Click(Sender: TObject);
+begin
+  Application.CreateForm(Tfclaves_automaticas, fclaves_automaticas);
+  fclaves_automaticas.showmodal;
+  freeandnil(fclaves_automaticas);
 end;
 
 procedure TfMain.cHAPAS1Click(Sender: TObject);
@@ -183,6 +192,22 @@ var
 begin
   R := CropRect(ClientRect, FGraphic.Width, FGraphic.Height);
   Canvas.StretchDraw(R, FGraphic);
+end;
+
+procedure TfMain.FormShow(Sender: TObject);
+begin
+  FormatSettings.DecimalSeparator := '.';
+  FormatSettings.ThousandSeparator := ',';
+  FormatSettings.CurrencyDecimals := 2;
+  FormatSettings.DateSeparator := '/';
+  FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
+  FormatSettings.LongDateFormat := 'dd/mm/yyyy';
+  FormatSettings.TimeSeparator := ':';
+  FormatSettings.TimeAMString := 'AM';
+  FormatSettings.TimePMString := 'PM';
+  FormatSettings.ShortTimeFormat := 'hh:nn';
+  FormatSettings.LongTimeFormat := 'hh:nn:ss';
+  FormatSettings.CurrencyString := '$';
 end;
 
 procedure TfMain.JCJ2Click(Sender: TObject);

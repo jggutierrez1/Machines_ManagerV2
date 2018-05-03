@@ -46,6 +46,7 @@ type
     Premios2: TMenuItem;
     N6: TMenuItem;
     N9: TMenuItem;
+    c1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure Salir1Click(Sender: TObject);
     procedure Acercade1Click(Sender: TObject);
@@ -68,6 +69,7 @@ type
     procedure Premios2Click(Sender: TObject);
     procedure Crearcopiadeseguridad1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure c1Click(Sender: TObject);
   private
     { Private declarations }
     FGraphic: TGraphic;
@@ -83,7 +85,7 @@ implementation
 uses
   acceso, About, Empresa, UtilesV20, Clientes, Municipios, Rutas, Maquinas,
   Denominaciones, AsigMaq, usuarios, Mant_Adelantos, Mant_Premios, Captura1,
-  RepJCJ_1, ReporteAdelantos, ReportePremios, Base64;
+  RepJCJ_1, ReporteAdelantos, ReportePremios, Base64, claves_automaticas;
 {$R *.dfm}
 
 // Database_Backup_Restore,
@@ -108,6 +110,19 @@ begin
   Application.CreateForm(TfAsigMaq, fAsigMaq);
   fAsigMaq.showmodal;
   freeandnil(fAsigMaq);
+end;
+
+procedure TfMain.c1Click(Sender: TObject);
+begin
+  if (UtilesV20.Is_Super_User() = false) then
+  begin
+    MessageDlg('Acceso restringido a esta sección.', mtConfirmation, [mbOk], 0);
+    exit;
+  end;
+
+  Application.CreateForm(Tfclaves_automaticas, fclaves_automaticas);
+  fclaves_automaticas.showmodal;
+  freeandnil(fclaves_automaticas);
 end;
 
 procedure TfMain.cHAPAS1Click(Sender: TObject);
@@ -252,7 +267,7 @@ procedure TfMain.Usuarios1Click(Sender: TObject);
 begin
   if (trim(UtilesV20.sUserName) <> 'ADMIN') and (trim(UtilesV20.sUserName) <> 'SUPER') then
   begin
-    MessageDlg('Usuario no tiene acceso a esta opción.', mtWarning, [mbOK], 0);
+    MessageDlg('Usuario no tiene acceso a esta opción.', mtWarning, [mbOk], 0);
     exit;
   end;
   Application.CreateForm(TFusuarios, Fusuarios);
