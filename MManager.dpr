@@ -35,7 +35,8 @@ uses
   Base64 in 'Base64.pas',
   UtilesV20 in 'UtilesV20.pas' {fUtilesV20},
   acceso1 in 'acceso1.pas' {facceso1},
-  claves_automaticas in 'claves_automaticas.pas' {fclaves_automaticas};
+  claves_automaticas in 'claves_automaticas.pas' {fclaves_automaticas},
+  aplica_colectas in 'aplica_colectas.pas' {faplica_colectas};
 
 {$R *.res}
 

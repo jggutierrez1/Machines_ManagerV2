@@ -446,10 +446,6 @@ object fClientes: TfClientes
     object TabSheet2: TTabSheet
       Caption = 'Adicional'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label15: TLabel
         Left = 399
         Top = 11

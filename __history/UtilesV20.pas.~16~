@@ -293,7 +293,6 @@ type
     function GetIPFromHost(HostName: string): string;
     function GetComputerNetName: string;
     function removeLeadingZeros(const Value: string): string;
-    function is_super_user: Boolean;
   private
     { Private declarations }
   public
@@ -366,6 +365,8 @@ function Execute_SQL_Query(var oQry: TFDQuery; sSql: string; oQryExec: Boolean =
 function Execute_SQL_Query(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False)
   : Boolean; overload;
 function Execute_SQL_Query(var oQry: TFDQuery; sSql: TStringList; oQryExec: Boolean = False): Boolean; overload;
+function Is_Super_User(): Boolean;
+function RepeatString(const S: string; Count: cardinal): string;
 
 implementation
 
@@ -823,7 +824,7 @@ end;
 
 function TfUtilesV20.LoadFileToString(const FileName: string): widestring;
 var
-  handle, Size: Cardinal;
+  handle, Size: cardinal;
 begin
   handle := CreateFile(PChar(FileName), GENERIC_READ, 0, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if handle <> INVALID_HANDLE_VALUE then
@@ -2742,7 +2743,7 @@ var
   sd: SECURITY_DESCRIPTOR;
   pi: PROCESS_INFORMATION;
   newstdin, newstdout, read_stdout, write_stdin: THandle;
-  exitcod, bread, avail: Cardinal;
+  exitcod, bread, avail: cardinal;
   sSym: string;
 begin
 
@@ -4551,11 +4552,12 @@ begin
   end;
 end;
 
-function is_super_user: Boolean;
+function Is_Super_User(): Boolean;
 var
   cSql_Ln: string;
   oQry_UsrCk: TFDQuery;
 begin
+  Result := True;
   oQry_UsrCk := TFDQuery.Create(nil);
 
   cSql_Ln := '';
@@ -4570,6 +4572,14 @@ begin
   else
     Result := False;
   freeandnil(oQry_UsrCk);
+end;
+
+function RepeatString(const S: string; Count: cardinal): string;
+var
+  i: integer;
+begin
+  for i := 1 to Count do
+    Result := Result + S;
 end;
 
 end.

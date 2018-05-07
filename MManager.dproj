@@ -191,6 +191,10 @@
             <Form>fclaves_automaticas</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="aplica_colectas.pas">
+            <Form>faplica_colectas</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

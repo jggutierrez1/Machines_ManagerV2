@@ -293,7 +293,6 @@ type
     function GetIPFromHost(HostName: string): string;
     function GetComputerNetName: string;
     function removeLeadingZeros(const Value: string): string;
-    function is_super_user: Boolean;
   private
     { Private declarations }
   public
@@ -366,6 +365,7 @@ function Execute_SQL_Query(var oQry: TFDQuery; sSql: string; oQryExec: Boolean =
 function Execute_SQL_Query(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False)
   : Boolean; overload;
 function Execute_SQL_Query(var oQry: TFDQuery; sSql: TStringList; oQryExec: Boolean = False): Boolean; overload;
+function Is_Super_User(): Boolean;
 
 implementation
 
@@ -4551,11 +4551,12 @@ begin
   end;
 end;
 
-function is_super_user: Boolean;
+function Is_Super_User(): Boolean;
 var
   cSql_Ln: string;
   oQry_UsrCk: TFDQuery;
 begin
+  Result := True;
   oQry_UsrCk := TFDQuery.Create(nil);
 
   cSql_Ln := '';
@@ -4566,9 +4567,9 @@ begin
   UtilesV20.Exec_Select_SQL(oQry_UsrCk, cSql_Ln, True, False);
 
   if (oQry_UsrCk.FieldByName('u_acceso1').AsInteger = 1) then
-    bPass_Ok := True
+    Result := True
   else
-    bPass_Ok := False;
+    Result := False;
   freeandnil(oQry_UsrCk);
 end;
 

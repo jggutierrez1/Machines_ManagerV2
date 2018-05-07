@@ -1,5 +1,5 @@
 unit UtilesV20;
-
+
 interface
 
 uses
@@ -366,6 +366,8 @@ function Execute_SQL_Query(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: s
   : Boolean; overload;
 function Execute_SQL_Query(var oQry: TFDQuery; sSql: TStringList; oQryExec: Boolean = False): Boolean; overload;
 function Is_Super_User(): Boolean;
+function RepeatString(const S: string; Count: cardinal): string;
+function CenterString(aStr: String; Len: integer): String;
 
 implementation
 
@@ -823,7 +825,7 @@ end;
 
 function TfUtilesV20.LoadFileToString(const FileName: string): widestring;
 var
-  handle, Size: Cardinal;
+  handle, Size: cardinal;
 begin
   handle := CreateFile(PChar(FileName), GENERIC_READ, 0, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if handle <> INVALID_HANDLE_VALUE then
@@ -2742,7 +2744,7 @@ var
   sd: SECURITY_DESCRIPTOR;
   pi: PROCESS_INFORMATION;
   newstdin, newstdout, read_stdout, write_stdin: THandle;
-  exitcod, bread, avail: Cardinal;
+  exitcod, bread, avail: cardinal;
   sSym: string;
 begin
 
@@ -4573,4 +4575,26 @@ begin
   freeandnil(oQry_UsrCk);
 end;
 
+function RepeatString(const S: string; Count: cardinal): string;
+var
+  i: integer;
+begin
+  for i := 1 to Count do
+    Result := Result + S;
+end;
+
+function CenterString(aStr: String; Len: integer): String;
+var
+  posStr: integer;
+begin
+  if Length(aStr) = Len then
+    Result := Copy(aStr, 1, Len)
+  else
+  begin
+    posStr := (Len - Length(aStr)) div 2;
+    Result := Format('%*s', [Len, aStr + Format('%-*s', [posStr, ''])]);
+  end;
+end;
+
 end.
+
