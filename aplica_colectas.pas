@@ -11,7 +11,8 @@ uses
   FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, Vcl.ComCtrls,
-  Vcl.StdCtrls, Vcl.Buttons, PngBitBtn;
+  Vcl.StdCtrls, Vcl.Buttons, PngBitBtn, FireDAC.Comp.ScriptCommands,
+  FireDAC.Stan.Util, FireDAC.Comp.Script;
 
 type
   Tfaplica_colectas = class(TForm)
@@ -57,6 +58,9 @@ type
     otext_lst2_t: TMemo;
     oQry_Prn_Maq: TFDQuery;
     oQry_Prn_Mnt: TFDQuery;
+    oText_Script: TMemo;
+    oScript: TFDScript;
+    oCmdProc: TFDStoredProc;
     procedure oBtnDeleteClick(Sender: TObject);
     procedure oBtnExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -65,6 +69,7 @@ type
     procedure TabSheet2Enter(Sender: TObject);
     function Listar2_Montos(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
     function Imprimir2_Montos(cEmp_Id: string; cCte_Id: string): boolean;
+    procedure oBtnApplyClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -84,9 +89,81 @@ begin
   freeandnil(oConection);
   self.PageControl1.ActivePageIndex := 0;
   self.oTmp_Op.Connection := fUtilesV20.oPublicCnn;
+  self.oScript.Connection := fUtilesV20.oPublicCnn;
+  self.oCmdProc.Connection := fUtilesV20.oPublicCnn;
+
   self.oTmp_Op.Active := true;
+  self.oTmp_Op.Filtered := false;
+  self.oTmp_Op.Filter := 'op_usermodify=1 AND op_emp_id=' + trim(IntToStr(Utilesv20.iId_Empresa));
+  self.oTmp_Op.Filtered := true;
+  self.oTmp_Op.First;
+
   self.oDS_Tmp_Op.DataSet := self.oTmp_Op;
   self.oDS_Tmp_Op.Enabled := true;
+
+end;
+
+procedure Tfaplica_colectas.oBtnApplyClick(Sender: TObject);
+var
+  cEmp_Id, cCte_Id, cGrp_Id, cDev_Id: string;
+begin
+  cEmp_Id := trim(self.oTmp_Op.FieldByName('op_emp_id').AsString);
+  cCte_Id := trim(self.oTmp_Op.FieldByName('cte_id').AsString);
+  cGrp_Id := trim(self.oTmp_Op.FieldByName('id_group').AsString);
+  cDev_Id := trim(self.oTmp_Op.FieldByName('id_device').AsString);
+
+  self.oScript.SQLScripts.Clear;
+
+  self.oScript.Params.Clear;
+  with self.oScript.Params.Add do
+  begin
+    Name := 'Emp_Id';
+    AsString := cEmp_Id;
+  end;
+
+  with self.oScript.Params.Add do
+  begin
+    Name := 'Cte_Id';
+    AsString := cCte_Id;
+  end;
+
+  with self.oScript.Params.Add do
+  begin
+    Name := 'Dev_Id';
+    AsString := cDev_Id;
+  end;
+
+  with self.oScript.Params.Add do
+  begin
+    Name := 'Grp_Id';
+    AsString := cGrp_Id;
+  end;
+
+  self.oScript.Connection := fUtilesV20.oPublicCnn;
+  self.oScript.SQLScripts.Clear;
+  self.oScript.SQLScripts.Add;
+  self.oScript.SQLScripts[0].SQL.text := self.oText_Script.text;
+  self.oScript.ValidateAll;
+  self.oScript.ExecuteAll;
+
+  {
+    self.oCmdProc.StoredProcName := 'actualiza_corre2';
+    self.oCmdProc.Prepare;
+    self.oCmdProc.Params[0].AsString := cEmp_Id;
+    self.oCmdProc.ExecProc;
+  }
+  self.oCmdProc.Connection := fUtilesV20.oPublicCnn;
+  self.oCmdProc.StoredProcName := 'actualiza_maquinas';
+  self.oCmdProc.Prepare;
+  self.oCmdProc.Params[0].AsString := cEmp_Id;
+  self.oCmdProc.Params[1].AsString := cDev_Id;
+  self.oCmdProc.Params[2].AsString := cCte_Id;
+  self.oCmdProc.ExecProc;
+
+  self.oTmp_Op.Refresh;
+  self.oTmp_Op.First;
+  MessageDlg('Proceso finalizado.', mtConfirmation, [mbOk], 0);
+
 end;
 
 procedure Tfaplica_colectas.oBtnDeleteClick(Sender: TObject);

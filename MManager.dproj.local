@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
-  <Transactions>
-    <Transaction>2018/05/06 22:08:52.729,=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas</Transaction>
-    <Transaction>2018/05/06 22:38:30.443,C:\Users\Usuario\Documents\GitHub\Machines_Manager\aplica_colectas.pas=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas</Transaction>
-    <Transaction>2018/05/06 22:38:30.443,C:\Users\Usuario\Documents\GitHub\Machines_Manager\aplica_colectas.dfm=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.dfm</Transaction>
+	<Transactions>
+    <Transaction>2018/05/06 22:08:52.000.729,=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas</Transaction>
+    <Transaction>2018/05/06 22:38:30.000.443,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas=C:\Users\Usuario\Documents\GitHub\Machines_Manager\aplica_colectas.pas</Transaction>
+    <Transaction>2018/05/06 22:38:30.000.443,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.dfm=C:\Users\Usuario\Documents\GitHub\Machines_Manager\aplica_colectas.dfm</Transaction>
   </Transactions>
 </BorlandProject>
