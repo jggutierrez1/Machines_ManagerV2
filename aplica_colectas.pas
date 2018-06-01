@@ -12,7 +12,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, Vcl.ComCtrls,
   Vcl.StdCtrls, Vcl.Buttons, PngBitBtn, FireDAC.Comp.ScriptCommands,
-  FireDAC.Stan.Util, FireDAC.Comp.Script;
+  FireDAC.Stan.Util, FireDAC.Comp.Script, ResizeKit;
 
 type
   Tfaplica_colectas = class(TForm)
@@ -61,6 +61,7 @@ type
     oText_Script: TMemo;
     oScript: TFDScript;
     oCmdProc: TFDStoredProc;
+    ResizeKit1: TResizeKit;
     procedure oBtnDeleteClick(Sender: TObject);
     procedure oBtnExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -107,6 +108,7 @@ procedure Tfaplica_colectas.oBtnApplyClick(Sender: TObject);
 var
   cEmp_Id, cCte_Id, cGrp_Id, cDev_Id: string;
 begin
+  self.oBtnApply.Enabled := false;
   cEmp_Id := trim(self.oTmp_Op.FieldByName('op_emp_id').AsString);
   cCte_Id := trim(self.oTmp_Op.FieldByName('cte_id').AsString);
   cGrp_Id := trim(self.oTmp_Op.FieldByName('id_group').AsString);
@@ -146,12 +148,6 @@ begin
   self.oScript.ValidateAll;
   self.oScript.ExecuteAll;
 
-  {
-    self.oCmdProc.StoredProcName := 'actualiza_corre2';
-    self.oCmdProc.Prepare;
-    self.oCmdProc.Params[0].AsString := cEmp_Id;
-    self.oCmdProc.ExecProc;
-  }
   self.oCmdProc.Connection := fUtilesV20.oPublicCnn;
   self.oCmdProc.StoredProcName := 'actualiza_maquinas';
   self.oCmdProc.Prepare;
@@ -163,7 +159,7 @@ begin
   self.oTmp_Op.Refresh;
   self.oTmp_Op.First;
   MessageDlg('Proceso finalizado.', mtConfirmation, [mbOk], 0);
-
+  self.oBtnApply.Enabled := true;
 end;
 
 procedure Tfaplica_colectas.oBtnDeleteClick(Sender: TObject);
@@ -172,9 +168,11 @@ var
   cSql_Ln: string;
   formattedDateTime: string;
 begin
+  self.oBtnDelete.Enabled := false;
   if self.oTmp_Op.isEmpty then
   begin
     exit;
+    self.oBtnDelete.Enabled := true;
   end;
   nResp := MessageDlg('Seguro que desea borrar eliminar el registro alctual?', mtConfirmation, [mbYes, mbNo], 0);
   If (nResp = mrYes) Then
@@ -189,7 +187,7 @@ begin
     if (Utilesv20.Execute_SQL_Command(cSql_Ln) = true) then
       self.oTmp_Op.Delete;
   end;
-
+  self.oBtnDelete.Enabled := true;
 end;
 
 procedure Tfaplica_colectas.oBtnExitClick(Sender: TObject);
@@ -264,7 +262,7 @@ function Tfaplica_colectas.Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string):
 var
   cMaq_Chap, cMaq_Mode: string;
   ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota,
-    ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp, ctot_bajp: String;
+    ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp, ctot_bajp, ctot_dev: String;
   cLine: String;
   cEmp_De, cCte_De: string;
 begin
@@ -277,18 +275,18 @@ begin
   end
   else
   begin
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('* * * ' + trim(cEmp_De) + ' * * *', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('LISTADO DE MAQUINAS COLECTADAS', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('CLIENTE: [' + cCte_Id + '] / [' + trim(cCte_De) + ']', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('* * * ' + trim(cEmp_De) + ' * * *', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('LISTADO DE MAQUINAS COLECTADAS', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('CLIENTE: [' + cCte_Id + '] / [' + trim(cCte_De) + ']', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     self.oQry_Prn_Maq.First;
-    cLine := String.format('%8s %18s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s',
-      [' CHAPA ', ' MODELO ', ' COL ', ' MUN ', ' JCJ ', ' TIM ', ' TEC ', ' OTR ', ' CRED.', ' SUBT ', ' IMP.',
-      ' TOT ', ' BLOC ', ' BEMP ', ' NLOC ', ' NEMP ']);
+    cLine := String.format('%8s %18s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s',
+      [' CHAPA ', ' MODELO ', ' COL ', ' MUN ', ' JCJ ', ' TIM ', ' TEC ', ' DEV ', ' OTR ', ' CRED.', ' SUBT ',
+      ' IMP.', ' TOT ', ' BLOC ', ' BEMP ', ' NLOC ', ' NEMP ']);
     self.otext_lst2_t.Lines.Append(cLine);
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     while not self.oQry_Prn_Maq.eof do
     begin
@@ -301,6 +299,7 @@ begin
       ctot_timb := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_timbres').AsFloat]);
       ctot_tecn := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_tec').AsFloat]);
       ctot_otos := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_otros').AsFloat]);
+      ctot_dev := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_dev').AsFloat]);
       ctot_cred := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_cred').AsFloat]);
       ctot_subt := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_sub').AsFloat]);
       ctot_itbm := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_itbm').AsFloat]);
@@ -311,15 +310,15 @@ begin
       ctot_nemp := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_netoemp').AsFloat]);
       ctot_bajp := String.format('%2d', [self.oQry_Prn_Maq.FieldByName('op_baja_prod').AsInteger]);
 
-      cLine := String.format('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s',
-        [cMaq_Chap, cMaq_Mode, ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_otos, ctot_cred, ctot_subt,
-        ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp]);
+      cLine := String.format('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s',
+        [cMaq_Chap, cMaq_Mode, ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_dev, ctot_otos, ctot_cred,
+        ctot_subt, ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp]);
 
       self.otext_lst2_t.Lines.Append(cLine);
       self.oQry_Prn_Maq.next;
     end;
 
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
     cLine := String.format('%s %6s', ['TOTAL DE MAQUNAS: ', trim(IntToStr(self.oQry_Prn_Maq.RecordCount))]);
     self.otext_lst2_t.Lines.Append(cLine);
 
@@ -353,7 +352,7 @@ begin
   cSqlLn := cSqlLn + ' WHERE(op.id_device = "' + cDevice + '")';
   cSqlLn := cSqlLn + ' AND (op.op_emp_id = "' + cEmp_Id + '")';
   cSqlLn := cSqlLn + ' AND (op.cte_id = "' + cCte_Id + '")';
-  cSqlLn := cSqlLn + 'AND (op.op_usermodify = "1")';
+  // cSqlLn := cSqlLn + 'AND (op.op_usermodify = "1")';
   cSqlLn := cSqlLn + 'GROUP BY op.op_emp_id, id_device ';
 
   self.oQry_Prn_Mnt.close;
@@ -387,38 +386,38 @@ begin
     while not self.oQry_Prn_Mnt.eof do
     begin
       self.otext_lst2_t.Lines.Append('COLECTADO  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('tot_cole').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('tot_cole').AsFloat]));
       self.otext_lst2_t.Lines.Append('TIMBRES    : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_timbres').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_timbres').AsFloat]));
       self.otext_lst2_t.Lines.Append('IMUESTOS   : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_impmunic').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_impmunic').AsFloat]));
       self.otext_lst2_t.Lines.Append('J.C.J      : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_impjcj').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_impjcj').AsFloat]));
       self.otext_lst2_t.Lines.Append('SERV.TEC.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_tec').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_tec').AsFloat]));
       self.otext_lst2_t.Lines.Append('TOT.DEVO.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_dev').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_dev').AsFloat]));
       self.otext_lst2_t.Lines.Append('TOT.OTRO   : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_otros').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_otros').AsFloat]));
       self.otext_lst2_t.Lines.Append('TOT.CRED.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_cred').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_cred').AsFloat]));
       self.otext_lst2_t.Lines.Append('SUB - TOTAL: ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_sub').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_sub').AsFloat]));
       self.otext_lst2_t.Lines.Append('TOT.IMP.   : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_itbm').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_itbm').AsFloat]));
       self.otext_lst2_t.Lines.Append('TOTAL      : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_tot').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_tot').AsFloat]));
       self.otext_lst2_t.Lines.Append('BRUTO CTE. : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_brutoloc').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_brutoloc').AsFloat]));
       self.otext_lst2_t.Lines.Append('BRUTO EMP. : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_brutoemp').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_brutoemp').AsFloat]));
       self.otext_lst2_t.Lines.Append('NETO CTE.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_netoloc').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_netoloc').AsFloat]));
       self.otext_lst2_t.Lines.Append('NETO EMP.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Maq.FieldByName('op_tot_netoemp').AsFloat]));
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_netoemp').AsFloat]));
       self.oQry_Prn_Mnt.next;
     end;
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     result := true;
   end;

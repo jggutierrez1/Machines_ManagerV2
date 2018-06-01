@@ -801,7 +801,7 @@ begin
     if not((trim(sCod_Modelo) = '%') or (trim(sCod_Modelo) = '')) then
       sLn2 := sLn2 + 'AND   (TRIM(op.op_modelo)=' + QuotedStr(trim(sCod_Modelo)) + ') ';
 
-    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + '" AND op.op_fecha<="' + sFecha_Fin + '")  ';
+    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + ' 00:00:01" AND op.op_fecha<="' + sFecha_Fin + ' 23:59:59")  ';
     sLn2 := sLn2 + ') a ';
 
     case StrToInt(sOrder) of
