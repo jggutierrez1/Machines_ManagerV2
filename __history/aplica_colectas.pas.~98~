@@ -262,7 +262,7 @@ function Tfaplica_colectas.Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string):
 var
   cMaq_Chap, cMaq_Mode: string;
   ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota,
-    ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp, ctot_bajp,ctot_dev: String;
+    ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp, ctot_bajp, ctot_dev: String;
   cLine: String;
   cEmp_De, cCte_De: string;
 begin
@@ -275,18 +275,18 @@ begin
   end
   else
   begin
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('* * * ' + trim(cEmp_De) + ' * * *', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('LISTADO DE MAQUINAS COLECTADAS', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('CLIENTE: [' + cCte_Id + '] / [' + trim(cCte_De) + ']', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('* * * ' + trim(cEmp_De) + ' * * *', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('LISTADO DE MAQUINAS COLECTADAS', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('CLIENTE: [' + cCte_Id + '] / [' + trim(cCte_De) + ']', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     self.oQry_Prn_Maq.First;
-    cLine := String.format('%8s %18s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s',
-      [' CHAPA ', ' MODELO ', ' COL ', ' MUN ', ' JCJ ', ' TIM ', ' TEC ', ' OTR ', ' CRED.', ' SUBT ', ' IMP.',
-      ' TOT ', ' BLOC ', ' BEMP ', ' NLOC ', ' NEMP ']);
+    cLine := String.format('%8s %18s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s',
+      [' CHAPA ', ' MODELO ', ' COL ', ' MUN ', ' JCJ ', ' TIM ', ' TEC ', ' DEV ', ' OTR ', ' CRED.', ' SUBT ',
+      ' IMP.', ' TOT ', ' BLOC ', ' BEMP ', ' NLOC ', ' NEMP ']);
     self.otext_lst2_t.Lines.Append(cLine);
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     while not self.oQry_Prn_Maq.eof do
     begin
@@ -311,14 +311,14 @@ begin
       ctot_bajp := String.format('%2d', [self.oQry_Prn_Maq.FieldByName('op_baja_prod').AsInteger]);
 
       cLine := String.format('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s',
-        [cMaq_Chap, cMaq_Mode, ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_dev, ctot_otos, ctot_cred, ctot_subt,
-        ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp]);
+        [cMaq_Chap, cMaq_Mode, ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_dev, ctot_otos, ctot_cred,
+        ctot_subt, ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp]);
 
       self.otext_lst2_t.Lines.Append(cLine);
       self.oQry_Prn_Maq.next;
     end;
 
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
     cLine := String.format('%s %6s', ['TOTAL DE MAQUNAS: ', trim(IntToStr(self.oQry_Prn_Maq.RecordCount))]);
     self.otext_lst2_t.Lines.Append(cLine);
 
@@ -352,7 +352,7 @@ begin
   cSqlLn := cSqlLn + ' WHERE(op.id_device = "' + cDevice + '")';
   cSqlLn := cSqlLn + ' AND (op.op_emp_id = "' + cEmp_Id + '")';
   cSqlLn := cSqlLn + ' AND (op.cte_id = "' + cCte_Id + '")';
-  //cSqlLn := cSqlLn + 'AND (op.op_usermodify = "1")';
+  // cSqlLn := cSqlLn + 'AND (op.op_usermodify = "1")';
   cSqlLn := cSqlLn + 'GROUP BY op.op_emp_id, id_device ';
 
   self.oQry_Prn_Mnt.close;
@@ -417,7 +417,7 @@ begin
         [self.oQry_Prn_Mnt.FieldByName('op_tot_netoemp').AsFloat]));
       self.oQry_Prn_Mnt.next;
     end;
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     result := true;
   end;

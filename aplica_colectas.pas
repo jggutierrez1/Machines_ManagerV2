@@ -106,7 +106,7 @@ end;
 
 procedure Tfaplica_colectas.oBtnApplyClick(Sender: TObject);
 var
-  cEmp_Id, cCte_Id, cGrp_Id, cDev_Id: string;
+  cEmp_Id, cCte_Id, cGrp_Id, cDev_Id, cSql_ln: string;
 begin
   self.oBtnApply.Enabled := false;
   cEmp_Id := trim(self.oTmp_Op.FieldByName('op_emp_id').AsString);
@@ -156,6 +156,26 @@ begin
   self.oCmdProc.Params[2].AsString := cCte_Id;
   self.oCmdProc.ExecProc;
 
+  cSql_ln := '';
+  cSql_ln := cSql_ln + 'UPDATE operacion op ';
+  cSql_ln := cSql_ln + 'JOIN clientes ct ON op.cte_id = ct.cte_id SET ';
+  cSql_ln := cSql_ln + '	op.op_tot_brutoloc = IF(ct.cte_poc_ret=100,000000000000.00, (op.op_tot_tot * (ct.cte_poc_ret/100)) ) ';
+  cSql_ln := cSql_ln + 'WHERE (op.op_emp_id 	="' + trim(cEmp_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.id_device 	="' + trim(cDev_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.cte_id    	="' + trim(cCte_Id) + '") ';
+  Utilesv20.Execute_SQL_Command(cSql_ln);
+
+  cSql_ln := '';
+  cSql_ln := cSql_ln + 'UPDATE operacion op ';
+  cSql_ln := cSql_ln + 'JOIN clientes ct ON op.cte_id = ct.cte_id SET ';
+  cSql_ln := cSql_ln + ' 	op.op_tot_brutoemp = IF(ct.cte_poc_ret=100, op.op_tot_tot , (op.op_tot_tot - op.op_tot_brutoloc)   ), ';
+  cSql_ln := cSql_ln + ' 	op.op_tot_netoloc	 = (op.op_tot_dev + op.op_tot_otros + op.op_tot_cred + op.op_tot_brutoloc), ';
+  cSql_ln := cSql_ln + ' 	op.op_tot_netoemp	 = (op.op_tot_timbres + op.op_tot_impmunic + op.op_tot_impjcj + op.op_tot_tec + op.op_tot_brutoemp) ';
+  cSql_ln := cSql_ln + 'WHERE (op.op_emp_id 	="' + trim(cEmp_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.id_device 	="' + trim(cDev_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.cte_id    	="' + trim(cCte_Id) + '") ';
+  Utilesv20.Execute_SQL_Command(cSql_ln);
+
   self.oTmp_Op.Refresh;
   self.oTmp_Op.First;
   MessageDlg('Proceso finalizado.', mtConfirmation, [mbOk], 0);
@@ -165,7 +185,7 @@ end;
 procedure Tfaplica_colectas.oBtnDeleteClick(Sender: TObject);
 var
   nResp: integer;
-  cSql_Ln: string;
+  cSql_ln: string;
   formattedDateTime: string;
 begin
   self.oBtnDelete.Enabled := false;
@@ -178,13 +198,13 @@ begin
   If (nResp = mrYes) Then
   begin
 
-    cSql_Ln := '';
-    cSql_Ln := cSql_Ln + 'DELETE FROM operacion_trans ';
-    cSql_Ln := cSql_Ln + 'WHERE op_emp_id =' + QuotedStr(trim(self.oTmp_Op.FieldByName('op_emp_id').AsString)) + ' ';
-    cSql_Ln := cSql_Ln + 'AND   id_device =' + QuotedStr(trim(self.oTmp_Op.FieldByName('id_device').AsString)) + ' ';
-    cSql_Ln := cSql_Ln + 'AND   cte_id    =' + QuotedStr(trim(self.oTmp_Op.FieldByName('cte_id').AsString)) + ' ';
-    cSql_Ln := cSql_Ln + 'AND   id_group  =' + QuotedStr(trim(self.oTmp_Op.FieldByName('id_group').AsString)) + ' ';
-    if (Utilesv20.Execute_SQL_Command(cSql_Ln) = true) then
+    cSql_ln := '';
+    cSql_ln := cSql_ln + 'DELETE FROM operacion_trans ';
+    cSql_ln := cSql_ln + 'WHERE op_emp_id =' + QuotedStr(trim(self.oTmp_Op.FieldByName('op_emp_id').AsString)) + ' ';
+    cSql_ln := cSql_ln + 'AND   id_device =' + QuotedStr(trim(self.oTmp_Op.FieldByName('id_device').AsString)) + ' ';
+    cSql_ln := cSql_ln + 'AND   cte_id    =' + QuotedStr(trim(self.oTmp_Op.FieldByName('cte_id').AsString)) + ' ';
+    cSql_ln := cSql_ln + 'AND   id_group  =' + QuotedStr(trim(self.oTmp_Op.FieldByName('id_group').AsString)) + ' ';
+    if (Utilesv20.Execute_SQL_Command(cSql_ln) = true) then
       self.oTmp_Op.Delete;
   end;
   self.oBtnDelete.Enabled := true;

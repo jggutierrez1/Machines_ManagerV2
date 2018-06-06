@@ -918,7 +918,7 @@ begin
     if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
       sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
 
-    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + '" AND op.op_fecha<="' + sFecha_Fin + '")  ';
+    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + ' 00:00:01" AND op.op_fecha<="' + sFecha_Fin + ' 23:59:59")  ';
     sLn2 := sLn2 + 'GROUP BY  op.op_chapa ';
 
     sLn2 := sLn2 + ') a ';
@@ -956,7 +956,7 @@ begin
     if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
       sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
 
-    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + '" AND op.op_fecha<="' + sFecha_Fin + '")  ';
+    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + ' 00:00:01" AND op.op_fecha<="' + sFecha_Fin + ' 23:59:59")  ';
     sLn2 := sLn2 + 'ORDER BY  1,2,4 ';
   end;
 
@@ -989,7 +989,7 @@ begin
     if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
       sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
 
-    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + '" AND op.op_fecha<="' + sFecha_Fin + '")  ';
+    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + ' 00:00:01" AND op.op_fecha<="' + sFecha_Fin + ' 23:59:59")  ';
     sLn2 := sLn2 + 'GROUP BY 1,DATE_FORMAT(op.op_fecha,"%Y-%m") ';
     sLn2 := sLn2 + 'ORDER BY 1,DATE_FORMAT(op.op_fecha,"%Y-%m") ';
   end;
