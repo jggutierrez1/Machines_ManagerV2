@@ -12,7 +12,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, Vcl.ComCtrls,
   Vcl.StdCtrls, Vcl.Buttons, PngBitBtn, FireDAC.Comp.ScriptCommands,
-  FireDAC.Stan.Util, FireDAC.Comp.Script, ResizeKit;
+  FireDAC.Stan.Util, FireDAC.Comp.Script, ResizeKit, System.DateUtils;
 
 type
   Tfaplica_colectas = class(TForm)
@@ -66,7 +66,7 @@ type
     procedure oBtnExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     function Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string): boolean;
-    function Listar2_Maquinas(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+    function Listar2_Maquinas(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
     procedure TabSheet2Enter(Sender: TObject);
     function Listar2_Montos(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
     function Imprimir2_Montos(cEmp_Id: string; cCte_Id: string): boolean;
@@ -82,7 +82,7 @@ var
 
 implementation
 
-uses Utilesv20;
+uses Utilesv20, Aplica_Fecha_Col;
 {$R *.dfm}
 
 procedure Tfaplica_colectas.FormCreate(Sender: TObject);
@@ -101,18 +101,75 @@ begin
 
   self.oDS_Tmp_Op.DataSet := self.oTmp_Op;
   self.oDS_Tmp_Op.Enabled := true;
-
 end;
 
 procedure Tfaplica_colectas.oBtnApplyClick(Sender: TObject);
 var
-  cEmp_Id, cCte_Id, cGrp_Id, cDev_Id: string;
+  cEmp_Id, cCte_Id, cGrp_Id, cDev_Id, cSql_ln: string;
+  dFechDB, dFechCa: Tdatetime;
+  cFechCa: string;
+  myYear, myMonth, myDay: Word;
+  myHour, myMin, mySec, myMilli: Word;
 begin
   self.oBtnApply.Enabled := false;
+
   cEmp_Id := trim(self.oTmp_Op.FieldByName('op_emp_id').AsString);
+  cDev_Id := trim(self.oTmp_Op.FieldByName('id_device').AsString);
   cCte_Id := trim(self.oTmp_Op.FieldByName('cte_id').AsString);
   cGrp_Id := trim(self.oTmp_Op.FieldByName('id_group').AsString);
-  cDev_Id := trim(self.oTmp_Op.FieldByName('id_device').AsString);
+
+  dFechDB := self.oTmp_Op.FieldByName('op_fecha_alta').AsDateTime;
+
+  cSql_ln := '';
+  cSql_ln := cSql_ln + 'SELECT IFNULL(id_op,"") AS id_op ';
+  cSql_ln := cSql_ln + '  FROM operacion_trans op ';
+  cSql_ln := cSql_ln + 'WHERE (op.op_emp_id ="' + trim(cEmp_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.id_device ="' + trim(cDev_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.cte_id    ="' + trim(cCte_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND   (op.id_group  ="' + trim(cGrp_Id) + '") ';
+  if (Utilesv20.Execute_SQL_Result(cSql_ln) = '') then
+  begin
+    MessageDlg
+      ('NO ES POSIBLE APLICAR ESTA COLECTA PORQUE NO SE ENCUENTRAN LAS CAPTURAS DE LAS MAQUINAS INDIVIDUALMENTE, VOLVA A VERIFICAR LA INFORMACION DESDE LA TABLET?.',
+      mtWarning, [mboK], 0);
+    self.oBtnApply.Enabled := true;
+    exit;
+  end;
+
+  decodedatetime(dFechDB, myYear, myMonth, myDay, myHour, myMin, mySec, myMilli);
+
+  Application.CreateForm(TfAplica_Fecha_Col, fAplica_Fecha_Col);
+  fAplica_Fecha_Col.CalendarView1.Date := now();
+  fAplica_Fecha_Col.showmodal;
+  if (fAplica_Fecha_Col.iOption = 1) then
+  begin
+    if (MessageDlg('Esta seguro/ra que desea cambiar la fecha de la colecta?.', mtConfirmation, [mbYes, mbNo], 0) = MrYes) then
+    begin
+      dFechCa := fAplica_Fecha_Col.CalendarView1.Date;
+      cFechCa := FormatDateTime('yyyy-mm-dd hh:mm:ss', dFechCa);
+
+      cSql_ln := '';
+      cSql_ln := cSql_ln + 'UPDATE operaciong_trans op ';
+      cSql_ln := cSql_ln + ' SET op.op_fecha_alta ="' + trim(cFechCa) + '" ';
+      cSql_ln := cSql_ln + 'WHERE (op.op_emp_id ="' + trim(cEmp_Id) + '") ';
+      cSql_ln := cSql_ln + 'AND 	(op.id_device ="' + trim(cDev_Id) + '") ';
+      cSql_ln := cSql_ln + 'AND 	(op.cte_id    ="' + trim(cCte_Id) + '") ';
+      cSql_ln := cSql_ln + 'AND   (op.id_group  ="' + trim(cGrp_Id) + '") ';
+      Utilesv20.Execute_SQL_Command(cSql_ln);
+
+      cSql_ln := '';
+      cSql_ln := cSql_ln + 'UPDATE operacion_trans op SET ';
+      cSql_ln := cSql_ln + '  op.op_fecha       ="' + trim(cFechCa) + '", ';
+      cSql_ln := cSql_ln + '  op.op_fecha_modif =NOW(), ';
+      cSql_ln := cSql_ln + '  op.u_usuario_modif="' + trim(Utilesv20.sUserName) + '" ';
+      cSql_ln := cSql_ln + 'WHERE (op.op_emp_id ="' + trim(cEmp_Id) + '") ';
+      cSql_ln := cSql_ln + 'AND 	(op.id_device ="' + trim(cDev_Id) + '") ';
+      cSql_ln := cSql_ln + 'AND 	(op.cte_id    ="' + trim(cCte_Id) + '") ';
+      cSql_ln := cSql_ln + 'AND   (op.id_group  ="' + trim(cGrp_Id) + '") ';
+      Utilesv20.Execute_SQL_Command(cSql_ln);
+    end;
+  end;
+  freeandnil(fAplica_Fecha_Col);
 
   self.oScript.SQLScripts.Clear;
 
@@ -125,14 +182,14 @@ begin
 
   with self.oScript.Params.Add do
   begin
-    Name := 'Cte_Id';
-    AsString := cCte_Id;
+    Name := 'Dev_Id';
+    AsString := cDev_Id;
   end;
 
   with self.oScript.Params.Add do
   begin
-    Name := 'Dev_Id';
-    AsString := cDev_Id;
+    Name := 'Cte_Id';
+    AsString := cCte_Id;
   end;
 
   with self.oScript.Params.Add do
@@ -154,20 +211,49 @@ begin
   self.oCmdProc.Params[0].AsString := cEmp_Id;
   self.oCmdProc.Params[1].AsString := cDev_Id;
   self.oCmdProc.Params[2].AsString := cCte_Id;
+  self.oCmdProc.Params[3].AsString := cGrp_Id;
   self.oCmdProc.ExecProc;
+
+  cSql_ln := '';
+  cSql_ln := cSql_ln + 'UPDATE operacion op ';
+  cSql_ln := cSql_ln + 'JOIN clientes ct ON op.cte_id = ct.cte_id SET ';
+  cSql_ln := cSql_ln + '	op.op_tot_brutoloc = IF(ct.cte_poc_ret=100,000000000000.00, (op.op_tot_tot * (ct.cte_poc_ret/100)) ) ';
+  cSql_ln := cSql_ln + 'WHERE (op.op_emp_id ="' + trim(cEmp_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.id_device ="' + trim(cDev_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.cte_id    ="' + trim(cCte_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND   (op.id_group  ="' + trim(cGrp_Id) + '") ';
+  Utilesv20.Execute_SQL_Command(cSql_ln);
+
+  cSql_ln := '';
+  cSql_ln := cSql_ln + 'UPDATE operacion op ';
+  cSql_ln := cSql_ln + 'JOIN clientes ct ON op.cte_id = ct.cte_id SET ';
+  cSql_ln := cSql_ln + ' 	op.op_tot_brutoemp = IF(ct.cte_poc_ret=100, op.op_tot_tot , (op.op_tot_tot - op.op_tot_brutoloc)   ), ';
+  cSql_ln := cSql_ln + ' 	op.op_tot_netoloc	 = (op.op_tot_dev + op.op_tot_otros + op.op_tot_cred + op.op_tot_brutoloc), ';
+  cSql_ln := cSql_ln +
+    ' 	op.op_tot_netoemp	 = (op.op_tot_timbres + op.op_tot_impmunic + op.op_tot_impjcj + op.op_tot_tec + op.op_tot_brutoemp) ';
+  cSql_ln := cSql_ln + 'WHERE (op.op_emp_id ="' + trim(cEmp_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.id_device ="' + trim(cDev_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND 	(op.cte_id    ="' + trim(cCte_Id) + '") ';
+  cSql_ln := cSql_ln + 'AND   (op.id_group  ="' + trim(cGrp_Id) + '") ';
+  Utilesv20.Execute_SQL_Command(cSql_ln);
 
   self.oTmp_Op.Refresh;
   self.oTmp_Op.First;
-  MessageDlg('Proceso finalizado.', mtConfirmation, [mbOk], 0);
+  MessageDlg('Proceso finalizado.', mtConfirmation, [mboK], 0);
   self.oBtnApply.Enabled := true;
 end;
 
 procedure Tfaplica_colectas.oBtnDeleteClick(Sender: TObject);
 var
   nResp: integer;
-  cSql_Ln: string;
+  cEmp_Id, cCte_Id, cGrp_Id, cDev_Id, cSql_ln: string;
   formattedDateTime: string;
 begin
+  cEmp_Id := trim(self.oTmp_Op.FieldByName('op_emp_id').AsString);
+  cDev_Id := trim(self.oTmp_Op.FieldByName('id_device').AsString);
+  cCte_Id := trim(self.oTmp_Op.FieldByName('cte_id').AsString);
+  cGrp_Id := trim(self.oTmp_Op.FieldByName('id_group').AsString);
+
   self.oBtnDelete.Enabled := false;
   if self.oTmp_Op.isEmpty then
   begin
@@ -175,16 +261,16 @@ begin
     self.oBtnDelete.Enabled := true;
   end;
   nResp := MessageDlg('Seguro que desea borrar eliminar el registro alctual?', mtConfirmation, [mbYes, mbNo], 0);
-  If (nResp = mrYes) Then
+  If (nResp = MrYes) Then
   begin
 
-    cSql_Ln := '';
-    cSql_Ln := cSql_Ln + 'DELETE FROM operacion_trans ';
-    cSql_Ln := cSql_Ln + 'WHERE op_emp_id =' + QuotedStr(trim(self.oTmp_Op.FieldByName('op_emp_id').AsString)) + ' ';
-    cSql_Ln := cSql_Ln + 'AND   id_device =' + QuotedStr(trim(self.oTmp_Op.FieldByName('id_device').AsString)) + ' ';
-    cSql_Ln := cSql_Ln + 'AND   cte_id    =' + QuotedStr(trim(self.oTmp_Op.FieldByName('cte_id').AsString)) + ' ';
-    cSql_Ln := cSql_Ln + 'AND   id_group  =' + QuotedStr(trim(self.oTmp_Op.FieldByName('id_group').AsString)) + ' ';
-    if (Utilesv20.Execute_SQL_Command(cSql_Ln) = true) then
+    cSql_ln := '';
+    cSql_ln := cSql_ln + 'DELETE FROM operacion_trans ';
+    cSql_ln := cSql_ln + 'WHERE (op_emp_id ="' + trim(cEmp_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND 	(id_device ="' + trim(cDev_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND 	(cte_id    ="' + trim(cCte_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND   (id_group  ="' + trim(cGrp_Id) + '") ';
+    if (Utilesv20.Execute_SQL_Command(cSql_ln) = true) then
       self.oTmp_Op.Delete;
   end;
   self.oBtnDelete.Enabled := true;
@@ -197,15 +283,16 @@ end;
 
 procedure Tfaplica_colectas.TabSheet2Enter(Sender: TObject);
 var
-  cDevice, cEmp_Id, cCte_Id: string;
+  cDevice, cEmp_Id, cCte_Id, cGrp_Id: string;
 begin
   cDevice := trim(self.oTmp_Op.FieldByName('id_device').AsString);
   cEmp_Id := trim(self.oTmp_Op.FieldByName('op_emp_id').AsString);
   cCte_Id := trim(self.oTmp_Op.FieldByName('cte_id').AsString);
+  cGrp_Id := trim(self.oTmp_Op.FieldByName('id_group').AsString);
 
   self.otext_lst2_t.text := '';
 
-  self.Listar2_Maquinas(cDevice, cEmp_Id, cCte_Id);
+  self.Listar2_Maquinas(cEmp_Id, cDevice, cCte_Id, cGrp_Id);
   self.Imprimir2_Maquinas(cEmp_Id, cCte_Id);
 
   self.Listar2_Montos(cDevice, cEmp_Id, cCte_Id);
@@ -214,7 +301,7 @@ begin
   self.otext_lst2_t.Refresh;
 end;
 
-function Tfaplica_colectas.Listar2_Maquinas(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+function Tfaplica_colectas.Listar2_Maquinas(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
 var
   nResp: integer;
   cSqlLn: string;
@@ -240,10 +327,11 @@ begin
   cSqlLn := cSqlLn + ' SUM(op.op_tot_netoemp) AS op_tot_netoemp, ';
   cSqlLn := cSqlLn + ' SUM(op.op_baja_prod) AS op_baja_prod ';
   cSqlLn := cSqlLn + ' FROM operacion_trans op ';
-  cSqlLn := cSqlLn + ' WHERE(op.id_device = "' + cDevice + '")';
-  cSqlLn := cSqlLn + ' AND (op.op_emp_id = "' + cEmp_Id + '")';
-  cSqlLn := cSqlLn + ' AND (op.cte_id = "' + cCte_Id + '")';
-  cSqlLn := cSqlLn + ' AND (op.op_usermodify = "1")';
+  cSqlLn := cSqlLn + ' WHERE(op.id_device ="' + cDevice + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.op_emp_id ="' + cEmp_Id + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.cte_id    ="' + cCte_Id + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.id_group  ="' + cGrp_Id + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.op_usermodify = "1") ';
   cSqlLn := cSqlLn + ' GROUP BY op.op_emp_id, op.op_chapa ';
   cSqlLn := cSqlLn + ' ORDER BY op.op_emp_id, op.op_chapa ';
   self.oQry_Prn_Maq.close;
@@ -261,13 +349,13 @@ end;
 function Tfaplica_colectas.Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string): boolean;
 var
   cMaq_Chap, cMaq_Mode: string;
-  ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota,
-    ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp, ctot_bajp,ctot_dev: String;
+  ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp,
+    ctot_nloc, ctot_nemp, ctot_bajp, ctot_dev: String;
   cLine: String;
   cEmp_De, cCte_De: string;
 begin
-  cEmp_De := Utilesv20.Execute_SQL_Result('SELECT emp_descripcion FROM empresas WHERE emp_id="' + trim(cEmp_Id) + '"');
-  cCte_De := Utilesv20.Execute_SQL_Result('SELECT cte_nombre_loc FROM clientes WHERE cte_id="' + trim(cCte_Id) + '"');
+  cEmp_De := Utilesv20.Execute_SQL_Result('SELECT emp_descripcion FROM empresas WHERE emp_id="' + trim(cEmp_Id) + '" ');
+  cCte_De := Utilesv20.Execute_SQL_Result('SELECT cte_nombre_loc  FROM clientes WHERE cte_id="' + trim(cCte_Id) + '" ');
 
   if (self.oQry_Prn_Maq.RecordCount = 0) then
   begin
@@ -275,18 +363,18 @@ begin
   end
   else
   begin
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('* * * ' + trim(cEmp_De) + ' * * *', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('LISTADO DE MAQUINAS COLECTADAS', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('CLIENTE: [' + cCte_Id + '] / [' + trim(cCte_De) + ']', 180));
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('* * * ' + trim(cEmp_De) + ' * * *', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('LISTADO DE MAQUINAS COLECTADAS', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('CLIENTE: [' + cCte_Id + '] / [' + trim(cCte_De) + ']', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     self.oQry_Prn_Maq.First;
-    cLine := String.format('%8s %18s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s',
-      [' CHAPA ', ' MODELO ', ' COL ', ' MUN ', ' JCJ ', ' TIM ', ' TEC ', ' OTR ', ' CRED.', ' SUBT ', ' IMP.',
-      ' TOT ', ' BLOC ', ' BEMP ', ' NLOC ', ' NEMP ']);
+    cLine := String.format('%8s %18s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s',
+      [' CHAPA ', ' MODELO ', ' COL ', ' MUN ', ' JCJ ', ' TIM ', ' TEC ', ' DEV ', ' OTR ', ' CRED.', ' SUBT ', ' IMP.', ' TOT ', ' BLOC ',
+      ' BEMP ', ' NLOC ', ' NEMP ']);
     self.otext_lst2_t.Lines.Append(cLine);
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     while not self.oQry_Prn_Maq.eof do
     begin
@@ -310,15 +398,14 @@ begin
       ctot_nemp := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_netoemp').AsFloat]);
       ctot_bajp := String.format('%2d', [self.oQry_Prn_Maq.FieldByName('op_baja_prod').AsInteger]);
 
-      cLine := String.format('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s',
-        [cMaq_Chap, cMaq_Mode, ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_otos, ctot_cred, ctot_subt,
-        ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp]);
+      cLine := String.format('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s', [cMaq_Chap, cMaq_Mode, ctot_cole, ctot_impu, ctot__jcj,
+        ctot_timb, ctot_tecn, ctot_dev, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp]);
 
       self.otext_lst2_t.Lines.Append(cLine);
       self.oQry_Prn_Maq.next;
     end;
 
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
     cLine := String.format('%s %6s', ['TOTAL DE MAQUNAS: ', trim(IntToStr(self.oQry_Prn_Maq.RecordCount))]);
     self.otext_lst2_t.Lines.Append(cLine);
 
@@ -326,7 +413,7 @@ begin
   end;
 end;
 
-function Tfaplica_colectas.Listar2_Montos(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+function Tfaplica_colectas.Listar2_Montos(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
 var
   nResp: integer;
   cSqlLn: string;
@@ -349,10 +436,11 @@ begin
   cSqlLn := cSqlLn + 'SUM(op.op_tot_netoloc) AS op_tot_netoloc, ';
   cSqlLn := cSqlLn + 'SUM(op.op_tot_netoemp) AS op_tot_netoemp ';
   cSqlLn := cSqlLn + ' FROM operacion_trans op ';
-  cSqlLn := cSqlLn + ' WHERE(op.id_device = "' + cDevice + '")';
-  cSqlLn := cSqlLn + ' AND (op.op_emp_id = "' + cEmp_Id + '")';
-  cSqlLn := cSqlLn + ' AND (op.cte_id = "' + cCte_Id + '")';
-  //cSqlLn := cSqlLn + 'AND (op.op_usermodify = "1")';
+  cSqlLn := cSqlLn + ' WHERE(op.id_device ="' + cDevice + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.op_emp_id ="' + cEmp_Id + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.cte_id    ="' + cCte_Id + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.id_group  ="' + cGrp_Id + '") ';
+  // cSqlLn := cSqlLn + 'AND (op.op_usermodify = "1")';
   cSqlLn := cSqlLn + 'GROUP BY op.op_emp_id, id_device ';
 
   self.oQry_Prn_Mnt.close;
@@ -371,8 +459,8 @@ function Tfaplica_colectas.Imprimir2_Montos(cEmp_Id: string; cCte_Id: string): b
 var
   cEmp_De, cCte_De: string;
 begin
-  cEmp_De := Utilesv20.Execute_SQL_Result('SELECT emp_descripcion FROM empresas WHERE emp_id="' + trim(cEmp_Id) + '"');
-  cCte_De := Utilesv20.Execute_SQL_Result('SELECT cte_nombre_loc FROM clientes WHERE cte_id="' + trim(cCte_Id) + '"');
+  cEmp_De := Utilesv20.Execute_SQL_Result('SELECT emp_descripcion FROM empresas WHERE emp_id="' + trim(cEmp_Id) + '" ');
+  cCte_De := Utilesv20.Execute_SQL_Result('SELECT cte_nombre_loc  FROM clientes WHERE cte_id="' + trim(cCte_Id) + '" ');
 
   if (self.oQry_Prn_Mnt.RecordCount = 0) then
   begin
@@ -385,39 +473,24 @@ begin
     self.otext_lst2_t.Lines.Append('');
     while not self.oQry_Prn_Mnt.eof do
     begin
-      self.otext_lst2_t.Lines.Append('COLECTADO  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('tot_cole').AsFloat]));
-      self.otext_lst2_t.Lines.Append('TIMBRES    : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_timbres').AsFloat]));
-      self.otext_lst2_t.Lines.Append('IMUESTOS   : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_impmunic').AsFloat]));
-      self.otext_lst2_t.Lines.Append('J.C.J      : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_impjcj').AsFloat]));
-      self.otext_lst2_t.Lines.Append('SERV.TEC.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_tec').AsFloat]));
-      self.otext_lst2_t.Lines.Append('TOT.DEVO.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_dev').AsFloat]));
-      self.otext_lst2_t.Lines.Append('TOT.OTRO   : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_otros').AsFloat]));
-      self.otext_lst2_t.Lines.Append('TOT.CRED.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_cred').AsFloat]));
-      self.otext_lst2_t.Lines.Append('SUB - TOTAL: ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_sub').AsFloat]));
-      self.otext_lst2_t.Lines.Append('TOT.IMP.   : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_itbm').AsFloat]));
-      self.otext_lst2_t.Lines.Append('TOTAL      : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_tot').AsFloat]));
-      self.otext_lst2_t.Lines.Append('BRUTO CTE. : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_brutoloc').AsFloat]));
-      self.otext_lst2_t.Lines.Append('BRUTO EMP. : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_brutoemp').AsFloat]));
-      self.otext_lst2_t.Lines.Append('NETO CTE.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_netoloc').AsFloat]));
-      self.otext_lst2_t.Lines.Append('NETO EMP.  : ' + String.format('%10.2f',
-        [self.oQry_Prn_Mnt.FieldByName('op_tot_netoemp').AsFloat]));
+      self.otext_lst2_t.Lines.Append('COLECTADO  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('tot_cole').AsFloat]));
+      self.otext_lst2_t.Lines.Append('TIMBRES    : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_timbres').AsFloat]));
+      self.otext_lst2_t.Lines.Append('IMUESTOS   : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_impmunic').AsFloat]));
+      self.otext_lst2_t.Lines.Append('J.C.J      : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_impjcj').AsFloat]));
+      self.otext_lst2_t.Lines.Append('SERV.TEC.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_tec').AsFloat]));
+      self.otext_lst2_t.Lines.Append('TOT.DEVO.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_dev').AsFloat]));
+      self.otext_lst2_t.Lines.Append('TOT.OTRO   : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_otros').AsFloat]));
+      self.otext_lst2_t.Lines.Append('TOT.CRED.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_cred').AsFloat]));
+      self.otext_lst2_t.Lines.Append('SUB - TOTAL: ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_sub').AsFloat]));
+      self.otext_lst2_t.Lines.Append('TOT.IMP.   : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_itbm').AsFloat]));
+      self.otext_lst2_t.Lines.Append('TOTAL      : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_tot').AsFloat]));
+      self.otext_lst2_t.Lines.Append('BRUTO CTE. : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_brutoloc').AsFloat]));
+      self.otext_lst2_t.Lines.Append('BRUTO EMP. : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_brutoemp').AsFloat]));
+      self.otext_lst2_t.Lines.Append('NETO CTE.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_netoloc').AsFloat]));
+      self.otext_lst2_t.Lines.Append('NETO EMP.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_netoemp').AsFloat]));
       self.oQry_Prn_Mnt.next;
     end;
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 180));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
     result := true;
   end;

@@ -1,9 +1,9 @@
 object faplica_colectas: Tfaplica_colectas
   Left = 0
   Top = 0
-  Caption = 'faplica_colectas'
-  ClientHeight = 514
-  ClientWidth = 1008
+  Caption = 'SISTEMA DE CONTROL DE COLECTAS ELECTRONICAS.'
+  ClientHeight = 745
+  ClientWidth = 1024
   Color = clBtnFace
   DefaultMonitor = dmDesktop
   Font.Charset = DEFAULT_CHARSET
@@ -17,19 +17,19 @@ object faplica_colectas: Tfaplica_colectas
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
-    Left = 8
-    Top = 5
-    Width = 999
-    Height = 445
-    ActivePage = TabSheet2
+    Left = 10
+    Top = 8
+    Width = 1003
+    Height = 664
+    ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Pendientes por aplicar'
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0
-        Width = 991
-        Height = 417
+        Width = 995
+        Height = 636
         Align = alClient
         DataGrouping.FootersDefValues.ShowFunctionName = True
         DataGrouping.FootersDefValues.RunTimeCustomizable = True
@@ -279,8 +279,8 @@ object faplica_colectas: Tfaplica_colectas
       object otext_lst2_t: TMemo
         Left = 0
         Top = 0
-        Width = 991
-        Height = 417
+        Width = 995
+        Height = 636
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -297,8 +297,8 @@ object faplica_colectas: Tfaplica_colectas
   end
   object oBtnDelete: TPngBitBtn
     Tag = 3
-    Left = 115
-    Top = 454
+    Left = 10
+    Top = 680
     Width = 109
     Height = 57
     Align = alCustom
@@ -429,8 +429,8 @@ object faplica_colectas: Tfaplica_colectas
   end
   object oBtnExit: TPngBitBtn
     Tag = 8
-    Left = 894
-    Top = 454
+    Left = 900
+    Top = 680
     Width = 109
     Height = 57
     Align = alCustom
@@ -605,7 +605,7 @@ object faplica_colectas: Tfaplica_colectas
   object oBtnApply: TPngBitBtn
     Tag = 4
     Left = 241
-    Top = 454
+    Top = 680
     Width = 109
     Height = 57
     Align = alCustom
@@ -720,7 +720,7 @@ object faplica_colectas: Tfaplica_colectas
   end
   object oText_Script: TMemo
     Left = 512
-    Top = 416
+    Top = 642
     Width = 185
     Height = 89
     Lines.Strings = (
@@ -1118,7 +1118,7 @@ object faplica_colectas: Tfaplica_colectas
       'Database=one2009_1')
     LoginPrompt = False
     Left = 16
-    Top = 472
+    Top = 658
   end
   object oTmp_Op: TFDTable
     Filtered = True
@@ -1127,7 +1127,7 @@ object faplica_colectas: Tfaplica_colectas
     UpdateOptions.UpdateTableName = 'operaciong_trans'
     TableName = 'operaciong_trans'
     Left = 72
-    Top = 472
+    Top = 658
     object oTmp_Opid_autoin: TFDAutoIncField
       FieldName = 'id_autoin'
       Origin = 'id_autoin'
@@ -1319,17 +1319,17 @@ object faplica_colectas: Tfaplica_colectas
   object oDS_Tmp_Op: TDataSource
     DataSet = oTmp_Op
     Left = 136
-    Top = 472
+    Top = 658
   end
   object oQry_Prn_Maq: TFDQuery
     Connection = oConection
     Left = 424
-    Top = 472
+    Top = 658
   end
   object oQry_Prn_Mnt: TFDQuery
     Connection = oConection
     Left = 536
-    Top = 472
+    Top = 658
   end
   object oScript: TFDScript
     SQLScripts = <>
@@ -1340,12 +1340,12 @@ object faplica_colectas: Tfaplica_colectas
     Params = <>
     Macros = <>
     Left = 368
-    Top = 472
+    Top = 658
   end
   object oCmdProc: TFDStoredProc
     Connection = oConection
     Left = 736
-    Top = 472
+    Top = 658
   end
   object ResizeKit1: TResizeKit
     FormPos = rpDefault
@@ -1359,9 +1359,9 @@ object faplica_colectas: Tfaplica_colectas
     Enabled = True
     ValidTaskbar = True
     Left = 472
-    Top = 456
-    DesignFrmW = 1008
-    DesignFrmH = 514
+    Top = 642
+    DesignFrmW = 1024
+    DesignFrmH = 745
     DesignDpiW = 96
     DesignDpiH = 96
   end

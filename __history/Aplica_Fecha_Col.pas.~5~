@@ -1,0 +1,47 @@
+unit Aplica_Fecha_Col;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, sPanel, sMonthCalendar, Vcl.StdCtrls, Vcl.Buttons, PngBitBtn;
+
+type
+  TfAplica_Fecha_Col = class(TForm)
+    sMonthCalendar1: TsMonthCalendar;
+    oBtnApply: TPngBitBtn;
+    oBtnExit: TPngBitBtn;
+    procedure oBtnExitClick(Sender: TObject);
+    procedure oBtnApplyClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    iOption: integer;
+  end;
+
+var
+  fAplica_Fecha_Col: TfAplica_Fecha_Col;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfAplica_Fecha_Col.FormCreate(Sender: TObject);
+begin
+  iOption := 0;
+end;
+
+procedure TfAplica_Fecha_Col.oBtnApplyClick(Sender: TObject);
+begin
+  close;
+end;
+
+procedure TfAplica_Fecha_Col.oBtnExitClick(Sender: TObject);
+begin
+  iOption := 0;
+  close;
+end;
+
+end.

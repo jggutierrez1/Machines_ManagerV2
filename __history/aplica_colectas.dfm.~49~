@@ -21,11 +21,10 @@ object faplica_colectas: Tfaplica_colectas
     Top = 5
     Width = 999
     Height = 445
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Pendientes por aplicar'
-      ExplicitHeight = 381
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0
@@ -277,7 +276,6 @@ object faplica_colectas: Tfaplica_colectas
       Caption = 'Detalle de maquinas'
       ImageIndex = 1
       OnEnter = TabSheet2Enter
-      ExplicitHeight = 381
       object otext_lst2_t: TMemo
         Left = 0
         Top = 0
@@ -294,7 +292,6 @@ object faplica_colectas: Tfaplica_colectas
         ParentFont = False
         ScrollBars = ssBoth
         TabOrder = 0
-        ExplicitHeight = 381
       end
     end
   end
@@ -1349,5 +1346,23 @@ object faplica_colectas: Tfaplica_colectas
     Connection = oConection
     Left = 736
     Top = 472
+  end
+  object ResizeKit1: TResizeKit
+    FormPos = rpDefault
+    FormWidth = 0
+    FormHeight = 0
+    FormMaxWidth = 0
+    FormMaxHeight = 0
+    FormMinWidth = 0
+    FormMinHeight = 0
+    ResizeFont = True
+    Enabled = True
+    ValidTaskbar = True
+    Left = 472
+    Top = 456
+    DesignFrmW = 1008
+    DesignFrmH = 514
+    DesignDpiW = 96
+    DesignDpiH = 96
   end
 end

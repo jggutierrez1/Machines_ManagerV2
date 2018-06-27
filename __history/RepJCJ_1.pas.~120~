@@ -65,8 +65,8 @@ type
     oOpt11: TRadioButton;
     oOpt12: TRadioButton;
     oOpt13: TRadioButton;
-    oQry_Ctes: TFDQuery;
     oOpt14: TRadioButton;
+    oQry_Ctes: TFDQuery;
     procedure Make_report(iOpt: integer);
     procedure oBtn_PreviewClick(Sender: TObject);
     procedure oBtn_PrintClick(Sender: TObject);
@@ -442,25 +442,6 @@ begin
   end;
 end;
 
-procedure TFRepJCJ_1.oOpt14Click(Sender: TObject);
-begin
-  iOption := 0;
-  if self.oOpt14.Checked = true then
-  begin
-    iOption := self.oOpt14.Tag;
-    self.Visible_Fechas(false);
-    self.Visible_Rutas(false);
-    self.Visible_Clientes(false);
-    self.Visible_Modelos(false);
-    self.olFecha1.Caption := 'Seleccione [Mes/Año]';
-    self.oFecha1.EditFormat := 'MM/YYYY';
-    self.olFecha1.Visible := true;
-    self.oFecha1.Visible := true;
-    self.oAll_Chapas.Visible := false;
-    self.oChapa.Visible := false;
-  end;
-end;
-
 procedure TFRepJCJ_1.oOpt1Click(Sender: TObject);
 begin
   iOption := 0;
@@ -580,6 +561,25 @@ begin
     self.Visible_Modelos(false);
     self.oAll_Chapas.Visible := true;
     self.oChapa.Visible := true;
+  end;
+end;
+
+procedure TFRepJCJ_1.oOpt14Click(Sender: TObject);
+begin
+  iOption := 0;
+  if self.oOpt14.Checked = true then
+  begin
+    iOption := self.oOpt4.Tag;
+    self.Visible_Fechas(false);
+    self.Visible_Rutas(false);
+    self.Visible_Clientes(false);
+    self.Visible_Modelos(false);
+    self.olFecha1.Caption := 'Seleccione [Mes/Año]';
+    self.oFecha1.EditFormat := 'MM/YYYY';
+    self.olFecha1.Visible := true;
+    self.oFecha1.Visible := true;
+    self.oAll_Chapas.Visible := false;
+    self.oChapa.Visible := false;
   end;
 end;
 
@@ -765,12 +765,6 @@ begin
       reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_12.fr3';
     end;
 
-    if (oOpt13.Checked = true) then
-    begin
-      sOrder := '7';
-      reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_14.fr3';
-    end;
-
     sLn2 := '';
     sLn2 := sLn2 + 'SELECT a.* FROM (';
     sLn2 := sLn2 + 'SELECT ';
@@ -807,7 +801,7 @@ begin
     if not((trim(sCod_Modelo) = '%') or (trim(sCod_Modelo) = '')) then
       sLn2 := sLn2 + 'AND   (TRIM(op.op_modelo)=' + QuotedStr(trim(sCod_Modelo)) + ') ';
 
-    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + '" AND op.op_fecha<="' + sFecha_Fin + '")  ';
+    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + ' 00:00:01" AND op.op_fecha<="' + sFecha_Fin + ' 23:59:59")  ';
     sLn2 := sLn2 + ') a ';
 
     case StrToInt(sOrder) of
@@ -828,7 +822,7 @@ begin
       8:
         sLn2 := sLn2 + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
       9:
-        sLn2 := sLn2 + 'ORDER BY  a.LOCAL2, a.op_chapa ';  //,a.MasterO
+        sLn2 := sLn2 + 'ORDER BY  a.LOCAL2, a.op_chapa '; // ,a.MasterO
       10:
         sLn2 := sLn2 + 'ORDER BY  a.rut_nombre, a.LOCAL2, a.op_chapa ';
       11:
@@ -839,8 +833,14 @@ begin
     end;
   end;
 
-  if oOpt4.Checked = true then
+  if ((self.oOpt4.Checked = true) or (self.oOpt14.Checked = true)) then
   begin
+    if (oOpt14.Checked = true) then
+    begin
+      sOrder := '4';
+      reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_14.fr3';
+    end;
+
     DecodeDate(oFecha1.Value, myYear, myMonth, myDay);
     sMesAno := IntToStr(myMonth) + ' de ' + IntToStr(myYear);
 
@@ -918,7 +918,7 @@ begin
     if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
       sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
 
-    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + '" AND op.op_fecha<="' + sFecha_Fin + '")  ';
+    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + ' 00:00:01" AND op.op_fecha<="' + sFecha_Fin + ' 23:59:59")  ';
     sLn2 := sLn2 + 'GROUP BY  op.op_chapa ';
 
     sLn2 := sLn2 + ') a ';
@@ -956,7 +956,7 @@ begin
     if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
       sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
 
-    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + '" AND op.op_fecha<="' + sFecha_Fin + '")  ';
+    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + ' 00:00:01" AND op.op_fecha<="' + sFecha_Fin + ' 23:59:59")  ';
     sLn2 := sLn2 + 'ORDER BY  1,2,4 ';
   end;
 
@@ -989,7 +989,7 @@ begin
     if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
       sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
 
-    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + '" AND op.op_fecha<="' + sFecha_Fin + '")  ';
+    sLn2 := sLn2 + 'AND   ( op.op_fecha>="' + sFecha_Inic + ' 00:00:01" AND op.op_fecha<="' + sFecha_Fin + ' 23:59:59")  ';
     sLn2 := sLn2 + 'GROUP BY 1,DATE_FORMAT(op.op_fecha,"%Y-%m") ';
     sLn2 := sLn2 + 'ORDER BY 1,DATE_FORMAT(op.op_fecha,"%Y-%m") ';
   end;
