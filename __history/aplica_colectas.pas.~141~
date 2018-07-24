@@ -66,9 +66,9 @@ type
     procedure oBtnExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     function Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string): boolean;
-    function Listar2_Maquinas(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+    function Listar2_Maquinas(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
     procedure TabSheet2Enter(Sender: TObject);
-    function Listar2_Montos(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+    function Listar2_Montos(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
     function Imprimir2_Montos(cEmp_Id: string; cCte_Id: string): boolean;
     procedure oBtnApplyClick(Sender: TObject);
   private
@@ -114,9 +114,9 @@ begin
   self.oBtnApply.Enabled := false;
 
   cEmp_Id := trim(self.oTmp_Op.FieldByName('op_emp_id').AsString);
+  cDev_Id := trim(self.oTmp_Op.FieldByName('id_device').AsString);
   cCte_Id := trim(self.oTmp_Op.FieldByName('cte_id').AsString);
   cGrp_Id := trim(self.oTmp_Op.FieldByName('id_group').AsString);
-  cDev_Id := trim(self.oTmp_Op.FieldByName('id_device').AsString);
 
   dFechDB := self.oTmp_Op.FieldByName('op_fecha_alta').AsDateTime;
 
@@ -136,7 +136,7 @@ begin
     exit;
   end;
 
-  decodedatetime(dFechDB, myYear, myMonth, myDay, myHour, myMin, mySec, myMilli);
+  //decodedatetime(dFechDB, myYear, myMonth, myDay, myHour, myMin, mySec, myMilli);
 
   Application.CreateForm(TfAplica_Fecha_Col, fAplica_Fecha_Col);
   fAplica_Fecha_Col.CalendarView1.Date := now();
@@ -149,8 +149,10 @@ begin
       cFechCa := FormatDateTime('yyyy-mm-dd hh:mm:ss', dFechCa);
 
       cSql_ln := '';
-      cSql_ln := cSql_ln + 'UPDATE operaciong_trans op ';
-      cSql_ln := cSql_ln + ' SET op.op_fecha_alta ="' + trim(cFechCa) + '" ';
+      cSql_ln := cSql_ln + 'UPDATE operaciong_trans op SET ';
+      cSql_ln := cSql_ln + ' op.op_fecha       ="' + trim(cFechCa) + '", ';
+      cSql_ln := cSql_ln + ' op.op_fecha_modif =NOW(), ';
+      cSql_ln := cSql_ln + ' op.op_usuario_modif="' + trim(Utilesv20.sUserName) + '" ';
       cSql_ln := cSql_ln + 'WHERE (op.op_emp_id ="' + trim(cEmp_Id) + '") ';
       cSql_ln := cSql_ln + 'AND 	(op.id_device ="' + trim(cDev_Id) + '") ';
       cSql_ln := cSql_ln + 'AND 	(op.cte_id    ="' + trim(cCte_Id) + '") ';
@@ -182,14 +184,14 @@ begin
 
   with self.oScript.Params.Add do
   begin
-    Name := 'Cte_Id';
-    AsString := cCte_Id;
+    Name := 'Dev_Id';
+    AsString := cDev_Id;
   end;
 
   with self.oScript.Params.Add do
   begin
-    Name := 'Dev_Id';
-    AsString := cDev_Id;
+    Name := 'Cte_Id';
+    AsString := cCte_Id;
   end;
 
   with self.oScript.Params.Add do
@@ -211,6 +213,7 @@ begin
   self.oCmdProc.Params[0].AsString := cEmp_Id;
   self.oCmdProc.Params[1].AsString := cDev_Id;
   self.oCmdProc.Params[2].AsString := cCte_Id;
+  self.oCmdProc.Params[3].AsString := cGrp_Id;
   self.oCmdProc.ExecProc;
 
   cSql_ln := '';
@@ -249,9 +252,9 @@ var
   formattedDateTime: string;
 begin
   cEmp_Id := trim(self.oTmp_Op.FieldByName('op_emp_id').AsString);
+  cDev_Id := trim(self.oTmp_Op.FieldByName('id_device').AsString);
   cCte_Id := trim(self.oTmp_Op.FieldByName('cte_id').AsString);
   cGrp_Id := trim(self.oTmp_Op.FieldByName('id_group').AsString);
-  cDev_Id := trim(self.oTmp_Op.FieldByName('id_device').AsString);
 
   self.oBtnDelete.Enabled := false;
   if self.oTmp_Op.isEmpty then
@@ -264,13 +267,21 @@ begin
   begin
 
     cSql_ln := '';
+    cSql_ln := cSql_ln + 'DELETE FROM operaciong_trans ';
+    cSql_ln := cSql_ln + 'WHERE (op_emp_id ="' + trim(cEmp_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND 	(id_device ="' + trim(cDev_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND 	(cte_id    ="' + trim(cCte_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND   (id_group  ="' + trim(cGrp_Id) + '") ';
+    Utilesv20.Execute_SQL_Command(cSql_ln);
+
+    cSql_ln := '';
     cSql_ln := cSql_ln + 'DELETE FROM operacion_trans ';
     cSql_ln := cSql_ln + 'WHERE (op_emp_id ="' + trim(cEmp_Id) + '") ';
     cSql_ln := cSql_ln + 'AND 	(id_device ="' + trim(cDev_Id) + '") ';
     cSql_ln := cSql_ln + 'AND 	(cte_id    ="' + trim(cCte_Id) + '") ';
     cSql_ln := cSql_ln + 'AND   (id_group  ="' + trim(cGrp_Id) + '") ';
-    if (Utilesv20.Execute_SQL_Command(cSql_ln) = true) then
-      self.oTmp_Op.Delete;
+    Utilesv20.Execute_SQL_Command(cSql_ln);
+
   end;
   self.oBtnDelete.Enabled := true;
 end;
@@ -291,16 +302,16 @@ begin
 
   self.otext_lst2_t.text := '';
 
-  self.Listar2_Maquinas(cDevice, cEmp_Id, cCte_Id);
+  self.Listar2_Maquinas(cEmp_Id, cDevice, cCte_Id, cGrp_Id);
   self.Imprimir2_Maquinas(cEmp_Id, cCte_Id);
 
-  self.Listar2_Montos(cDevice, cEmp_Id, cCte_Id);
+  self.Listar2_Montos(cEmp_Id, cDevice, cCte_Id, cGrp_Id);
   self.Imprimir2_Montos(cEmp_Id, cCte_Id);
 
   self.otext_lst2_t.Refresh;
 end;
 
-function Tfaplica_colectas.Listar2_Maquinas(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+function Tfaplica_colectas.Listar2_Maquinas(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
 var
   nResp: integer;
   cSqlLn: string;
@@ -329,6 +340,7 @@ begin
   cSqlLn := cSqlLn + ' WHERE(op.id_device ="' + cDevice + '") ';
   cSqlLn := cSqlLn + ' AND  (op.op_emp_id ="' + cEmp_Id + '") ';
   cSqlLn := cSqlLn + ' AND  (op.cte_id    ="' + cCte_Id + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.id_group  ="' + cGrp_Id + '") ';
   cSqlLn := cSqlLn + ' AND  (op.op_usermodify = "1") ';
   cSqlLn := cSqlLn + ' GROUP BY op.op_emp_id, op.op_chapa ';
   cSqlLn := cSqlLn + ' ORDER BY op.op_emp_id, op.op_chapa ';
@@ -411,7 +423,7 @@ begin
   end;
 end;
 
-function Tfaplica_colectas.Listar2_Montos(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+function Tfaplica_colectas.Listar2_Montos(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
 var
   nResp: integer;
   cSqlLn: string;
@@ -437,6 +449,7 @@ begin
   cSqlLn := cSqlLn + ' WHERE(op.id_device ="' + cDevice + '") ';
   cSqlLn := cSqlLn + ' AND  (op.op_emp_id ="' + cEmp_Id + '") ';
   cSqlLn := cSqlLn + ' AND  (op.cte_id    ="' + cCte_Id + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.id_group  ="' + cGrp_Id + '") ';
   // cSqlLn := cSqlLn + 'AND (op.op_usermodify = "1")';
   cSqlLn := cSqlLn + 'GROUP BY op.op_emp_id, id_device ';
 

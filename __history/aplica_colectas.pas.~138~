@@ -68,7 +68,7 @@ type
     function Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string): boolean;
     function Listar2_Maquinas(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
     procedure TabSheet2Enter(Sender: TObject);
-    function Listar2_Montos(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+    function Listar2_Montos(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
     function Imprimir2_Montos(cEmp_Id: string; cCte_Id: string): boolean;
     procedure oBtnApplyClick(Sender: TObject);
   private
@@ -136,7 +136,7 @@ begin
     exit;
   end;
 
-  decodedatetime(dFechDB, myYear, myMonth, myDay, myHour, myMin, mySec, myMilli);
+  //decodedatetime(dFechDB, myYear, myMonth, myDay, myHour, myMin, mySec, myMilli);
 
   Application.CreateForm(TfAplica_Fecha_Col, fAplica_Fecha_Col);
   fAplica_Fecha_Col.CalendarView1.Date := now();
@@ -295,7 +295,7 @@ begin
   self.Listar2_Maquinas(cEmp_Id, cDevice, cCte_Id, cGrp_Id);
   self.Imprimir2_Maquinas(cEmp_Id, cCte_Id);
 
-  self.Listar2_Montos(cDevice, cEmp_Id, cCte_Id);
+  self.Listar2_Montos(cEmp_Id, cDevice, cCte_Id, cGrp_Id);
   self.Imprimir2_Montos(cEmp_Id, cCte_Id);
 
   self.otext_lst2_t.Refresh;
@@ -413,7 +413,7 @@ begin
   end;
 end;
 
-function Tfaplica_colectas.Listar2_Montos(cDevice: string; cEmp_Id: string; cCte_Id: string): boolean;
+function Tfaplica_colectas.Listar2_Montos(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
 var
   nResp: integer;
   cSqlLn: string;
@@ -439,6 +439,7 @@ begin
   cSqlLn := cSqlLn + ' WHERE(op.id_device ="' + cDevice + '") ';
   cSqlLn := cSqlLn + ' AND  (op.op_emp_id ="' + cEmp_Id + '") ';
   cSqlLn := cSqlLn + ' AND  (op.cte_id    ="' + cCte_Id + '") ';
+  cSqlLn := cSqlLn + ' AND  (op.id_group  ="' + cGrp_Id + '") ';
   // cSqlLn := cSqlLn + 'AND (op.op_usermodify = "1")';
   cSqlLn := cSqlLn + 'GROUP BY op.op_emp_id, id_device ';
 

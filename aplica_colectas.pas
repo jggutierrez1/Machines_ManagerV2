@@ -71,6 +71,10 @@ type
     function Listar2_Montos(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
     function Imprimir2_Montos(cEmp_Id: string; cCte_Id: string): boolean;
     procedure oBtnApplyClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    function getHeightOfTaskBar: integer;
+    procedure Max_;
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -84,6 +88,11 @@ implementation
 
 uses Utilesv20, Aplica_Fecha_Col;
 {$R *.dfm}
+
+procedure Tfaplica_colectas.FormActivate(Sender: TObject);
+begin
+  //self.Max_;
+end;
 
 procedure Tfaplica_colectas.FormCreate(Sender: TObject);
 begin
@@ -136,7 +145,7 @@ begin
     exit;
   end;
 
-  //decodedatetime(dFechDB, myYear, myMonth, myDay, myHour, myMin, mySec, myMilli);
+  // decodedatetime(dFechDB, myYear, myMonth, myDay, myHour, myMin, mySec, myMilli);
 
   Application.CreateForm(TfAplica_Fecha_Col, fAplica_Fecha_Col);
   fAplica_Fecha_Col.CalendarView1.Date := now();
@@ -149,8 +158,10 @@ begin
       cFechCa := FormatDateTime('yyyy-mm-dd hh:mm:ss', dFechCa);
 
       cSql_ln := '';
-      cSql_ln := cSql_ln + 'UPDATE operaciong_trans op ';
-      cSql_ln := cSql_ln + ' SET op.op_fecha_alta ="' + trim(cFechCa) + '" ';
+      cSql_ln := cSql_ln + 'UPDATE operaciong_trans op SET ';
+      cSql_ln := cSql_ln + ' op.op_fecha       ="' + trim(cFechCa) + '", ';
+      cSql_ln := cSql_ln + ' op.op_fecha_modif =NOW(), ';
+      cSql_ln := cSql_ln + ' op.op_usuario_modif="' + trim(Utilesv20.sUserName) + '" ';
       cSql_ln := cSql_ln + 'WHERE (op.op_emp_id ="' + trim(cEmp_Id) + '") ';
       cSql_ln := cSql_ln + 'AND 	(op.id_device ="' + trim(cDev_Id) + '") ';
       cSql_ln := cSql_ln + 'AND 	(op.cte_id    ="' + trim(cCte_Id) + '") ';
@@ -237,6 +248,12 @@ begin
   cSql_ln := cSql_ln + 'AND   (op.id_group  ="' + trim(cGrp_Id) + '") ';
   Utilesv20.Execute_SQL_Command(cSql_ln);
 
+  cSql_ln := 'DELETE FROM operaciong_trans WHERE (op_fecha<= DATE_ADD(NOW(), INTERVAL -20 DAY) )';
+  Utilesv20.Execute_SQL_Command(cSql_ln);
+
+  cSql_ln := 'DELETE FROM operacion_trans WHERE (op_fecha<= DATE_ADD(NOW(), INTERVAL -20 DAY) )';
+  Utilesv20.Execute_SQL_Command(cSql_ln);
+
   self.oTmp_Op.Refresh;
   self.oTmp_Op.First;
   MessageDlg('Proceso finalizado.', mtConfirmation, [mboK], 0);
@@ -265,13 +282,22 @@ begin
   begin
 
     cSql_ln := '';
+    cSql_ln := cSql_ln + 'DELETE FROM operaciong_trans ';
+    cSql_ln := cSql_ln + 'WHERE (op_emp_id ="' + trim(cEmp_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND 	(id_device ="' + trim(cDev_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND 	(cte_id    ="' + trim(cCte_Id) + '") ';
+    cSql_ln := cSql_ln + 'AND   (id_group  ="' + trim(cGrp_Id) + '") ';
+    Utilesv20.Execute_SQL_Command(cSql_ln);
+
+    cSql_ln := '';
     cSql_ln := cSql_ln + 'DELETE FROM operacion_trans ';
     cSql_ln := cSql_ln + 'WHERE (op_emp_id ="' + trim(cEmp_Id) + '") ';
     cSql_ln := cSql_ln + 'AND 	(id_device ="' + trim(cDev_Id) + '") ';
     cSql_ln := cSql_ln + 'AND 	(cte_id    ="' + trim(cCte_Id) + '") ';
     cSql_ln := cSql_ln + 'AND   (id_group  ="' + trim(cGrp_Id) + '") ';
-    if (Utilesv20.Execute_SQL_Command(cSql_ln) = true) then
-      self.oTmp_Op.Delete;
+    Utilesv20.Execute_SQL_Command(cSql_ln);
+    self.oTmp_Op.Refresh;
+
   end;
   self.oBtnDelete.Enabled := true;
 end;
@@ -309,7 +335,7 @@ begin
   cSqlLn := '';
   cSqlLn := cSqlLn + ' SELECT ';
   cSqlLn := cSqlLn + ' op.op_chapa, ';
-  cSqlLn := cSqlLn + ' op.op_modelo, ';
+  cSqlLn := cSqlLn + ' SUBSTRING(op.op_modelo,1,18) AS op_modelo, ';
   cSqlLn := cSqlLn + ' SUM(op.op_tot_colect) AS tot_cole, ';
   cSqlLn := cSqlLn + ' SUM(op.op_tot_impmunic) AS op_tot_impmunic, ';
   cSqlLn := cSqlLn + ' SUM(op.op_tot_impjcj) AS op_tot_impjcj, ';
@@ -344,6 +370,11 @@ begin
     self.oQry_Prn_Maq.First;
     result := true;
   end;
+end;
+
+procedure Tfaplica_colectas.FormShow(Sender: TObject);
+begin
+  //self.ResizeKit1.Enabled := true;
 end;
 
 function Tfaplica_colectas.Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string): boolean;
@@ -495,6 +526,33 @@ begin
     result := true;
   end;
 
+end;
+
+procedure Tfaplica_colectas.Max_;
+begin
+  if self.WindowState = wsNormal then
+  begin
+    self.WindowState := wsMaximized;
+    self.SetBounds(0, 0, screen.Width, screen.Height - getHeightOfTaskBar);
+  end
+  else
+  begin
+    self.WindowState := wsNormal;
+  end;
+
+  // ShowTrayWindow;
+end;
+
+function Tfaplica_colectas.getHeightOfTaskBar: integer;
+var
+  hTaskBar: HWND;
+  rect: TRect;
+begin
+  hTaskBar := FindWindow('Shell_TrayWnd', Nil);
+  if hTaskBar <> 0 then
+    GetWindowRect(hTaskBar, rect);
+
+  result := rect.bottom - rect.top;
 end;
 
 end.

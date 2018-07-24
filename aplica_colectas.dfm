@@ -13,22 +13,25 @@ object faplica_colectas: Tfaplica_colectas
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnActivate = FormActivate
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 10
     Top = 8
-    Width = 1003
+    Width = 1024
     Height = 664
     ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Pendientes por aplicar'
+      ExplicitWidth = 995
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0
-        Width = 995
+        Width = 1016
         Height = 636
         Align = alClient
         DataGrouping.FootersDefValues.ShowFunctionName = True
@@ -276,10 +279,11 @@ object faplica_colectas: Tfaplica_colectas
       Caption = 'Detalle de maquinas'
       ImageIndex = 1
       OnEnter = TabSheet2Enter
+      ExplicitWidth = 995
       object otext_lst2_t: TMemo
         Left = 0
         Top = 0
-        Width = 995
+        Width = 1016
         Height = 636
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -292,6 +296,7 @@ object faplica_colectas: Tfaplica_colectas
         ParentFont = False
         ScrollBars = ssBoth
         TabOrder = 0
+        ExplicitWidth = 995
       end
     end
   end
@@ -719,15 +724,17 @@ object faplica_colectas: Tfaplica_colectas
     PngOptions = []
   end
   object oText_Script: TMemo
-    Left = 512
-    Top = 642
-    Width = 185
-    Height = 89
+    Left = 61
+    Top = 96
+    Width = 924
+    Height = 513
     Lines.Strings = (
       'INSERT INTO operaciong ('
       '  cte_id,'
       '  cte_nombre_loc,'
       '  cte_nombre_com,'
+      '  op_fecha,'
+      '  op_fact_global,'
       '  op_cal_colect,'
       '  op_tot_colect,'
       '  op_tot_impmunic,'
@@ -752,11 +759,15 @@ object faplica_colectas: Tfaplica_colectas
       '  id_group,'
       '  op_fecha_alta,'
       '  op_fecha_modif,'
+      '  op_usuario_alta,'
+      '  op_usuario_modif,'
       '  op_usermodify)'
       'SELECT'
       #9'opg_t.cte_id,'
       #9'opg_t.cte_nombre_loc,'
       #9'opg_t.cte_nombre_com,'
+      '        opg_t.op_fecha,'
+      '        op_fact_global,'
       #9'opg_t.op_cal_colect,'
       '  '#9'opg_t.op_tot_colect,'
       '  '#9'opg_t.op_tot_impmunic,'
@@ -781,65 +792,48 @@ object faplica_colectas: Tfaplica_colectas
       '  '#9'opg_t.id_group,'
       '  '#9'opg_t.op_fecha_alta,'
       '  '#9'opg_t.op_fecha_modif,'
+      '        opg_t.op_usuario_alta,'
+      '        opg_t.op_usuario_modif,'
       '  '#9'opg_t.op_usermodify'
       'FROM operaciong_trans opg_t'
       'WHERE opg_t.op_usermodify =1'
-      'AND  '#9'opg_t.op_emp_id'#9'  '
-      '=:Emp_Id'
-      'AND  '#9'opg_t.cte_id      =:Cte_Id'
-      'AND  '#9'opg_t.id_device'#9'  '
-      '=:Dev_Id'
-      'AND  '#9'opg_t.id_group    '
-      '=:Grp_Id'
+      'AND  '#9'opg_t.op_emp_id'#9' =:Emp_Id'
+      'AND  '#9'opg_t.cte_id     =:Cte_Id'
+      'AND  '#9'opg_t.id_device'#9' =:Dev_Id'
+      'AND  '#9'opg_t.id_group   =:Grp_Id'
       'ON DUPLICATE KEY UPDATE'
-      '        operaciong.cte_nombre_loc   '
-      '=  VALUES(cte_nombre_loc),'
-      #9
-      'operaciong.cte_nombre_com   = '
-      'VALUES(cte_nombre_com),'
-      '  '#9'operaciong.op_cal_colect  '
-      '  = VALUES(op_cal_colect),'
-      '  '#9'operaciong.op_tot_colect '
-      '   = VALUES(op_tot_colect),'
-      '  '#9
-      'operaciong.op_tot_impmunic  =  '
-      'VALUES(op_tot_impmunic),'
-      '  '#9'operaciong.op_tot_impjcj  '
-      '  = VALUES(op_tot_impjcj),'
-      '        operaciong.op_tot_timbres   = '
-      '  VALUES(op_tot_timbres),'
-      '  '#9'operaciong.op_tot_spac'#9
-      '    = VALUES(op_tot_spac),'
-      ' '#9'operaciong.op_tot_tec'#9
-      '    = VALUES(op_tot_tec),'
-      '  '#9'operaciong.op_tot_dev'#9
-      '    = VALUES(op_tot_dev),'
-      '  '#9'operaciong.op_tot_otros'#9
-      '    = VALUES(op_tot_otros),'
-      '  '#9'operaciong.op_tot_cred'#9
-      '    = VALUES(op_tot_cred),'
-      '  '#9'operaciong.op_cal_cred    '
-      '  = VALUES(op_cal_cred),'
-      '  '#9'operaciong.op_tot_sub     '
-      '  = VALUES(op_tot_sub),'
-      '  '#9'operaciong.op_tot_itbm'#9
-      '    = VALUES(op_tot_itbm),'
-      '  '#9'operaciong.op_tot_tot      '
-      ' = VALUES(op_tot_tot),'
-      '        operaciong.op_tot_brutoloc  = '
-      ' VALUES(op_tot_brutoloc),'
-      '        operaciong.op_tot_brutoemp  '
-      '= VALUES(op_tot_brutoemp),'
-      '        operaciong.op_tot_netoloc   = '
-      'VALUES(op_tot_netoloc),'
-      '        operaciong.op_tot_netoemp   '
-      '= VALUES(op_tot_netoemp),'
-      '  '#9'operaciong.op_observ      '
-      '  = VALUES(op_observ),'
-      '        operaciong.op_fecha_alta    = '
-      'VALUES(op_fecha_alta),'
-      '        operaciong.op_fecha_modif   '
-      '= VALUES(op_fecha_modif);'
+      '        operaciong.cte_nombre_loc   = VALUES(cte_nombre_loc),'
+      '        operaciong.cte_nombre_com   = VALUES(cte_nombre_com),'
+      '        operaciong.op_fecha         = VALUES(op_fecha),'
+      '        operaciong.op_fact_global   = VALUES(op_fact_global),'
+      '  '#9'operaciong.op_cal_colect    = VALUES(op_cal_colect),'
+      '  '#9'operaciong.op_tot_colect    = VALUES(op_tot_colect),'
+      '        operaciong.op_tot_impmunic  = VALUES(op_tot_impmunic),'
+      '  '#9'operaciong.op_tot_impjcj    = VALUES(op_tot_impjcj),'
+      '        operaciong.op_tot_timbres   = VALUES(op_tot_timbres),'
+      '  '#9'operaciong.op_tot_spac'#9'    = VALUES(op_tot_spac),'
+      ' '#9'operaciong.op_tot_tec'#9'    = VALUES(op_tot_tec),'
+      '  '#9'operaciong.op_tot_dev'#9'    = VALUES(op_tot_dev),'
+      '  '#9'operaciong.op_tot_otros'#9'    = VALUES(op_tot_otros),'
+      '  '#9'operaciong.op_tot_cred'#9'    = VALUES(op_tot_cred),'
+      '  '#9'operaciong.op_cal_cred      = VALUES(op_cal_cred),'
+      '  '#9'operaciong.op_tot_sub       = VALUES(op_tot_sub),'
+      '  '#9'operaciong.op_tot_itbm'#9'    = VALUES(op_tot_itbm),'
+      '  '#9'operaciong.op_tot_tot       = VALUES(op_tot_tot),'
+      '        operaciong.op_tot_brutoloc  = VALUES(op_tot_brutoloc),'
+      '        operaciong.op_tot_brutoemp  = VALUES(op_tot_brutoemp),'
+      '        operaciong.op_tot_netoloc   = VALUES(op_tot_netoloc),'
+      '        operaciong.op_tot_netoemp   = VALUES(op_tot_netoemp),'
+      '  '#9'operaciong.op_observ        = VALUES(op_observ),'
+      '        operaciong.op_fecha_alta    = VALUES(op_fecha_alta),'
+      '        operaciong.op_fecha_modif   = VALUES(op_fecha_modif),'
+      
+        '        operaciong.opg_t.op_usuario_alta  = VALUES(op_usuario_al' +
+        'ta),'
+      
+        '        operaciong.opg_t.op_usuario_modif = VALUES(op_usuario_mo' +
+        'dif);'
+      ''
       'INSERT INTO operacion ('
       '  MaqLnk_Id,'
       '  cte_id,'
@@ -877,6 +871,7 @@ object faplica_colectas: Tfaplica_colectas
       '  op_s_pantalla,'
       '  op_cal_colect,'
       '  op_tot_colect,'
+      '  op_tot_colect_m,'
       '  op_tot_impmunic,'
       '  op_tot_impjcj,'
       '  op_tot_timbres,'
@@ -884,8 +879,9 @@ object faplica_colectas: Tfaplica_colectas
       '  op_tot_tec,'
       '  op_tot_dev,'
       '  op_tot_otros,'
-      '  op_tot_cred,'
       '  op_cal_cred,'
+      '  op_tot_cred,'
+      '  op_tot_cred_m,'
       '  op_tot_sub,'
       '  op_tot_itbm,'
       '  op_tot_tot,'
@@ -946,6 +942,7 @@ object faplica_colectas: Tfaplica_colectas
       '  op_t.op_s_pantalla,'
       '  op_t.op_cal_colect,'
       '  op_t.op_tot_colect,'
+      '  op_t.op_tot_colect_m,'
       '  op_t.op_tot_impmunic,'
       '  op_t.op_tot_impjcj,'
       '  op_t.op_tot_timbres,'
@@ -953,8 +950,9 @@ object faplica_colectas: Tfaplica_colectas
       '  op_t.op_tot_tec,'
       '  op_t.op_tot_dev,'
       '  op_t.op_tot_otros,'
-      '  op_t.op_tot_cred,'
       '  op_t.op_cal_cred,'
+      '  op_t.op_tot_cred,'
+      '  op_t.op_tot_cred_m,'
       '  op_t.op_tot_sub,'
       '  op_t.op_tot_itbm,'
       '  op_t.op_tot_tot,'
@@ -979,132 +977,73 @@ object faplica_colectas: Tfaplica_colectas
       '  op_t.op_usermodify'
       'FROM operacion_trans op_t'
       'WHERE op_t.op_usermodify =1'
-      'AND  '#9'op_t.op_emp_id'
-      '=:Emp_Id'
+      'AND  '#9'op_t.op_emp_id =:Emp_Id'
       'AND  '#9'op_t.cte_id    =:Cte_Id'
       'AND  '#9'op_t.id_device =:Dev_Id'
       'AND  '#9'op_t.id_group  =:Grp_Id'
       'ON DUPLICATE KEY UPDATE'
-      '  operacion.MaqLnk_Id'
-      '=VALUES(MaqLnk_Id),'
-      '  operacion.cte_nombre_loc'
-      '=VALUES(cte_nombre_loc),'
-      '  operacion.cte_nombre_com'
-      '=VALUES(cte_nombre_com),'
-      '  operacion.cte_pag_jcj'
-      '=VALUES(cte_pag_jcj),'
-      '  operacion.cte_pag_spac'
-      '=VALUES(cte_pag_spac),'
-      '  operacion.cte_pag_impm'
-      '=VALUES(cte_pag_impm),'
-      '  operacion.maqtc_denom_e'
-      '=VALUES(maqtc_denom_e),'
-      '  operacion.maqtc_denom_s'
-      '=VALUES(maqtc_denom_s),'
-      '  operacion.den_valore'
-      '=VALUES(den_valore),'
-      '  operacion.den_valors'
-      '=VALUES(den_valors),'
-      '  operacion.den_fact_e'
-      '=VALUES(den_fact_e),'
-      '  operacion.den_fact_s'
-      '=VALUES(den_fact_s),'
-      '  operacion.maqtc_tipomaq'
-      '=VALUES(maqtc_tipomaq),'
-      '  operacion.op_cporc_Loc'
-      '=VALUES(op_cporc_Loc),'
-      '  operacion.op_serie'
-      '=VALUES(op_serie),'
-      '  operacion.op_modelo'
-      '=VALUES(op_modelo),'
-      '  operacion.op_e_pantalla'
-      '=VALUES(op_e_pantalla),'
-      '  operacion.op_ea_metroan'
-      '=VALUES(op_ea_metroan),'
-      '  operacion.op_ea_metroac'
-      '=VALUES(op_ea_metroac),'
-      '  operacion.op_ea_met'
-      '=VALUES(op_ea_met),'
-      '  operacion.op_sa_metroan'
-      '=VALUES(op_sa_metroan),'
-      '  operacion.op_sa_metroac'
-      '=VALUES(op_sa_metroac),'
-      '  operacion.op_sa_met'
-      '=VALUES(op_sa_met),'
-      '  operacion.op_eb_metroan'
-      '=VALUES(op_eb_metroan),'
-      '  operacion.op_eb_metroac'
-      '=VALUES(op_eb_metroac),'
-      '  operacion.op_eb_met'
-      '=VALUES(op_eb_met),'
-      '  operacion.op_sb_metroan'
-      '=VALUES(op_sb_metroan),'
-      '  operacion.op_sb_metroac'
-      '=VALUES(op_sb_metroac),'
-      '  operacion.op_sb_met'
-      '=VALUES(op_sb_met),'
-      '  operacion.op_s_pantalla'
-      '=VALUES(op_s_pantalla),'
-      '  operacion.op_cal_colect'
-      '=VALUES(op_cal_colect),'
-      '  operacion.op_tot_colect'
-      '=VALUES(op_tot_colect),'
-      '  operacion.op_tot_impmunic'
-      '=VALUES(op_tot_impmunic),'
-      '  operacion.op_tot_impjcj'
-      '=VALUES(op_tot_impjcj),'
-      '  operacion.op_tot_timbres'
-      '=VALUES(op_tot_timbres),'
-      '  operacion.op_tot_spac'
-      '=VALUES(op_tot_spac),'
-      '  operacion.op_tot_tec'
-      '=VALUES(op_tot_tec),'
-      '  operacion.op_tot_dev'
-      '=VALUES(op_tot_dev),'
-      '  operacion.op_tot_otros'
-      '=VALUES(op_tot_otros),'
-      '  operacion.op_tot_cred'
-      '=VALUES(op_tot_cred),'
-      '  operacion.op_cal_cred'
-      '=VALUES(op_cal_cred),'
-      '  operacion.op_tot_sub'
-      '=VALUES(op_tot_sub),'
-      '  operacion.op_tot_itbm'
-      '=VALUES(op_tot_itbm),'
-      '  operacion.op_tot_tot'
-      '=VALUES(op_tot_tot),'
-      'operacion.op_tot_brutoloc=VALUES'
-      '(op_tot_brutoloc),'
-      '  operacion.op_tot_brutoemp'
-      '=VALUES(op_tot_brutoemp),'
-      '  operacion.op_tot_netoloc '
-      '=VALUES(op_tot_netoloc),'
-      '  operacion.op_tot_netoemp '
-      '=VALUES(op_tot_netoemp),'
-      '  operacion.op_observ'#9'   '
-      '=VALUES(op_observ),'
-      '  operacion.op_num_sem'#9'   '
-      '=VALUES(op_num_sem),'
-      '  operacion.op_fecha_alta  '
-      '=VALUES(op_fecha_alta),'
-      '  operacion.op_fecha_modif '
-      '=VALUES(op_fecha_modif),'
-      '  operacion.u_usuario_alta '
-      '=VALUES(u_usuario_alta),'
-      '  operacion.u_usuario_modif'
-      '=VALUES(u_usuario_modif),'
-      '  operacion.op_baja_prod   '
-      '=VALUES(op_baja_prod),'
-      '  operacion.op_tot_colect2 '
-      '=VALUES(op_tot_colect2),'
-      '  operacion.op_tot_cred2   '
-      '=VALUES(op_tot_cred2),'
-      '  operacion.op_semanas_imp '
-      '=VALUES(op_semanas_imp),'
-      '  operacion.op_image_name  '
-      '=VALUES(op_image_name),'
-      '  operacion.op_usermodify  '
-      '=VALUES(op_usermodify);'
+      '  operacion.MaqLnk_Id      = VALUES(MaqLnk_Id),'
+      '  operacion.cte_nombre_loc = VALUES(cte_nombre_loc),'
+      '  operacion.cte_nombre_com = VALUES(cte_nombre_com),'
+      '  operacion.cte_pag_jcj    = VALUES(cte_pag_jcj),'
+      '  operacion.cte_pag_spac   = VALUES(cte_pag_spac),'
+      '  operacion.cte_pag_impm   = VALUES(cte_pag_impm),'
+      '  operacion.maqtc_denom_e  = VALUES(maqtc_denom_e),'
+      '  operacion.maqtc_denom_s  = VALUES(maqtc_denom_s),'
+      '  operacion.den_valore     = VALUES(den_valore),'
+      '  operacion.den_valors     = VALUES(den_valors),'
+      '  operacion.den_fact_e     = VALUES(den_fact_e),'
+      '  operacion.den_fact_s     = VALUES(den_fact_s),'
+      '  operacion.maqtc_tipomaq  = VALUES(maqtc_tipomaq),'
+      '  operacion.op_cporc_Loc   = VALUES(op_cporc_Loc),'
+      '  operacion.op_serie       = VALUES(op_serie),'
+      '  operacion.op_modelo      = VALUES(op_modelo),'
+      '  operacion.op_e_pantalla  = VALUES(op_e_pantalla),'
+      '  operacion.op_ea_metroan  = VALUES(op_ea_metroan),'
+      '  operacion.op_ea_metroac  = VALUES(op_ea_metroac),'
+      '  operacion.op_ea_met      = VALUES(op_ea_met),'
+      '  operacion.op_sa_metroan  = VALUES(op_sa_metroan),'
+      '  operacion.op_sa_metroac  = VALUES(op_sa_metroac),'
+      '  operacion.op_sa_met      = VALUES(op_sa_met),'
+      '  operacion.op_eb_metroan  = VALUES(op_eb_metroan),'
+      '  operacion.op_eb_metroac  = VALUES(op_eb_metroac),'
+      '  operacion.op_eb_met      = VALUES(op_eb_met),'
+      '  operacion.op_sb_metroan  = VALUES(op_sb_metroan),'
+      '  operacion.op_sb_metroac  = VALUES(op_sb_metroac),'
+      '  operacion.op_sb_met      = VALUES(op_sb_met),'
+      '  operacion.op_s_pantalla  = VALUES(op_s_pantalla),'
+      '  operacion.op_cal_colect  = VALUES(op_cal_colect),'
+      '  operacion.op_tot_colect  = VALUES(op_tot_colect),'
+      '  operacion.op_tot_colect_m= VALUES(op_tot_colect_m),'
+      '  operacion.op_tot_impmunic= VALUES(op_tot_impmunic),'
+      '  operacion.op_tot_impjcj  = VALUES(op_tot_impjcj),'
+      '  operacion.op_tot_timbres = VALUES(op_tot_timbres),'
+      '  operacion.op_tot_spac    = VALUES(op_tot_spac),'
+      '  operacion.op_tot_tec     = VALUES(op_tot_tec),'
+      '  operacion.op_tot_dev     = VALUES(op_tot_dev),'
+      '  operacion.op_tot_otros   = VALUES(op_tot_otros),'
+      '  operacion.op_cal_cred    = VALUES(op_cal_cred),'
+      '  operacion.op_tot_cred    = VALUES(op_tot_cred),'
+      '  operacion.op_tot_cred_m  = VALUES(op_tot_cred_m),'
+      '  operacion.op_tot_sub     = VALUES(op_tot_sub),'
+      '  operacion.op_tot_itbm    = VALUES(op_tot_itbm),'
+      '  operacion.op_tot_tot     = VALUES(op_tot_tot),'
+      '  operacion.op_tot_brutoloc= VALUES(op_tot_brutoloc),'
+      '  operacion.op_tot_brutoemp= VALUES(op_tot_brutoemp),'
+      '  operacion.op_tot_netoloc = VALUES(op_tot_netoloc),'
+      '  operacion.op_tot_netoemp = VALUES(op_tot_netoemp),'
+      '  operacion.op_observ'#9'   = VALUES(op_observ),'
+      '  operacion.op_num_sem'#9'   = VALUES(op_num_sem),'
+      '  operacion.op_fecha_alta  = VALUES(op_fecha_alta),'
+      '  operacion.op_fecha_modif = VALUES(op_fecha_modif),'
+      '  operacion.u_usuario_alta = VALUES(u_usuario_alta),'
+      '  operacion.u_usuario_modif= VALUES(u_usuario_modif),'
+      '  operacion.op_baja_prod   = VALUES(op_baja_prod),'
+      '  operacion.op_tot_colect2 = VALUES(op_tot_colect2),'
+      '  operacion.op_tot_cred2   = VALUES(op_tot_cred2),'
+      '  operacion.op_semanas_imp = VALUES(op_semanas_imp),'
+      '  operacion.op_image_name  = VALUES(op_image_name),'
+      '  operacion.op_usermodify  = VALUES(op_usermodify);'
       '')
     TabOrder = 4
     Visible = False
@@ -1355,7 +1294,7 @@ object faplica_colectas: Tfaplica_colectas
     FormMaxHeight = 0
     FormMinWidth = 0
     FormMinHeight = 0
-    ResizeFont = True
+    ResizeFont = False
     Enabled = True
     ValidTaskbar = True
     Left = 472
