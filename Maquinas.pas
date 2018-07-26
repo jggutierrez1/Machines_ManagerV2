@@ -14,7 +14,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, DBAxisGridsEh, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, EhLibVCL;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, DBAxisGridsEh, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, EhLibVCL, FireDAC.VCLUI.Wait;
 
 type
   TfMaquinas = class(TForm)
@@ -56,6 +56,47 @@ type
     oDenom_E: TDBLookupComboBox;
     oDenom_S: TDBLookupComboBox;
     oTipoMaq: TDBComboBoxEh;
+    TabSheet2: TTabSheet;
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
+    Label8: TLabel;
+    om1e_act: TDBNumberEditEh;
+    Label10: TLabel;
+    om1e_ant: TDBNumberEditEh;
+    Label11: TLabel;
+    Label12: TLabel;
+    om1s_act: TDBNumberEditEh;
+    om1s_ant: TDBNumberEditEh;
+    Label9: TLabel;
+    om2e_act: TDBNumberEditEh;
+    Label13: TLabel;
+    om2e_ant: TDBNumberEditEh;
+    Label14: TLabel;
+    Label15: TLabel;
+    om2s_act: TDBNumberEditEh;
+    om2s_ant: TDBNumberEditEh;
+    Label18: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    ofact_act1: TDBEdit;
+    ofact_ant1: TDBEdit;
+    Label23: TLabel;
+    ofact_act2: TDBEdit;
+    Label24: TLabel;
+    ofact_ant2: TDBEdit;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    omfecha_act1: TDBDateTimeEditEh;
+    omfecha_ant1: TDBDateTimeEditEh;
+    omfecha_act2: TDBDateTimeEditEh;
+    omfecha_ant2: TDBDateTimeEditEh;
+    Label30: TLabel;
+    oporc_conc: TDBNumberEditEh;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -116,8 +157,8 @@ end;
 procedure TfMaquinas.FormShow(Sender: TObject);
 begin
   self.Activa_Objetos(false);
-  self.StatusBar1.Panels[0].Text := 'Servidor: ' + futilesV20.oPublicCnn.Params.Values['Server'] + '/' +
-    futilesV20.oPublicCnn.Params.Values['Database'];
+  self.StatusBar1.Panels[0].Text := 'Servidor: ' + futilesV20.oPublicCnn.Params.Values['Server'] + '/' + futilesV20.oPublicCnn.Params.Values
+    ['Database'];
 end;
 
 procedure TfMaquinas.oBtnAbortClick(Sender: TObject);
@@ -172,6 +213,34 @@ begin
   self.Action_Control(2);
   self.Activa_Objetos(true);
   Rs_Bookmark := oMaquinaTC.GetBookmark;
+
+  if (utilesV20.Is_Super_User() = false) then
+  begin
+    self.om1e_act.Enabled := false;
+    self.om1e_ant.Enabled := false;
+
+    self.om2e_act.Enabled := false;
+    self.om2e_ant.Enabled := false;
+
+    self.ofact_act1.Enabled := false;
+    self.ofact_ant1.Enabled := false;
+
+    self.omfecha_act1.Enabled := false;
+    self.omfecha_ant1.Enabled := false;
+
+    self.om1s_act.Enabled := false;
+    self.om1s_ant.Enabled := false;
+
+    self.om2s_act.Enabled := false;
+    self.om2s_ant.Enabled := false;
+
+    self.ofact_act2.Enabled := false;
+    self.ofact_ant2.Enabled := false;
+
+    self.omfecha_act2.Enabled := false;
+    self.omfecha_ant2.Enabled := false;
+  end;
+
   self.oCodigo.SetFocus;
 end;
 
@@ -444,6 +513,8 @@ begin
       TDBComboBox(self.Components[i]).Enabled := bPar;
     if (self.Components[i] is TDBComboBoxEh) then
       TDBComboBoxEh(self.Components[i]).Enabled := bPar;
+    if (self.Components[i] is TDBDateTimeEditEh) then
+      TDBDateTimeEditEh(self.Components[i]).Enabled := bPar;
   end;
   self.oID.Enabled := false;
 end;

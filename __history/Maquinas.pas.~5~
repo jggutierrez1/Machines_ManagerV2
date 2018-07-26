@@ -14,7 +14,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, DBAxisGridsEh;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, DBAxisGridsEh, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, EhLibVCL, FireDAC.VCLUI.Wait;
 
 type
   TfMaquinas = class(TForm)
@@ -56,6 +56,29 @@ type
     oDenom_E: TDBLookupComboBox;
     oDenom_S: TDBLookupComboBox;
     oTipoMaq: TDBComboBoxEh;
+    TabSheet2: TTabSheet;
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
+    Label8: TLabel;
+    om1e_act: TDBNumberEditEh;
+    Label10: TLabel;
+    om1e_ant: TDBNumberEditEh;
+    Label11: TLabel;
+    Label12: TLabel;
+    om1s_act: TDBNumberEditEh;
+    om1s_ant: TDBNumberEditEh;
+    Label9: TLabel;
+    om2e_act: TDBNumberEditEh;
+    Label13: TLabel;
+    om2e_ant: TDBNumberEditEh;
+    Label14: TLabel;
+    Label15: TLabel;
+    om2s_act: TDBNumberEditEh;
+    om2s_ant: TDBNumberEditEh;
+    Label18: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);

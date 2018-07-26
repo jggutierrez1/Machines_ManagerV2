@@ -69,14 +69,8 @@ type
     oBtn_Rep: TBitBtn;
     oConection: TFDConnection;
     otEmpresa: TFDTable;
-    oEmp_corre_act: TDBNumberEditEh;
-    Label17: TLabel;
-    oEmp_corre_ant: TDBNumberEditEh;
-    Label1: TLabel;
     Shape1: TShape;
     Label18: TLabel;
-    Shape2: TShape;
-    Label19: TLabel;
     Label20: TLabel;
     oEmp_clave_montos: TDBNumberEditEh;
     Label21: TLabel;
@@ -154,9 +148,6 @@ begin
   self.Activa_Objetos(false);
   if (utilesv20.Is_Super_User() = false) then
   begin
-    self.oEmp_corre_ant.PasswordChar := '*';
-    self.oEmp_corre_act.PasswordChar := '*';
-
     self.oEmp_clave_montos.PasswordChar := '*';
     self.oEmp_clave_metros.PasswordChar := '*';
   end;

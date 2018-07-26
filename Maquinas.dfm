@@ -160,7 +160,7 @@ object fMaquinas: TfMaquinas
     TabOrder = 9
   end
   object PageControl1: TPageControl
-    Left = 8
+    Left = 12
     Top = 8
     Width = 697
     Height = 455
@@ -248,6 +248,13 @@ object fMaquinas: TfMaquinas
         Height = 13
         Caption = 'Tipo M'#225'quina:'
       end
+      object Label30: TLabel
+        Left = 376
+        Top = 18
+        Width = 79
+        Height = 13
+        Caption = '% En concesi'#243'n:'
+      end
       object oActivo: TDBCheckBox
         Left = 204
         Top = 17
@@ -262,7 +269,7 @@ object fMaquinas: TfMaquinas
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         ParentFont = False
-        TabOrder = 1
+        TabOrder = 2
         ValueChecked = '1'
         ValueUnchecked = '0'
       end
@@ -274,7 +281,7 @@ object fMaquinas: TfMaquinas
         CharCase = ecUpperCase
         DataField = 'maqtc_cod'
         DataSource = oDS_Maquinas
-        TabOrder = 2
+        TabOrder = 4
       end
       object oID: TDBEdit
         Left = 105
@@ -298,7 +305,7 @@ object fMaquinas: TfMaquinas
         Enabled = False
         EditButtons = <>
         Kind = dtkDateTimeEh
-        TabOrder = 9
+        TabOrder = 11
         Visible = True
       end
       object oFecha_Mof: TDBDateTimeEditEh
@@ -312,7 +319,7 @@ object fMaquinas: TfMaquinas
         Enabled = False
         EditButtons = <>
         Kind = dtkDateTimeEh
-        TabOrder = 8
+        TabOrder = 10
         Visible = True
       end
       object oModelo: TDBEdit
@@ -323,7 +330,7 @@ object fMaquinas: TfMaquinas
         CharCase = ecUpperCase
         DataField = 'maqtc_modelo'
         DataSource = oDS_Maquinas
-        TabOrder = 4
+        TabOrder = 6
       end
       object oGrid: TDBGridEh
         Left = 10
@@ -337,9 +344,10 @@ object fMaquinas: TfMaquinas
         FooterParams.Color = clWindow
         Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghExtendVertLines]
-        TabOrder = 10
+        TabOrder = 1
         Columns = <
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'maqtc_cod'
@@ -350,6 +358,7 @@ object fMaquinas: TfMaquinas
             Width = 85
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'maqtc_modelo'
@@ -360,6 +369,7 @@ object fMaquinas: TfMaquinas
             Width = 387
           end
           item
+            CellButtons = <>
             Checkboxes = True
             DropDownSpecRow.Value = '0'
             DynProps = <>
@@ -372,6 +382,7 @@ object fMaquinas: TfMaquinas
             Width = 54
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'maqtc_metros'
@@ -400,7 +411,7 @@ object fMaquinas: TfMaquinas
           '1'
           '2')
         ParentFont = False
-        TabOrder = 5
+        TabOrder = 7
       end
       object oDenom_E: TDBLookupComboBox
         Left = 511
@@ -419,7 +430,7 @@ object fMaquinas: TfMaquinas
         ListFieldIndex = 1
         ListSource = oDS_Denom
         ParentFont = False
-        TabOrder = 6
+        TabOrder = 8
       end
       object oDenom_S: TDBLookupComboBox
         Left = 511
@@ -438,7 +449,7 @@ object fMaquinas: TfMaquinas
         ListFieldIndex = 1
         ListSource = oDS_Denom
         ParentFont = False
-        TabOrder = 7
+        TabOrder = 9
       end
       object oTipoMaq: TDBComboBoxEh
         Left = 105
@@ -457,8 +468,445 @@ object fMaquinas: TfMaquinas
           '1'
           '2'
           '3')
+        TabOrder = 5
+        Visible = True
+      end
+      object oporc_conc: TDBNumberEditEh
+        Left = 511
+        Top = 15
+        Width = 54
+        Height = 21
+        DataField = 'maqtc_porc_conc'
+        DataSource = oDS_Maquinas
+        DisplayFormat = '##0.00'
+        DynProps = <>
+        EditButtons = <>
         TabOrder = 3
         Visible = True
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Inf. Adicional'
+      ImageIndex = 1
+      object GroupBox1: TGroupBox
+        Left = 3
+        Top = 32
+        Width = 683
+        Height = 137
+        Caption = 'Metros de Entrada'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        object Label8: TLabel
+          Left = 6
+          Top = 57
+          Width = 41
+          Height = 16
+          Caption = 'Ultimo:'
+        end
+        object Label10: TLabel
+          Left = 6
+          Top = 97
+          Width = 49
+          Height = 16
+          Caption = 'Anterior:'
+        end
+        object Label9: TLabel
+          Left = 191
+          Top = 57
+          Width = 41
+          Height = 16
+          Caption = 'Ultimo:'
+        end
+        object Label13: TLabel
+          Left = 191
+          Top = 97
+          Width = 49
+          Height = 16
+          Caption = 'Anterior:'
+        end
+        object Label18: TLabel
+          Left = 91
+          Top = 22
+          Width = 78
+          Height = 20
+          Caption = 'METRO 1'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label19: TLabel
+          Left = 272
+          Top = 22
+          Width = 78
+          Height = 20
+          Caption = 'METRO 2'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label22: TLabel
+          Left = 377
+          Top = 57
+          Width = 10
+          Height = 16
+          Caption = '#:'
+        end
+        object Label23: TLabel
+          Left = 379
+          Top = 97
+          Width = 10
+          Height = 16
+          Caption = '#:'
+        end
+        object Label26: TLabel
+          Left = 389
+          Top = 22
+          Width = 119
+          Height = 20
+          Caption = 'SEGUN FACT.'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label27: TLabel
+          Left = 568
+          Top = 22
+          Width = 61
+          Height = 20
+          Caption = 'FECHA'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object om1e_act: TDBNumberEditEh
+          Left = 59
+          Top = 48
+          Width = 120
+          Height = 24
+          DataField = 'maqtc_m1e_act'
+          DataSource = oDS_Maquinas
+          DisplayFormat = '###########0.00'
+          DynProps = <>
+          EditButtons = <>
+          TabOrder = 0
+          Visible = True
+        end
+        object om1e_ant: TDBNumberEditEh
+          Left = 59
+          Top = 94
+          Width = 120
+          Height = 24
+          DataField = 'maqtc_m1e_ant'
+          DataSource = oDS_Maquinas
+          DisplayFormat = '###########0.00'
+          DynProps = <>
+          EditButtons = <>
+          TabOrder = 4
+          Visible = True
+        end
+        object om2e_act: TDBNumberEditEh
+          Left = 244
+          Top = 48
+          Width = 120
+          Height = 24
+          DataField = 'maqtc_m2e_act'
+          DataSource = oDS_Maquinas
+          DisplayFormat = '###########0.00'
+          DynProps = <>
+          EditButtons = <>
+          TabOrder = 1
+          Visible = True
+        end
+        object om2e_ant: TDBNumberEditEh
+          Left = 244
+          Top = 94
+          Width = 120
+          Height = 24
+          DataField = 'maqtc_m2e_ant'
+          DataSource = oDS_Maquinas
+          DisplayFormat = '###########0.00'
+          DynProps = <>
+          EditButtons = <>
+          TabOrder = 5
+          Visible = True
+        end
+        object ofact_act1: TDBEdit
+          Left = 389
+          Top = 48
+          Width = 120
+          Height = 24
+          CharCase = ecUpperCase
+          DataField = 'maqtc_fact_act'
+          DataSource = oDS_Maquinas
+          TabOrder = 2
+        end
+        object ofact_ant1: TDBEdit
+          Left = 389
+          Top = 94
+          Width = 120
+          Height = 24
+          CharCase = ecUpperCase
+          DataField = 'maqtc_fact_ant'
+          DataSource = oDS_Maquinas
+          TabOrder = 6
+        end
+        object omfecha_act1: TDBDateTimeEditEh
+          Left = 545
+          Top = 46
+          Width = 121
+          Height = 24
+          DataField = 'maqtc_mfecha_act'
+          DataSource = oDS_Maquinas
+          DynProps = <>
+          EditButtons = <>
+          Kind = dtkDateEh
+          TabOrder = 3
+          Visible = True
+        end
+        object omfecha_ant1: TDBDateTimeEditEh
+          Left = 546
+          Top = 94
+          Width = 121
+          Height = 24
+          DataField = 'maqtc_mfecha_ant'
+          DataSource = oDS_Maquinas
+          DynProps = <>
+          EditButtons = <>
+          Kind = dtkDateEh
+          TabOrder = 7
+          Visible = True
+        end
+      end
+      object GroupBox2: TGroupBox
+        Left = 3
+        Top = 196
+        Width = 683
+        Height = 137
+        Caption = 'Metros de Salida'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 1
+        object Label11: TLabel
+          Left = 10
+          Top = 55
+          Width = 41
+          Height = 16
+          Caption = 'Ultimo:'
+        end
+        object Label12: TLabel
+          Left = 10
+          Top = 95
+          Width = 49
+          Height = 16
+          Caption = 'Anterior:'
+        end
+        object Label14: TLabel
+          Left = 191
+          Top = 55
+          Width = 41
+          Height = 16
+          Caption = 'Ultimo:'
+        end
+        object Label15: TLabel
+          Left = 189
+          Top = 95
+          Width = 49
+          Height = 16
+          Caption = 'Anterior:'
+        end
+        object Label20: TLabel
+          Left = 91
+          Top = 24
+          Width = 78
+          Height = 20
+          Caption = 'METRO 1'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label21: TLabel
+          Left = 270
+          Top = 24
+          Width = 78
+          Height = 20
+          Caption = 'METRO 2'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label24: TLabel
+          Left = 379
+          Top = 55
+          Width = 10
+          Height = 16
+          Caption = '#:'
+        end
+        object Label25: TLabel
+          Left = 379
+          Top = 95
+          Width = 10
+          Height = 16
+          Caption = '#:'
+        end
+        object Label28: TLabel
+          Left = 562
+          Top = 24
+          Width = 61
+          Height = 20
+          Caption = 'FECHA'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label29: TLabel
+          Left = 387
+          Top = 24
+          Width = 119
+          Height = 20
+          Caption = 'SEGUN FACT.'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object om1s_act: TDBNumberEditEh
+          Left = 59
+          Top = 52
+          Width = 120
+          Height = 24
+          DataField = 'maqtc_m1s_act'
+          DataSource = oDS_Maquinas
+          DisplayFormat = '###########0.00'
+          DynProps = <>
+          EditButtons = <>
+          TabOrder = 0
+          Visible = True
+        end
+        object om1s_ant: TDBNumberEditEh
+          Left = 59
+          Top = 92
+          Width = 120
+          Height = 24
+          DataField = 'maqtc_m1s_ant'
+          DataSource = oDS_Maquinas
+          DisplayFormat = '###########0.00'
+          DynProps = <>
+          EditButtons = <>
+          TabOrder = 4
+          Visible = True
+        end
+        object om2s_act: TDBNumberEditEh
+          Left = 242
+          Top = 50
+          Width = 120
+          Height = 24
+          DataField = 'maqtc_m2s_act'
+          DataSource = oDS_Maquinas
+          DisplayFormat = '###########0.00'
+          DynProps = <>
+          EditButtons = <>
+          TabOrder = 1
+          Visible = True
+        end
+        object om2s_ant: TDBNumberEditEh
+          Left = 242
+          Top = 92
+          Width = 120
+          Height = 24
+          DataField = 'maqtc_m2s_ant'
+          DataSource = oDS_Maquinas
+          DisplayFormat = '###########0.00'
+          DynProps = <>
+          EditButtons = <>
+          TabOrder = 5
+          Visible = True
+        end
+        object ofact_act2: TDBEdit
+          Left = 389
+          Top = 52
+          Width = 115
+          Height = 24
+          CharCase = ecUpperCase
+          DataField = 'maqtc_fact_act'
+          DataSource = oDS_Maquinas
+          Enabled = False
+          ReadOnly = True
+          TabOrder = 2
+        end
+        object ofact_ant2: TDBEdit
+          Left = 389
+          Top = 92
+          Width = 115
+          Height = 24
+          CharCase = ecUpperCase
+          DataField = 'maqtc_fact_ant'
+          DataSource = oDS_Maquinas
+          Enabled = False
+          ReadOnly = True
+          TabOrder = 6
+        end
+        object omfecha_act2: TDBDateTimeEditEh
+          Left = 546
+          Top = 52
+          Width = 121
+          Height = 24
+          DataField = 'maqtc_mfecha_act'
+          DataSource = oDS_Maquinas
+          DynProps = <>
+          Enabled = False
+          EditButtons = <>
+          Kind = dtkDateEh
+          ReadOnly = True
+          TabOrder = 3
+          Visible = True
+        end
+        object omfecha_ant2: TDBDateTimeEditEh
+          Left = 547
+          Top = 92
+          Width = 121
+          Height = 24
+          DataField = 'maqtc_mfecha_ant'
+          DataSource = oDS_Maquinas
+          DynProps = <>
+          Enabled = False
+          EditButtons = <>
+          Kind = dtkDateEh
+          ReadOnly = True
+          TabOrder = 7
+          Visible = True
+        end
       end
     end
   end
@@ -1472,7 +1920,8 @@ object fMaquinas: TfMaquinas
       'Database=one2009_1'
       'User_Name=root'
       'CharacterSet=utf8'
-      'DriverID=MySQL')
+      'DriverID=MySQL'
+      'Server=localhost')
     LoginPrompt = False
     Left = 9
     Top = 475

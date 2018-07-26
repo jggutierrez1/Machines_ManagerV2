@@ -14,7 +14,8 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef;
+  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef,
+  FireDAC.VCLUI.Wait;
 
 type
   TfEmpresa = class(TForm)
@@ -68,6 +69,18 @@ type
     oBtn_Rep: TBitBtn;
     oConection: TFDConnection;
     otEmpresa: TFDTable;
+    oEmp_corre_act: TDBNumberEditEh;
+    Label17: TLabel;
+    oEmp_corre_ant: TDBNumberEditEh;
+    Label1: TLabel;
+    Shape1: TShape;
+    Label18: TLabel;
+    Shape2: TShape;
+    Label19: TLabel;
+    Label20: TLabel;
+    oEmp_clave_montos: TDBNumberEditEh;
+    Label21: TLabel;
+    oEmp_clave_metros: TDBNumberEditEh;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -139,6 +152,14 @@ procedure TfEmpresa.FormShow(Sender: TObject);
 begin
   self.PageControl1.ActivePageIndex := 0;
   self.Activa_Objetos(false);
+  if (utilesv20.Is_Super_User() = false) then
+  begin
+    self.oEmp_corre_ant.PasswordChar := '*';
+    self.oEmp_corre_act.PasswordChar := '*';
+
+    self.oEmp_clave_montos.PasswordChar := '*';
+    self.oEmp_clave_metros.PasswordChar := '*';
+  end;
 end;
 
 procedure TfEmpresa.oBtnAbortClick(Sender: TObject);
