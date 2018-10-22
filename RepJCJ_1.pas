@@ -599,7 +599,7 @@ begin
     self.Visible_Fechas(false);
     self.Visible_Rutas(false);
     self.Visible_Clientes(true);
-    self.Visible_Modelos(true);
+    self.Visible_Modelos(false);
     self.oAll_Chapas.Visible := true;
     self.oChapa.Visible := true;
     self.olFecha1.Caption := 'Seleccione [Mes/Año]';
@@ -853,9 +853,9 @@ BEGIN
 
   cSql_Ln := '';
   cSql_Ln := cSql_Ln + 'SELECT a.*, ';
-  cSql_Ln := cSql_Ln + '	ROUND(a.NetWinM/No_Semanas,2) AS NetWinS, ';
-  cSql_Ln := cSql_Ln + '	ROUND(a.NetWinM/7,2) 			AS NetWinD, ';
-  cSql_Ln := cSql_Ln + '	ROUND(a.No_Semanas*37.50,2) 		AS ImpSem ';
+  cSql_Ln := cSql_Ln + '	ROUND((a.NetWinM/No_Semanas),2) AS NetWinS, ';
+  cSql_Ln := cSql_Ln + '	ROUND((a.NetWinM/30),2) 			AS NetWinD, ';
+  cSql_Ln := cSql_Ln + '	ROUND((a.No_Semanas*37.50),2) 		AS ImpSem ';
   cSql_Ln := cSql_Ln + 'FROM ( ';
   cSql_Ln := cSql_Ln + '	SELECT ';
   cSql_Ln := cSql_Ln +

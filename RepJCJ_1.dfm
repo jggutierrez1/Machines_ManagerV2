@@ -143,7 +143,6 @@ object FRepJCJ_1: TFRepJCJ_1
       item
         Width = 50
       end>
-    ExplicitWidth = 490
   end
   object oOpt1: TRadioButton
     Tag = 1

@@ -4,7 +4,7 @@ object FRepJCJ_1: TFRepJCJ_1
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Teportes de Producci'#243'n TIPO C.'
   ClientHeight = 541
-  ClientWidth = 490
+  ClientWidth = 488
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -137,12 +137,13 @@ object FRepJCJ_1: TFRepJCJ_1
   object StatusBar1: TStatusBar
     Left = 0
     Top = 522
-    Width = 490
+    Width = 488
     Height = 19
     Panels = <
       item
         Width = 50
       end>
+    ExplicitWidth = 490
   end
   object oOpt1: TRadioButton
     Tag = 1
@@ -811,7 +812,7 @@ object FRepJCJ_1: TFRepJCJ_1
     TabOrder = 27
     OnClick = oOpt13Click
   end
-  object RadioButton1: TRadioButton
+  object oOpt14: TRadioButton
     Tag = 14
     Left = 250
     Top = 244
@@ -819,7 +820,17 @@ object FRepJCJ_1: TFRepJCJ_1
     Height = 17
     Caption = 'Informe J.C.J. Detalle'
     TabOrder = 28
-    OnClick = oOpt4Click
+    OnClick = oOpt14Click
+  end
+  object oOpt15: TRadioButton
+    Tag = 15
+    Left = 19
+    Top = 244
+    Width = 225
+    Height = 17
+    Caption = 'Informe NETWIN'
+    TabOrder = 29
+    OnClick = oOpt15Click
   end
   object oDS_Rutas: TDataSource
     DataSet = otRutas
