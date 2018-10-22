@@ -67,6 +67,7 @@ type
     oOpt13: TRadioButton;
     oOpt14: TRadioButton;
     oQry_Ctes: TFDQuery;
+    oOpt15: TRadioButton;
     procedure Make_report(iOpt: integer);
     procedure oBtn_PreviewClick(Sender: TObject);
     procedure oBtn_PrintClick(Sender: TObject);
@@ -103,9 +104,15 @@ type
     procedure oLst_empExit(Sender: TObject);
     procedure oLst_empCloseUp(Sender: TObject; Accept: boolean);
     procedure oOpt14Click(Sender: TObject);
+    procedure oOpt15Click(Sender: TObject);
+    Function Generic_Qry(sOrder: string): Widestring;
+    Function JCJ_Qry(): Widestring;
+    Function NETWIN_Qry(): Widestring;
   private
     iOption: integer;
     cSql_Cte: string;
+    sMesAno: string;
+
     { Private declarations }
   public
     { Public declarations }
@@ -342,7 +349,7 @@ end;
 procedure TFRepJCJ_1.oOpt10Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt10.Checked = true then
+  if (self.oOpt10.Checked = true) then
   begin
     iOption := self.oOpt10.Tag;
     self.Visible_Fechas(true);
@@ -357,7 +364,7 @@ end;
 procedure TFRepJCJ_1.oOpt11Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt11.Checked = true then
+  if (self.oOpt11.Checked = true) then
   begin
     iOption := self.oOpt11.Tag;
     self.Visible_Fechas(true);
@@ -386,7 +393,7 @@ end;
 procedure TFRepJCJ_1.oOpt12Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt12.Checked = true then
+  if (self.oOpt12.Checked = true) then
   begin
     iOption := self.oOpt12.Tag;
     self.Visible_Fechas(true);
@@ -416,7 +423,7 @@ end;
 procedure TFRepJCJ_1.oOpt13Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt13.Checked = true then
+  if (self.oOpt13.Checked = true) then
   begin
     iOption := self.oOpt13.Tag;
     self.Visible_Fechas(true);
@@ -445,7 +452,7 @@ end;
 procedure TFRepJCJ_1.oOpt1Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt1.Checked = true then
+  if (self.oOpt1.Checked = true) then
   begin
     iOption := self.oOpt1.Tag;
     self.Visible_Fechas(true);
@@ -460,7 +467,7 @@ end;
 procedure TFRepJCJ_1.oOpt2Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt2.Checked = true then
+  if (self.oOpt2.Checked = true) then
   begin
     iOption := self.oOpt2.Tag;
     self.Visible_Fechas(true);
@@ -475,7 +482,7 @@ end;
 procedure TFRepJCJ_1.oOpt3Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt3.Checked = true then
+  if (self.oOpt3.Checked = true) then
   begin
     iOption := self.oOpt3.Tag;
     self.Visible_Fechas(true);
@@ -490,7 +497,7 @@ end;
 procedure TFRepJCJ_1.oOpt4Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt4.Checked = true then
+  if (self.oOpt4.Checked = true) then
   begin
     iOption := self.oOpt4.Tag;
     self.Visible_Fechas(false);
@@ -509,7 +516,7 @@ end;
 procedure TFRepJCJ_1.oOpt5Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt5.Checked = true then
+  if (self.oOpt5.Checked = true) then
   begin
     iOption := self.oOpt5.Tag;
     self.Visible_Fechas(true);
@@ -524,7 +531,7 @@ end;
 procedure TFRepJCJ_1.oOpt6Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt6.Checked = true then
+  if (self.oOpt6.Checked = true) then
   begin
     iOption := self.oOpt6.Tag;
     self.Visible_Fechas(true);
@@ -539,7 +546,7 @@ end;
 procedure TFRepJCJ_1.oOpt7Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt7.Checked = true then
+  if (self.oOpt7.Checked = true) then
   begin
     iOption := self.oOpt7.Tag;
     self.Visible_Fechas(true);
@@ -552,7 +559,7 @@ end;
 procedure TFRepJCJ_1.oOpt9Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt9.Checked = true then
+  if (self.oOpt9.Checked = true) then
   begin
     iOption := self.oOpt9.Tag;
     self.Visible_Fechas(true);
@@ -567,9 +574,9 @@ end;
 procedure TFRepJCJ_1.oOpt14Click(Sender: TObject);
 begin
   iOption := 0;
-  if self.oOpt14.Checked = true then
+  if (self.oOpt14.Checked = true) then
   begin
-    iOption := self.oOpt4.Tag;
+    iOption := self.oOpt14.Tag;
     self.Visible_Fechas(false);
     self.Visible_Rutas(false);
     self.Visible_Clientes(false);
@@ -581,6 +588,26 @@ begin
     self.oAll_Chapas.Visible := false;
     self.oChapa.Visible := false;
   end;
+end;
+
+procedure TFRepJCJ_1.oOpt15Click(Sender: TObject);
+begin
+  iOption := 0;
+  if (self.oOpt15.Checked = true) then
+  begin
+    iOption := self.oOpt15.Tag;
+    self.Visible_Fechas(false);
+    self.Visible_Rutas(false);
+    self.Visible_Clientes(true);
+    self.Visible_Modelos(true);
+    self.oAll_Chapas.Visible := true;
+    self.oChapa.Visible := true;
+    self.olFecha1.Caption := 'Seleccione [Mes/Año]';
+    self.oFecha1.EditFormat := 'MM/YYYY';
+    self.olFecha1.Visible := true;
+    self.oFecha1.Visible := true;
+  end;
+
 end;
 
 Procedure TFRepJCJ_1.Visible_Clientes(bFlag: boolean);
@@ -669,24 +696,243 @@ begin
   self.Escribe_ini;
 end;
 
+Function TFRepJCJ_1.Generic_Qry(sOrder: string): Widestring;
+var
+  sFecha_Ini: string;
+  sFecha_Fin: string;
+  cSql_Ln, sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Modelo: string;
+begin
+  FormatSettings.ShortDateFormat := 'yyyy-MM-dd';
+  sFecha_Ini := DateToStr(self.oFecha1.Value);
+  sFecha_Fin := DateToStr(self.oFecha2.Value);
+  FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
+
+  sCod_Cte := fUtilesV20.iif(self.oAll_Ctes.Checked = true, '%', self.oLst_Ctes.KeyValue);
+  sCod_Ruta := fUtilesV20.iif(self.oAll_Routes.Checked = true, '%', self.oLst_Rutas.KeyValue);
+  sCod_Modelo := fUtilesV20.iif(self.oAll_Modelos.Checked = true, '%', self.oLst_Modelos.KeyValue);
+  sCod_Chapa := fUtilesV20.iif(self.oAll_Chapas.Checked = true, '%', self.oChapa.Text);
+
+  cSql_Ln := '';
+  cSql_Ln := cSql_Ln + 'SELECT a.* FROM (';
+  cSql_Ln := cSql_Ln + 'SELECT ';
+  cSql_Ln := cSql_Ln + '	CASE ';
+  cSql_Ln := cSql_Ln + '	WHEN op.op_serie=1 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"A") ';
+  cSql_Ln := cSql_Ln + '	WHEN op.op_serie=2 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"B") ';
+  cSql_Ln := cSql_Ln + '	WHEN op.op_serie=3 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"C") ';
+  cSql_Ln := cSql_Ln + '	END AS MasterO, ';
+  cSql_Ln := cSql_Ln + '	IF(TRIM(op.cte_nombre_loc)="",ct.cte_nombre_loc,op.cte_nombre_loc) AS LOCAL2, ';
+  cSql_Ln := cSql_Ln + '	op.*, ';
+  cSql_Ln := cSql_Ln + '	IF(op.op_tot_colect=0,0,(op.op_tot_cred/op.op_tot_colect)*100) AS Porc_Pag, ';
+  cSql_Ln := cSql_Ln + '	rutas.rut_nombre, ';
+  cSql_Ln := cSql_Ln + '	mt.maqtc_modelo ';
+  cSql_Ln := cSql_Ln + 'FROM operacion op ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN rutas         ON ct.rut_id   = rutas.rut_id ';
+  cSql_Ln := cSql_Ln + 'WHERE (op.maqtc_tipomaq =1) ';
+  cSql_Ln := cSql_Ln + 'AND   (ct.cte_inactivo  =0) ';
+  cSql_Ln := cSql_Ln + 'AND   (mt.maqtc_inactivo=0) ';
+
+  if (self.oAll_Emp.Checked = false) then
+    cSql_Ln := cSql_Ln + 'AND (op.op_emp_id = "' + trim(self.oLst_emp.Value) + '") ';
+
+  if (self.oAll_Chapas.Checked = false) then
+  begin
+    if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
+      cSql_Ln := cSql_Ln + 'AND (op.op_chapa="' + trim(sCod_Chapa) + '") ';
+  end;
+
+  if (self.oAll_Ctes.Checked = false) then
+  begin
+    if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
+      cSql_Ln := cSql_Ln + 'AND (op.cte_id="' + trim(sCod_Cte) + '") ';
+  end;
+
+  if (self.oAll_Routes.Checked = false) then
+  begin
+    if not((trim(sCod_Ruta) = '%') or (trim(sCod_Ruta) = '')) then
+      cSql_Ln := cSql_Ln + 'AND   (ct.rut_id="' + trim(sCod_Ruta) + '") ';
+  end;
+
+  if (self.oAll_Modelos.Checked = false) then
+  begin
+    if not((trim(sCod_Modelo) = '%') or (trim(sCod_Modelo) = '')) then
+      cSql_Ln := cSql_Ln + 'AND   (TRIM(op.op_modelo)="' + trim(sCod_Modelo) + '") ';
+  end;
+
+  cSql_Ln := cSql_Ln + 'AND   (';
+  cSql_Ln := cSql_Ln + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") >= "' + sFecha_Ini + '") AND ';
+  cSql_Ln := cSql_Ln + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") <= "' + sFecha_Fin + '") ';
+  cSql_Ln := cSql_Ln + '      )  ';
+  cSql_Ln := cSql_Ln + ') a ';
+
+  case StrToInt(sOrder) of
+    1:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.LOCAL2, a.MasterO,  a.op_chapa ';
+    2:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.MasterO, a.LOCAL2 ';
+    3:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.MasterO, a.op_nodoc ';
+    4:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.MasterO, a.op_chapa ';
+    5:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
+    6:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.maqtc_modelo, a.op_chapa ';
+    7:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
+    8:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
+    9:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.LOCAL2, a.op_chapa '; // ,a.MasterO
+    10:
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.rut_nombre, a.LOCAL2, a.op_chapa ';
+    11:
+      BEGIN
+        cSql_Ln := cSql_Ln + 'GROUP BY  a.LOCAL2, a.op_chapa ';
+        cSql_Ln := cSql_Ln + 'ORDER BY  a.LOCAL2, a.op_chapa ';
+      END;
+  end;
+  result := cSql_Ln;
+end;
+
+Function TFRepJCJ_1.JCJ_Qry(): Widestring;
+var
+  cSql_Ln, sCod_Chapa: string;
+  myYear, myMonth, myDay: Word;
+BEGIN
+  DecodeDate(self.oFecha1.Value, myYear, myMonth, myDay);
+  self.sMesAno := IntToStr(myMonth) + ' de ' + IntToStr(myYear);
+
+  sCod_Chapa := fUtilesV20.iif(self.oAll_Chapas.Checked = true, '%', self.oChapa.Text);
+
+  cSql_Ln := '';
+  cSql_Ln := cSql_Ln + 'SELECT ';
+  cSql_Ln := cSql_Ln + '	CASE ';
+  cSql_Ln := cSql_Ln + '	WHEN op.op_serie=1 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"A") ';
+  cSql_Ln := cSql_Ln + '	WHEN op.op_serie=2 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"B") ';
+  cSql_Ln := cSql_Ln + '	WHEN op.op_serie=3 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"C") ';
+  cSql_Ln := cSql_Ln + '	END AS MasterO, ';
+  cSql_Ln := cSql_Ln + '	IF(TRIM(op.cte_nombre_loc)="",ct.cte_nombre_loc,op.cte_nombre_loc) AS LOCAL2, ';
+  cSql_Ln := cSql_Ln + '	op.*, ';
+  cSql_Ln := cSql_Ln + '	IF(op.op_tot_colect=0,0,(op.op_tot_cred/op.op_tot_colect)*100) AS Porc_Pag ';
+  cSql_Ln := cSql_Ln + 'FROM operacion op ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN rutas         ON ct.rut_id   = rutas.rut_id ';
+  cSql_Ln := cSql_Ln + 'WHERE (op.maqtc_tipomaq =1) ';
+  cSql_Ln := cSql_Ln + 'AND   (ct.cte_inactivo  =0) ';
+  cSql_Ln := cSql_Ln + 'AND   (mt.maqtc_inactivo=0) ';
+
+  if (self.oAll_Emp.Checked = false) then
+    cSql_Ln := cSql_Ln + 'AND (op.op_emp_id = ' + QuotedStr(trim(self.oLst_emp.Value)) + ') ';
+
+  cSql_Ln := cSql_Ln + 'AND   (YEAR(op.op_fecha) =' + QuotedStr(IntToStr(myYear)) + ') ';
+  cSql_Ln := cSql_Ln + 'AND 	(MONTH(op.op_fecha)=' + QuotedStr(IntToStr(myMonth)) + ') ';
+  if (self.oAll_Chapas.Checked = false) then
+  begin
+    if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
+      cSql_Ln := cSql_Ln + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
+  end;
+  cSql_Ln := cSql_Ln + 'ORDER BY op.op_chapa ';
+  result := cSql_Ln;
+END;
+
+Function TFRepJCJ_1.NETWIN_Qry(): Widestring;
+var
+  cSql_Ln, sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Modelo: string;
+  myYear, myMonth, myDay: Word;
+BEGIN
+  DecodeDate(self.oFecha1.Value, myYear, myMonth, myDay);
+  self.sMesAno := IntToStr(myMonth) + ' de ' + IntToStr(myYear);
+
+  sCod_Cte := fUtilesV20.iif(self.oAll_Ctes.Checked = true, '%', self.oLst_Ctes.KeyValue);
+  sCod_Ruta := fUtilesV20.iif(self.oAll_Routes.Checked = true, '%', self.oLst_Rutas.KeyValue);
+  sCod_Modelo := fUtilesV20.iif(self.oAll_Modelos.Checked = true, '%', self.oLst_Modelos.KeyValue);
+  sCod_Chapa := fUtilesV20.iif(self.oAll_Chapas.Checked = true, '%', self.oChapa.Text);
+
+  cSql_Ln := '';
+  cSql_Ln := cSql_Ln + 'SELECT a.*, ';
+  cSql_Ln := cSql_Ln + '	ROUND(a.NetWinM/No_Semanas,2) AS NetWinS, ';
+  cSql_Ln := cSql_Ln + '	ROUND(a.NetWinM/7,2) 			AS NetWinD, ';
+  cSql_Ln := cSql_Ln + '	ROUND(a.No_Semanas*37.50,2) 		AS ImpSem ';
+  cSql_Ln := cSql_Ln + 'FROM ( ';
+  cSql_Ln := cSql_Ln + '	SELECT ';
+  cSql_Ln := cSql_Ln +
+    '		@FechaIni := DATE(CONCAT(YEAR(op.op_fecha),"-",MONTH(op.op_fecha),"-01")) 										 AS FechaIni, ';
+  cSql_Ln := cSql_Ln +
+    '		@FechaFin := DATE_ADD( DATE(CONCAT(YEAR(op.op_fecha),"-",MONTH(op.op_fecha)+1,"-01")), INTERVAL -1 DAY) AS FechaFin, ';
+  cSql_Ln := cSql_Ln + '		op.op_chapa, ';
+  cSql_Ln := cSql_Ln + '		op.op_modelo, ';
+  cSql_Ln := cSql_Ln + '		IF(TRIM(op.cte_nombre_loc)="",ct.cte_nombre_loc,op.cte_nombre_loc) AS LOCAL2, ';
+  cSql_Ln := cSql_Ln + '		FLOOR((DATEDIFF(@FechaFin,@FechaIni)+1)/7) AS No_Semanas, ';
+  cSql_Ln := cSql_Ln + '		COUNT(op.op_chapa)      AS No_Colect, ';
+  cSql_Ln := cSql_Ln + '		SUM(op.op_tot_colect)   AS op_tot_colect, ';
+  cSql_Ln := cSql_Ln + '		SUM(op.op_tot_cred)     AS op_tot_cred, ';
+  cSql_Ln := cSql_Ln + '		SUM(op.op_tot_dev)      AS op_tot_dev, ';
+  cSql_Ln := cSql_Ln + '		SUM(op.op_tot_timbres) + SUM(op.op_tot_impjcj) + SUM(op.op_tot_impmunic) AS IMP, ';
+  cSql_Ln := cSql_Ln + '		SUM(op.op_tot_sub)      AS op_tot_sub, ';
+  cSql_Ln := cSql_Ln + '		SUM(op.op_tot_netoemp)  AS op_tot_netoemp, ';
+  cSql_Ln := cSql_Ln + '		SUM(op.op_tot_brutoemp) AS op_tot_brutoemp, ';
+  cSql_Ln := cSql_Ln + '		IF(SUM(op.op_tot_colect)=0,0,(SUM(op.op_tot_cred)/SUM(op.op_tot_colect))*100) AS Porc_Pag, ';
+  cSql_Ln := cSql_Ln +
+    '		@NetWin := ROUND(IF(SUM(op.op_tot_colect)=0,0.00,(SUM(op.op_tot_colect)-SUM(op.op_tot_cred))),2) AS NetWinM ';
+  cSql_Ln := cSql_Ln + '	FROM operacion op ';
+  cSql_Ln := cSql_Ln + '	LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
+  cSql_Ln := cSql_Ln + '	LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
+  cSql_Ln := cSql_Ln + '	WHERE (op.maqtc_tipomaq =1)  ';
+  cSql_Ln := cSql_Ln + '	AND   (ct.cte_inactivo  =0) ';
+  cSql_Ln := cSql_Ln + '	AND   (mt.maqtc_inactivo=0) ';
+  cSql_Ln := cSql_Ln + '  AND   (YEAR(op.op_fecha) =' + QuotedStr(IntToStr(myYear)) + ') ';
+  cSql_Ln := cSql_Ln + '  AND 	(MONTH(op.op_fecha)=' + QuotedStr(IntToStr(myMonth)) + ') ';
+
+  if (self.oAll_Emp.Checked = false) then
+    cSql_Ln := cSql_Ln + 'AND (op.op_emp_id = ' + QuotedStr(trim(self.oLst_emp.Value)) + ') ';
+
+  if (self.oAll_Ctes.Checked = false) then
+  begin
+    if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
+      cSql_Ln := cSql_Ln + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
+  end;
+
+  if (self.oAll_Chapas.Checked = false) then
+  begin
+    if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
+      cSql_Ln := cSql_Ln + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
+  end;
+
+  if (self.oAll_Routes.Checked = false) then
+  begin
+    if not((trim(sCod_Ruta) = '%') or (trim(sCod_Ruta) = '')) then
+      cSql_Ln := cSql_Ln + 'AND   (ct.rut_id=' + QuotedStr(trim(sCod_Ruta)) + ') ';
+  end;
+
+  if (self.oAll_Modelos.Checked = false) then
+  begin
+    if not((trim(sCod_Modelo) = '%') or (trim(sCod_Modelo) = '')) then
+      cSql_Ln := cSql_Ln + 'AND   (TRIM(op.op_modelo)=' + QuotedStr(trim(sCod_Modelo)) + ') ';
+  end;
+
+  cSql_Ln := cSql_Ln + '	GROUP BY  op.op_chapa) a ';
+  cSql_Ln := cSql_Ln + 'ORDER BY a.op_chapa ';
+  result := cSql_Ln;
+END;
+
 procedure TFRepJCJ_1.Show_Report(nOption: integer);
 var
   icnt1: integer;
   icnt2: integer;
   sOrder: string;
-  sLn1: string;
+  sLn1: Widestring;
   sLn2: string;
   sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Modelo: string;
-
   sFecha_Ini: string;
   sFecha_Fin: string;
-  sMesAno: string;
-  myYear, myMonth, myDay: Word;
 begin
 
   FormatSettings.ShortDateFormat := 'yyyy-MM-dd';
-  sFecha_Ini := DateToStr(oFecha1.Value);
-  sFecha_Fin := DateToStr(oFecha2.Value);
+  sFecha_Ini := DateToStr(self.oFecha1.Value);
+  sFecha_Fin := DateToStr(self.oFecha2.Value);
   FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
 
   reportes.Initialize;
@@ -715,166 +961,49 @@ begin
     begin
       sOrder := '1';
       reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_01.fr3';
-    end;
-
-    if (oOpt2.Checked = true) then
+    end
+    else if (oOpt2.Checked = true) then
     begin
       sOrder := '2';
       reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_02.fr3';
-    end;
-
-    if (oOpt3.Checked = true) then
+    end
+    else if (oOpt3.Checked = true) then
     begin
       sOrder := '3';
       reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_03.fr3';
-    end;
-
-    if (oOpt6.Checked = true) then
+    end
+    else if (oOpt6.Checked = true) then
     begin
       sOrder := '6';
       reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_06.fr3';
-    end;
-
-    if (oOpt7.Checked = true) then
+    end
+    else if (oOpt7.Checked = true) then
     begin
       sOrder := '7';
       reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_07.fr3';
-    end;
-
-    if (oOpt9.Checked = true) then
+    end
+    else if (oOpt9.Checked = true) then
     begin
       sOrder := '9';
       reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_09.fr3';
-    end;
-
-    if (oOpt10.Checked = true) then
+    end
+    else if (oOpt10.Checked = true) then
     begin
       sOrder := '10';
       reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_10.fr3';
     end;
 
-    if (oOpt11.Checked = true) then
-    begin
-      sOrder := '11';
-      reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_11.fr3';
-    end;
-
-    if (oOpt12.Checked = true) then
-    begin
-      sOrder := '12';
-      reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_12.fr3';
-    end;
-
-    sLn2 := '';
-    sLn2 := sLn2 + 'SELECT a.* FROM (';
-    sLn2 := sLn2 + 'SELECT ';
-    sLn2 := sLn2 + '	CASE ';
-    sLn2 := sLn2 + '	WHEN op.op_serie=1 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"A") ';
-    sLn2 := sLn2 + '	WHEN op.op_serie=2 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"B") ';
-    sLn2 := sLn2 + '	WHEN op.op_serie=3 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"C") ';
-    sLn2 := sLn2 + '	END AS MasterO, ';
-    sLn2 := sLn2 + '	IF(TRIM(op.cte_nombre_loc)="",ct.cte_nombre_loc,op.cte_nombre_loc) AS LOCAL2, ';
-    sLn2 := sLn2 + '	op.*, ';
-    sLn2 := sLn2 + '	IF(op.op_tot_colect=0,0,(op.op_tot_cred/op.op_tot_colect)*100) AS Porc_Pag, ';
-    sLn2 := sLn2 + '	rutas.rut_nombre, ';
-    sLn2 := sLn2 + '	mt.maqtc_modelo ';
-    sLn2 := sLn2 + 'FROM operacion op ';
-    sLn2 := sLn2 + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
-    sLn2 := sLn2 + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
-    sLn2 := sLn2 + 'LEFT JOIN rutas         ON ct.rut_id   = rutas.rut_id ';
-    sLn2 := sLn2 + 'WHERE (op.maqtc_tipomaq =1) ';
-    sLn2 := sLn2 + 'AND   (ct.cte_inactivo  =0) ';
-    sLn2 := sLn2 + 'AND   (mt.maqtc_inactivo=0) ';
-
-    if (self.oAll_Emp.Checked = false) then
-      sLn2 := sLn2 + 'AND (op.op_emp_id = ' + QuotedStr(trim(self.oLst_emp.Value)) + ') ';
-
-    if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
-      sLn2 := sLn2 + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
-
-    if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
-      sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
-
-    if not((trim(sCod_Ruta) = '%') or (trim(sCod_Ruta) = '')) then
-      sLn2 := sLn2 + 'AND   (ct.rut_id=' + QuotedStr(trim(sCod_Ruta)) + ') ';
-
-    if not((trim(sCod_Modelo) = '%') or (trim(sCod_Modelo) = '')) then
-      sLn2 := sLn2 + 'AND   (TRIM(op.op_modelo)=' + QuotedStr(trim(sCod_Modelo)) + ') ';
-
-    sLn2 := sLn2 + 'AND   (';
-    sLn2 := sLn2 + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") >= "' + sFecha_Ini + '") AND ';
-    sLn2 := sLn2 + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") <= "' + sFecha_Fin + '") ';
-    sLn2 := sLn2 + '      )  ';
-    sLn2 := sLn2 + ') a ';
-
-    case StrToInt(sOrder) of
-      1:
-        sLn2 := sLn2 + 'ORDER BY  a.LOCAL2, a.MasterO,  a.op_chapa ';
-      2:
-        sLn2 := sLn2 + 'ORDER BY  a.MasterO, a.LOCAL2 ';
-      3:
-        sLn2 := sLn2 + 'ORDER BY  a.MasterO, a.op_nodoc ';
-      4:
-        sLn2 := sLn2 + 'ORDER BY  a.MasterO, a.op_chapa ';
-      5:
-        sLn2 := sLn2 + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
-      6:
-        sLn2 := sLn2 + 'ORDER BY  a.maqtc_modelo, a.op_chapa ';
-      7:
-        sLn2 := sLn2 + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
-      8:
-        sLn2 := sLn2 + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
-      9:
-        sLn2 := sLn2 + 'ORDER BY  a.LOCAL2, a.op_chapa '; // ,a.MasterO
-      10:
-        sLn2 := sLn2 + 'ORDER BY  a.rut_nombre, a.LOCAL2, a.op_chapa ';
-      11:
-        BEGIN
-          sLn2 := sLn2 + 'GROUP BY  a.LOCAL2, a.op_chapa ';
-          sLn2 := sLn2 + 'ORDER BY  a.LOCAL2, a.op_chapa ';
-        END;
-    end;
-  end;
-
-  if ((self.oOpt4.Checked = true) or (self.oOpt14.Checked = true)) then
+    sLn2 := self.Generic_Qry(sOrder);
+  end
+  else if ((self.oOpt4.Checked = true) or (self.oOpt14.Checked = true)) then
   begin
-    if (oOpt14.Checked = true) then
-    begin
-      sOrder := '4';
-      reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_14.fr3';
-    end;
 
-    DecodeDate(oFecha1.Value, myYear, myMonth, myDay);
-    sMesAno := IntToStr(myMonth) + ' de ' + IntToStr(myYear);
+    sOrder := '4';
+    reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_14.fr3';
 
-    sLn2 := '';
-    sLn2 := sLn2 + 'SELECT ';
-    sLn2 := sLn2 + '	CASE ';
-    sLn2 := sLn2 + '	WHEN op.op_serie=1 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"A") ';
-    sLn2 := sLn2 + '	WHEN op.op_serie=2 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"B") ';
-    sLn2 := sLn2 + '	WHEN op.op_serie=3 THEN concat(DATE_FORMAT(op.op_fecha,"%m-%d-%Y"),"C") ';
-    sLn2 := sLn2 + '	END AS MasterO, ';
-    sLn2 := sLn2 + '	IF(TRIM(op.cte_nombre_loc)="",ct.cte_nombre_loc,op.cte_nombre_loc) AS LOCAL2, ';
-    sLn2 := sLn2 + '	op.*, ';
-    sLn2 := sLn2 + '	IF(op.op_tot_colect=0,0,(op.op_tot_cred/op.op_tot_colect)*100) AS Porc_Pag ';
-    sLn2 := sLn2 + 'FROM operacion op ';
-    sLn2 := sLn2 + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
-    sLn2 := sLn2 + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
-    sLn2 := sLn2 + 'LEFT JOIN rutas         ON ct.rut_id   = rutas.rut_id ';
-    sLn2 := sLn2 + 'WHERE (op.maqtc_tipomaq =1) ';
-    sLn2 := sLn2 + 'AND   (ct.cte_inactivo  =0) ';
-    sLn2 := sLn2 + 'AND   (mt.maqtc_inactivo=0) ';
+    sLn2 := self.JCJ_Qry();
 
-    if (self.oAll_Emp.Checked = false) then
-      sLn2 := sLn2 + 'AND (op.op_emp_id = ' + QuotedStr(trim(self.oLst_emp.Value)) + ') ';
-
-    sLn2 := sLn2 + 'AND   (YEAR(op.op_fecha) =' + QuotedStr(IntToStr(myYear)) + ') ';
-    sLn2 := sLn2 + 'AND 	(MONTH(op.op_fecha)=' + QuotedStr(IntToStr(myMonth)) + ') ';
-    if trim(sCod_Chapa) <> '%' then
-      sLn2 := sLn2 + 'AND   (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
-    sLn2 := sLn2 + 'ORDER BY op.op_chapa ';
-
-    reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_04.fr3';
+    // reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_04.fr3';
     reportes.Report.Vars[3].Name := 'F_MesAno';
     reportes.Report.Vars[3].Value := sMesAno;
 
@@ -883,10 +1012,10 @@ begin
       reportes.Report.Vars[4].Value := SysUtils.QuotedStr(trim(self.oLst_emp.Value))
     else
       reportes.Report.Vars[4].Value := 'Todas las empresas.';
-  end;
-
-  if (oOpt11.Checked = true) then
+  end
+  else if (oOpt11.Checked = true) then
   begin
+    sOrder := '11';
     reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_11.fr3';
 
     sLn2 := '';
@@ -929,9 +1058,8 @@ begin
 
     sLn2 := sLn2 + ') a ';
     sLn2 := sLn2 + 'ORDER BY  a.op_chapa ';
-  end;
-
-  if (oOpt12.Checked = true) then
+  end
+  else if (oOpt12.Checked = true) then
   begin
     sOrder := '12';
     reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_12.fr3';
@@ -968,9 +1096,8 @@ begin
     sLn2 := sLn2 + '      )  ';
 
     sLn2 := sLn2 + 'ORDER BY  1,2,4 ';
-  end;
-
-  if (oOpt13.Checked = true) then
+  end
+  else if (oOpt13.Checked = true) then
   begin
     reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_13.fr3';
 
@@ -1006,6 +1133,12 @@ begin
 
     sLn2 := sLn2 + 'GROUP BY 1,DATE_FORMAT(op.op_fecha,"%Y-%m") ';
     sLn2 := sLn2 + 'ORDER BY 1,DATE_FORMAT(op.op_fecha,"%Y-%m") ';
+  end
+  else if (oOpt15.Checked = true) then
+  begin
+    sOrder := '15';
+    reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_15.fr3';
+    sLn2 := self.NETWIN_Qry();
   end;
 
   reportes.Queries[2].active := true;
