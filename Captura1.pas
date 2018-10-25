@@ -1,5 +1,5 @@
 unit Captura1;
-
+
 interface
 
 uses
@@ -237,6 +237,7 @@ type
     procedure oCk_MetrosDl_EClick(Sender: TObject);
   private
     iOption: integer;
+    bOk_Chg_Mts: boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -275,6 +276,7 @@ uses UtilesV20, Denominaciones, Clientes, Empresa, MaquinasTC, Municipios,
 procedure TfCaptura1.FormCreate(Sender: TObject);
 begin
   iOption := 0;
+  self.bOk_Chg_Mts := false;
   // self.ResizeKit1.Enabled := utiles.Ctrl_Resize;
   bFoundMach := false;
   bChangeMeters := true;
@@ -319,6 +321,7 @@ end;
 procedure TfCaptura1.FormShow(Sender: TObject);
 begin
   iOption := 0;
+  self.bOk_Chg_Mts := false;
   self.otOperaciones.Last;
   self.Mostrar_Baja_Prod;
   Enabled_Screen(false);
@@ -329,18 +332,32 @@ end;
 
 procedure TfCaptura1.Label10Click(Sender: TObject);
 begin
+
   if (iOption = 1) then
   begin
-    Application.CreateForm(Tfacceso1, facceso1);
-    facceso1.ShowModal;
-    if (facceso1.bPass_Ok = true) then
+    if (UtilesV20.Is_Super_User() = true) then
+      self.bOk_Chg_Mts := true
+    else
+    begin
+      if (self.bOk_Chg_Mts = false) then
+      begin
+        Application.CreateForm(Tfacceso1, facceso1);
+        facceso1.ShowModal;
+        if (facceso1.bPass_Ok = true) then
+          self.bOk_Chg_Mts := true
+        else
+          self.bOk_Chg_Mts := false;
+        freeandnil(facceso1);
+      end;
+    end;
+
+    if (self.bOk_Chg_Mts = true) then
     begin
       self.otOp_ea_metroan.Enabled := true;
       self.otOp_ea_metroan.SetFocus;
     end
     else
       self.otOp_ea_metroan.Enabled := false;
-    freeandnil(facceso1);
   end;
 end;
 
@@ -348,16 +365,29 @@ procedure TfCaptura1.Label12Click(Sender: TObject);
 begin
   if (iOption = 1) then
   begin
-    Application.CreateForm(Tfacceso1, facceso1);
-    facceso1.ShowModal;
-    if (facceso1.bPass_Ok = true) then
+    if (UtilesV20.Is_Super_User() = true) then
+      self.bOk_Chg_Mts := true
+    else
+    begin
+      if (self.bOk_Chg_Mts = false) then
+      begin
+        Application.CreateForm(Tfacceso1, facceso1);
+        facceso1.ShowModal;
+        if (facceso1.bPass_Ok = true) then
+          self.bOk_Chg_Mts := true
+        else
+          self.bOk_Chg_Mts := false;
+        freeandnil(facceso1);
+      end;
+    end;
+
+    if (self.bOk_Chg_Mts = true) then
     begin
       self.otOp_eb_metroan.Enabled := true;
       self.otOp_eb_metroan.SetFocus;
     end
     else
       self.otOp_eb_metroan.Enabled := false;
-    freeandnil(facceso1);
   end;
 end;
 
@@ -401,16 +431,29 @@ procedure TfCaptura1.Label17Click(Sender: TObject);
 begin
   if (iOption = 1) then
   begin
-    Application.CreateForm(Tfacceso1, facceso1);
-    facceso1.ShowModal;
-    if (facceso1.bPass_Ok = true) then
+    if (UtilesV20.Is_Super_User() = true) then
+      self.bOk_Chg_Mts := true
+    else
+    begin
+      if (self.bOk_Chg_Mts = false) then
+      begin
+        Application.CreateForm(Tfacceso1, facceso1);
+        facceso1.ShowModal;
+        if (facceso1.bPass_Ok = true) then
+          self.bOk_Chg_Mts := true
+        else
+          self.bOk_Chg_Mts := false;
+        freeandnil(facceso1);
+      end;
+    end;
+
+    if (self.bOk_Chg_Mts = true) then
     begin
       self.otOp_sa_metroan.Enabled := true;
       self.otOp_sa_metroan.SetFocus;
     end
     else
       self.otOp_sa_metroan.Enabled := false;
-    freeandnil(facceso1);
   end;
 end;
 
@@ -418,16 +461,29 @@ procedure TfCaptura1.Label19Click(Sender: TObject);
 begin
   if (iOption = 1) then
   begin
-    Application.CreateForm(Tfacceso1, facceso1);
-    facceso1.ShowModal;
-    if (facceso1.bPass_Ok = true) then
+    if (UtilesV20.Is_Super_User() = true) then
+      self.bOk_Chg_Mts := true
+    else
+    begin
+      if (self.bOk_Chg_Mts = false) then
+      begin
+        Application.CreateForm(Tfacceso1, facceso1);
+        facceso1.ShowModal;
+        if (facceso1.bPass_Ok = true) then
+          self.bOk_Chg_Mts := true
+        else
+          self.bOk_Chg_Mts := false;
+        freeandnil(facceso1);
+      end;
+    end;
+
+    if (self.bOk_Chg_Mts = true) then
     begin
       self.otOp_sb_metroan.Enabled := true;
       self.otOp_sb_metroan.SetFocus;
     end
     else
       self.otOp_sb_metroan.Enabled := false;
-    freeandnil(facceso1);
   end;
 end;
 
@@ -1852,3 +1908,4 @@ begin
 end;
 
 end.
+

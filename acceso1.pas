@@ -13,12 +13,12 @@ type
     Label1: TLabel;
     Label2: TLabel;
     oPass: TEdit;
-    BitBtn1: TBitBtn;
-    BitBtn2: TBitBtn;
+    oBtn_Ok: TBitBtn;
+    oBtn_Cancel: TBitBtn;
     oQry_Gen: TFDQuery;
     procedure FormCreate(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
-    procedure BitBtn2Click(Sender: TObject);
+    procedure oBtn_OkClick(Sender: TObject);
+    procedure oBtn_CancelClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -34,39 +34,43 @@ implementation
 uses UtilesV20;
 {$R *.dfm}
 
-procedure Tfacceso1.BitBtn1Click(Sender: TObject);
+procedure Tfacceso1.oBtn_OkClick(Sender: TObject);
 var
   cSql_Ln: string;
+  sClave: string;
 begin
   if (self.oPass.Text = '') then
   begin
     exit;
   end;
 
+  sClave := fUtilesV20.Encrypt(trim(self.oPass.Text));
+
   cSql_Ln := '';
-  cSql_Ln := cSql_Ln + 'SELECT u_usuario,u_acceso1,BASE64_DECODE(u_clave) AS clave ';
+  cSql_Ln := cSql_Ln + 'SELECT u_acceso1 ';
   cSql_Ln := cSql_Ln + 'FROM usuarios ';
-  cSql_Ln := cSql_Ln + 'WHERE  BASE64_DECODE(u_clave)="' + trim(self.oPass.Text) + '"';
+  // cSql_Ln := cSql_Ln + 'WHERE  BASE64_DECODE(u_clave)="' + trim(self.oPass.Text) + '"';
+  cSql_Ln := cSql_Ln + 'WHERE u_clave=' + QuotedStr(sClave) + ' ';
   cSql_Ln := cSql_Ln + 'ORDER BY u_usuario ';
-  UtilesV20.Exec_Select_SQL(self.oQry_Gen, cSql_Ln,true,false);
+  UtilesV20.Exec_Select_SQL(self.oQry_Gen, cSql_Ln, true, false);
 
   if (self.oQry_Gen.FieldByName('u_acceso1').AsInteger = 1) then
-    bPass_Ok := true
+    self.bPass_Ok := true
   else
-    bPass_Ok := false;
+    self.bPass_Ok := false;
   close;
 end;
 
-procedure Tfacceso1.BitBtn2Click(Sender: TObject);
+procedure Tfacceso1.oBtn_CancelClick(Sender: TObject);
 begin
-  bPass_Ok := false;
+  self.bPass_Ok := false;
   close;
 end;
 
 procedure Tfacceso1.FormCreate(Sender: TObject);
 begin
   self.oPass.Text := '';
-  bPass_Ok := false;
+  self.bPass_Ok := false;
 end;
 
 end.

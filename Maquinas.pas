@@ -14,7 +14,8 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, DBAxisGridsEh, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, EhLibVCL, FireDAC.VCLUI.Wait;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, DBAxisGridsEh, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, EhLibVCL, FireDAC.VCLUI.Wait,
+  Vcl.Imaging.pngimage;
 
 type
   TfMaquinas = class(TForm)
@@ -97,6 +98,7 @@ type
     omfecha_ant2: TDBDateTimeEditEh;
     Label30: TLabel;
     oporc_conc: TDBNumberEditEh;
+    oImage_Lock2: TImage;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -114,7 +116,9 @@ type
     procedure oMaquinaTCAfterEdit(DataSet: TDataSet);
     procedure oMaquinaTCAfterInsert(DataSet: TDataSet);
     procedure oMaquinaTCBeforePost(DataSet: TDataSet);
+    procedure oImage_Lock2Click(Sender: TObject);
   private
+    bOk_Chg_Val: boolean;
     { Private declarations }
     // oObjRez: TReziseCntl;
   public
@@ -129,11 +133,12 @@ var
 
 implementation
 
-USES BuscarGenM2, Denominaciones, utilesV20;
+USES BuscarGenM2, Denominaciones, utilesV20, acceso1;
 {$R *.dfm}
 
 procedure TfMaquinas.FormCreate(Sender: TObject);
 begin
+  self.bOk_Chg_Val := false;
   // self.ResizeKit1.Enabled := utiles.Ctrl_Resize;
   // utiles.ResizeKit_DBGridEh_Prepare(self.DBGridEh1, oObjRez);
   freeandnil(oConection);
@@ -156,9 +161,11 @@ end;
 
 procedure TfMaquinas.FormShow(Sender: TObject);
 begin
+  self.bOk_Chg_Val := false;
   self.Activa_Objetos(false);
   self.StatusBar1.Panels[0].Text := 'Servidor: ' + futilesV20.oPublicCnn.Params.Values['Server'] + '/' + futilesV20.oPublicCnn.Params.Values
     ['Database'];
+  self.bOk_Chg_Val := utilesV20.Is_Super_User();
 end;
 
 procedure TfMaquinas.oBtnAbortClick(Sender: TObject);
@@ -214,7 +221,7 @@ begin
   self.Activa_Objetos(true);
   Rs_Bookmark := oMaquinaTC.GetBookmark;
 
-  if (utilesV20.Is_Super_User() = false) then
+  if (self.bOk_Chg_Val = false) then
   begin
     self.om1e_act.Enabled := false;
     self.om1e_ant.Enabled := false;
@@ -334,6 +341,27 @@ begin
   fDenom.ShowModal;
   fDenom.free;
   self.oDenom.Refresh;
+end;
+
+procedure TfMaquinas.oImage_Lock2Click(Sender: TObject);
+begin
+  self.bOk_Chg_Val := false;
+
+  if (utilesV20.Is_Super_User() = true) then
+    self.bOk_Chg_Val := true
+  else
+  begin
+    if (self.bOk_Chg_Val = false) then
+    begin
+      Application.CreateForm(Tfacceso1, facceso1);
+      facceso1.ShowModal;
+      if (facceso1.bPass_Ok = true) then
+        self.bOk_Chg_Val := true
+      else
+        self.bOk_Chg_Val := false;
+      freeandnil(facceso1);
+    end;
+  end;
 end;
 
 procedure TfMaquinas.oMaquinaTCAfterEdit(DataSet: TDataSet);

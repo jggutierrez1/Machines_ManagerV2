@@ -75,6 +75,7 @@ type
     oEmp_clave_montos: TDBNumberEditEh;
     Label21: TLabel;
     oEmp_clave_metros: TDBNumberEditEh;
+    oImage_Lock2: TImage;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -100,6 +101,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure otEmpresaBeforePost(DataSet: TDataSet);
     procedure otEmpresaAfterInsert(DataSet: TDataSet);
+    procedure oImage_Lock2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -111,7 +113,7 @@ var
 
 implementation
 
-USES utilesv20, BuscarGenM2;
+USES utilesv20, BuscarGenM2, acceso1;
 {$R *.dfm}
 
 procedure TfEmpresa.oJCJKeyPress(Sender: TObject; var Key: Char);
@@ -292,6 +294,41 @@ begin
     Key := #0; { eat enter key }
     Perform(WM_NEXTDLGCTL, 0, 0); { move to next control }
   end
+end;
+
+procedure TfEmpresa.oImage_Lock2Click(Sender: TObject);
+var
+  bOk_Access: boolean;
+begin
+  bOk_Access := false;
+
+  if (utilesv20.Is_Super_User() = true) then
+    bOk_Access := true
+  else
+  begin
+    if (bOk_Access = false) then
+    begin
+      Application.CreateForm(Tfacceso1, facceso1);
+      facceso1.ShowModal;
+      if (facceso1.bPass_Ok = true) then
+        bOk_Access := true
+      else
+        bOk_Access := false;
+      freeandnil(facceso1);
+    end;
+  end;
+
+  if (bOk_Access = true) then
+  begin
+    self.oEmp_clave_montos.PasswordChar := #0;
+    self.oEmp_clave_metros.PasswordChar := #0;
+  end
+  else
+  begin
+    self.oEmp_clave_montos.PasswordChar := '*';
+    self.oEmp_clave_metros.PasswordChar := '*';
+  end
+
 end;
 
 procedure TfEmpresa.oNombreKeyPress(Sender: TObject; var Key: Char);

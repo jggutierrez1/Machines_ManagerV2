@@ -1,5 +1,5 @@
 unit Main;
-
+
 interface
 
 uses
@@ -224,6 +224,20 @@ begin
   FormatSettings.ShortTimeFormat := 'hh:nn';
   FormatSettings.LongTimeFormat := 'hh:nn:ss';
   FormatSettings.CurrencyString := '$';
+
+  if (UtilesV20.Is_Super_User() = true) then
+  begin
+    self.Usuarios1.Visible := true;
+    self.c1.Visible := true;
+    self.Configuracin1.Visible := true;
+  end
+  else
+  begin
+    self.Usuarios1.Visible := false;
+    self.c1.Visible := false;
+    self.Configuracin1.Visible := false;
+  end;
+
 end;
 
 procedure TfMain.JCJ2Click(Sender: TObject);
@@ -311,3 +325,4 @@ begin
 end;
 
 end.
+

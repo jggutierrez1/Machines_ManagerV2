@@ -376,7 +376,7 @@ object fCaptura1: TfCaptura1
     end
     object Label10: TLabel
       Left = 30
-      Top = 62
+      Top = 64
       Width = 43
       Height = 13
       Caption = 'Anterior:'

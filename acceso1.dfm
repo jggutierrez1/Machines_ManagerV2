@@ -49,9 +49,8 @@ object facceso1: Tfacceso1
     Height = 21
     PasswordChar = '*'
     TabOrder = 0
-    Text = 'oPass'
   end
-  object BitBtn1: TBitBtn
+  object oBtn_Ok: TBitBtn
     Left = 46
     Top = 88
     Width = 96
@@ -78,9 +77,9 @@ object facceso1: Tfacceso1
     ModalResult = 1
     NumGlyphs = 2
     TabOrder = 1
-    OnClick = BitBtn1Click
+    OnClick = oBtn_OkClick
   end
-  object BitBtn2: TBitBtn
+  object oBtn_Cancel: TBitBtn
     Left = 181
     Top = 88
     Width = 96
@@ -107,7 +106,7 @@ object facceso1: Tfacceso1
     ModalResult = 2
     NumGlyphs = 2
     TabOrder = 2
-    OnClick = BitBtn2Click
+    OnClick = oBtn_CancelClick
   end
   object oQry_Gen: TFDQuery
     Left = 280

@@ -176,8 +176,7 @@ type
     function ConnectServer(pKey: string): Boolean;
     function GetSetting2(pClaveReg: string): Boolean;
     function SaveSetting2(pClaveReg: string): Boolean;
-    function Add_query_in_Combo(pFieldText: string; pFieldKey: string; pSQL: string; var oCombo: TDBComboBoxEh)
-      : Boolean;
+    function Add_query_in_Combo(pFieldText: string; pFieldKey: string; pSQL: string; var oCombo: TDBComboBoxEh): Boolean;
     function LoadDatabaseInServer(pServer: string; var oCombo: TcomboBox): Boolean;
     function GetWindowsDir: TFileName;
     function GetSystemDir: TFileName;
@@ -249,11 +248,9 @@ type
     function Inlist(aCadena: string; aLista: array of string): Boolean;
     function Ctrl_Resize: Boolean;
     procedure PrintLineToGeneric(const line: string);
-    procedure PrintLineOnDotMatrix(cPrinterName: string; cDocName: string; cString: string; bDobleCarr: Boolean;
-      bTest: Boolean = False);
+    procedure PrintLineOnDotMatrix(cPrinterName: string; cDocName: string; cString: string; bDobleCarr: Boolean; bTest: Boolean = False);
     function CenterText(nWidth: integer; sText: string): string;
-    function CadLongitudFija(cadena: string; longitud: integer; posicionIzquierda: Boolean;
-      valorRelleno: string): string;
+    function CadLongitudFija(cadena: string; longitud: integer; posicionIzquierda: Boolean; valorRelleno: string): string;
     function Get_Values3: Boolean;
     procedure QuitarEjecutarEnInicio(NombreEjecutable: string; SoloUnaVez, SoloUsuario: Boolean);
     procedure EjecutarEnInicio(NombrePrograma, NombreEjecutable: string; SoloUnaVez, SoloUsuario: Boolean);
@@ -282,8 +279,7 @@ type
     function GetUNCName(const LocalPath: string): string;
     // function GetIPFromHost(var HostName, IPaddr, WSAErr: string): Boolean;
     function CornerForm(form: TCustomForm; corner: TCorner): Boolean;
-    function Ftp_Is_Alive(cHost: string; cUsername: string = 'remoto'; cPassword: string = '1234';
-      nPort: integer = 21): Boolean;
+    function Ftp_Is_Alive(cHost: string; cUsername: string = 'remoto'; cPassword: string = '1234'; nPort: integer = 21): Boolean;
     function Check_Host_IsAlive(cHost: string; nPort: integer): Boolean;
     procedure InitCheckConnection;
     procedure Split(const Delimiter: Char; Input: string; const Strings: TStrings);
@@ -339,10 +335,9 @@ function TimeADD(TDateTime: TDateTime; nInterval: integer; nValue: integer): str
 function FormatNumber(flt: Double; decimals: integer = 0; Thousands: Boolean = True): string; Overload;
 function FormatNumber(int: Int64; Thousands: Boolean = True): string; Overload;
 function FormatNumber(Str: string; Thousands: Boolean = True): string; Overload;
-function fields_info(var oQryFlds: TFDQuery; field: string = '*'; DBName: string = ''; TableName: string = '')
+function fields_info(var oQryFlds: TFDQuery; field: string = '*'; DBName: string = ''; TableName: string = ''): Boolean; overload;
+function fields_info(oConn_Tmp: TFDConnection; var oQryFlds: TFDQuery; field: string = '*'; DBName: string = ''; TableName: string = '')
   : Boolean; overload;
-function fields_info(oConn_Tmp: TFDConnection; var oQryFlds: TFDQuery; field: string = '*'; DBName: string = '';
-  TableName: string = ''): Boolean; overload;
 
 function Execute_SQL_Script(oConn_Tmp: TFDConnection; pScript: TStrings): Boolean; overload;
 function Execute_SQL_Script(pScript: string): Boolean; Overload;
@@ -357,13 +352,12 @@ function Exec_Select_SQL(var oQry: TFDQuery; sSql: string; oQryExec: Boolean = T
   IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
 function Exec_Select_SQL(var oQry: TFDQuery; sSql: TStringList; oQryExec: Boolean = False; oQryCreate: Boolean = True;
   IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
-function Exec_Select_SQL(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False;
-  oQryCreate: Boolean = True; IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
+function Exec_Select_SQL(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False; oQryCreate: Boolean = True;
+  IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
 function Execute_SQL_Result(pSQL: string): string; overload;
 function Execute_SQL_Result(oConn_Tmp: TFDConnection; pSQL: string): string; overload;
 function Execute_SQL_Query(var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False): Boolean; overload;
-function Execute_SQL_Query(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False)
-  : Boolean; overload;
+function Execute_SQL_Query(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False): Boolean; overload;
 function Execute_SQL_Query(var oQry: TFDQuery; sSql: TStringList; oQryExec: Boolean = False): Boolean; overload;
 function Is_Super_User(): Boolean;
 function RepeatString(const S: string; Count: cardinal): string;
@@ -386,8 +380,8 @@ const
   letters_digits = ['0' .. '9', 'A' .. 'Z', 'a' .. 'z'];
   subdomain_chars = ['-', '0' .. '9', 'A' .. 'Z', 'a' .. 'z'];
 type
-  States = (STATE_BEGIN, STATE_ATOM, STATE_QTEXT, STATE_QCHAR, STATE_QUOTE, STATE_LOCAL_PERIOD,
-    STATE_EXPECTING_SUBDOMAIN, STATE_SUBDOMAIN, STATE_HYPHEN);
+  States = (STATE_BEGIN, STATE_ATOM, STATE_QTEXT, STATE_QCHAR, STATE_QUOTE, STATE_LOCAL_PERIOD, STATE_EXPECTING_SUBDOMAIN, STATE_SUBDOMAIN,
+    STATE_HYPHEN);
 var
   State: States;
   i, n, subdomains: integer;
@@ -506,8 +500,8 @@ begin
       VerQueryValue(Pt, '\', Pt2, Size2);
       with TVSFixedFileInfo(Pt2^) do
       begin
-        Result := IntToStr(HiWord(dwFileVersionMS)) + '.' + IntToStr(LoWord(dwFileVersionMS)) + '.' +
-          IntToStr(HiWord(dwFileVersionLS)) + '.' + IntToStr(LoWord(dwFileVersionLS));
+        Result := IntToStr(HiWord(dwFileVersionMS)) + '.' + IntToStr(LoWord(dwFileVersionMS)) + '.' + IntToStr(HiWord(dwFileVersionLS)) +
+          '.' + IntToStr(LoWord(dwFileVersionLS));
       end;
     finally
       FreeMem(Pt);
@@ -560,8 +554,8 @@ begin
   end;
 end;
 
-function Exec_Select_SQL(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False;
-  oQryCreate: Boolean = True; IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
+function Exec_Select_SQL(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False; oQryCreate: Boolean = True;
+  IsProcedure: Boolean = False; ExecNoOpen: Boolean = False): Boolean; overload;
 begin
   with fUtilesV20 do
   begin
@@ -1545,8 +1539,7 @@ begin
     oPublicCnn_Tmp.Params.Add('MetaCurCatalog=' + oSetting_Tmp.database);
     oPublicCnn_Tmp.LoginPrompt := False;
 
-    if Check_Host_IsAlive(oPublicCnn_Tmp.Params.Values['Server'], StrToInt(oPublicCnn_Tmp.Params.Values['Port'])) = False
-    then
+    if Check_Host_IsAlive(oPublicCnn_Tmp.Params.Values['Server'], StrToInt(oPublicCnn_Tmp.Params.Values['Port'])) = False then
     begin
       Result := False;
       exit;
@@ -1751,8 +1744,7 @@ var
   Response: integer;
 begin
   try
-    sParamet := ' --host=' + trim(oSetting_Fac.host) + ' --user=root --password= -d ' + trim(oSetting_Fac.database) +
-      ' > ' + sFilename;
+    sParamet := ' --host=' + trim(oSetting_Fac.host) + ' --user=root --password= -d ' + trim(oSetting_Fac.database) + ' > ' + sFilename;
     sLineCMD := ExtractFilePath(Application.ExeName) + 'Data\mysqldump.exe ';
     Response := WinExec(PAnsiChar(sLineCMD + sParamet), SW_SHOWNORMAL);
   except
@@ -1806,8 +1798,7 @@ begin
   freeandnil(oFile);
 end;
 
-function TfUtilesV20.Add_query_in_Combo(pFieldText: string; pFieldKey: string; pSQL: string;
-  var oCombo: TDBComboBoxEh): Boolean;
+function TfUtilesV20.Add_query_in_Combo(pFieldText: string; pFieldKey: string; pSQL: string; var oCombo: TDBComboBoxEh): Boolean;
 var
   oQuery1: TFDQuery;
   sText: string;
@@ -2608,8 +2599,7 @@ begin
   Result := StringReplace(Str, '.', FormatSettings.DecimalSeparator, [rfReplaceAll]);
   if Thousands then
   begin
-    if ((Length(Result) >= 1) and (Result[1] = '0')) or
-      ((Length(Result) >= 2) and (Result[1] = '-') and (Result[2] = '0')) then
+    if ((Length(Result) >= 1) and (Result[1] = '0')) or ((Length(Result) >= 2) and (Result[1] = '-') and (Result[2] = '0')) then
       exit;
     p := Pos(FormatSettings.DecimalSeparator, Result);
     if p = 0 then
@@ -2958,8 +2948,8 @@ begin
     CloseHandle(hAccessToken);
     if bSuccess then
     begin
-      AllocateAndInitializeSid(SECURITY_NT_AUTHORITY, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0,
-        0, 0, 0, psidAdministrators);
+      AllocateAndInitializeSid(SECURITY_NT_AUTHORITY, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0,
+        psidAdministrators);
 {$R-}
       for X := 0 to ptgGroups.GroupCount - 1 do
       begin
@@ -3110,8 +3100,7 @@ begin
         cInterval := 'HOUR';
       end;
   end;
-  cSql_Line := 'SELECT DATE_FORMAT(DATE_ADD("' + cDateTime + '",INTERVAL ' + IntToStr(nValue) + ' ' + cInterval +
-    '),"%T") AS xTime ';
+  cSql_Line := 'SELECT DATE_FORMAT(DATE_ADD("' + cDateTime + '",INTERVAL ' + IntToStr(nValue) + ' ' + cInterval + '),"%T") AS xTime ';
   if Exec_Select_SQL(oQry_Gen, cSql_Line, True, True) = True then
     Result := oQry_Gen.FieldByName('xTime').AsString;
   freeandnil(oQry_Gen);
@@ -3126,8 +3115,7 @@ var
   oQry_Gen: TFDQuery;
   cSql_Line: string;
 begin
-  cSql_Line := 'SELECT TIMEDIFF(IFNULL("' + cTime_Ult + '","01:00:00"),IFNULL("' + cTime_Ant +
-    '","00:00:00")) as xTime ';
+  cSql_Line := 'SELECT TIMEDIFF(IFNULL("' + cTime_Ult + '","01:00:00"),IFNULL("' + cTime_Ant + '","00:00:00")) as xTime ';
   Exec_Select_SQL(oQry_Gen, cSql_Line, True, True);
   Result := oQry_Gen.FieldByName('xTime').AsString;
   freeandnil(oQry_Gen);
@@ -3206,8 +3194,7 @@ begin
   if Exec_Select_SQL(oQry_Sec_CD, 'SELECT suc_Id,no_estacion,no_operacion FROM  conf_sistema WHERE suc_Id= ' +
     QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;', True, True) = True then
   begin
-    cOp_idC := trim(IntToStr(iId_Empresa)) + trim(cOp_est) +
-      trim(IntToStr(oQry_Sec_CD.FieldByName('no_operacion').AsInteger + 1));
+    cOp_idC := trim(IntToStr(iId_Empresa)) + trim(cOp_est) + trim(IntToStr(oQry_Sec_CD.FieldByName('no_operacion').AsInteger + 1));
     oQry_Sec_CD.close;
     freeandnil(oQry_Sec_CD);
     Result := cOp_idC;
@@ -3222,8 +3209,8 @@ begin
     cOp_idC := trim(IntToStr(iId_Empresa)) + trim(cOp_est) + '1';
     Result := cOp_idC;
   end;
-  Execute_SQL_Command('UPDATE conf_sistema SET no_operacion = no_operacion + 1 WHERE suc_Id= ' +
-    QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + '; ');
+  Execute_SQL_Command('UPDATE conf_sistema SET no_operacion = no_operacion + 1 WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)) +
+    ' AND no_estacion= ' + QuotedStr(cId_Estacion) + '; ');
 
 end;
 
@@ -3240,26 +3227,26 @@ begin
   begin
     case nOption of
       1:
-        Execute_SQL_Command('UPDATE conf_sistema SET no_cargoinv     = no_cargoinv + 1 WHERE suc_Id= ' +
-          QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
+        Execute_SQL_Command('UPDATE conf_sistema SET no_cargoinv     = no_cargoinv + 1 WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)) +
+          ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
       2:
-        Execute_SQL_Command('UPDATE conf_sistema SET no_descargoinv  = no_descargoinv + 1  WHERE suc_Id= ' +
-          QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
+        Execute_SQL_Command('UPDATE conf_sistema SET no_descargoinv  = no_descargoinv + 1  WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)
+          ) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
       3:
-        Execute_SQL_Command('UPDATE conf_sistema SET no_ordenprod    = no_ordenprod + 1    WHERE suc_Id= ' +
-          QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
+        Execute_SQL_Command('UPDATE conf_sistema SET no_ordenprod    = no_ordenprod + 1    WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)
+          ) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
       4:
-        Execute_SQL_Command('UPDATE conf_sistema SET no_cargoprod    = no_cargoprod + 1    WHERE suc_Id= ' +
-          QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
+        Execute_SQL_Command('UPDATE conf_sistema SET no_cargoprod    = no_cargoprod + 1    WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)
+          ) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
       5:
-        Execute_SQL_Command('UPDATE conf_sistema SET no_descargoprod = no_descargoprod + 1 WHERE suc_Id= ' +
-          QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
+        Execute_SQL_Command('UPDATE conf_sistema SET no_descargoprod = no_descargoprod + 1 WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)
+          ) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
       6:
-        Execute_SQL_Command('UPDATE conf_sistema SET no_tomainv      = no_tomainv + 1      WHERE suc_Id= ' +
-          QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
+        Execute_SQL_Command('UPDATE conf_sistema SET no_tomainv      = no_tomainv + 1      WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)
+          ) + ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;');
     end;
-    if Exec_Select_SQL(oQry_Sec_CD, 'SELECT * FROM  conf_sistema WHERE suc_Id=' + QuotedStr(IntToStr(iId_Empresa)) +
-      ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;', True, True) = True then
+    if Exec_Select_SQL(oQry_Sec_CD, 'SELECT * FROM  conf_sistema WHERE suc_Id=' + QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' +
+      QuotedStr(cId_Estacion) + ' ;', True, True) = True then
     begin
       case nOption of
         1:
@@ -3282,8 +3269,8 @@ begin
   end
   else
   begin
-    if Exec_Select_SQL(oQry_Sec_CD, 'SELECT * FROM  conf_sistema WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)) +
-      ' AND no_estacion= ' + QuotedStr(cId_Estacion) + ' ;', True, True) = True then
+    if Exec_Select_SQL(oQry_Sec_CD, 'SELECT * FROM  conf_sistema WHERE suc_Id= ' + QuotedStr(IntToStr(iId_Empresa)) + ' AND no_estacion= ' +
+      QuotedStr(cId_Estacion) + ' ;', True, True) = True then
     begin
       case nOption of
         1:
@@ -3468,8 +3455,7 @@ begin
   end;
 end;
 
-function TfUtilesV20.CadLongitudFija(cadena: string; longitud: integer; posicionIzquierda: Boolean;
-  valorRelleno: string): string;
+function TfUtilesV20.CadLongitudFija(cadena: string; longitud: integer; posicionIzquierda: Boolean; valorRelleno: string): string;
 var
   i: integer;
 begin
@@ -3801,8 +3787,7 @@ begin
   Strip := Str;
 end; { Func Strip }
 
-function fields_info(var oQryFlds: TFDQuery; field: string = '*'; DBName: string = ''; TableName: string = '')
-  : Boolean; overload;
+function fields_info(var oQryFlds: TFDQuery; field: string = '*'; DBName: string = ''; TableName: string = ''): Boolean; overload;
 var
   cSqlCmdl: string;
 begin
@@ -3828,8 +3813,8 @@ begin
   end;
 end;
 
-function fields_info(oConn_Tmp: TFDConnection; var oQryFlds: TFDQuery; field: string = '*'; DBName: string = '';
-  TableName: string = ''): Boolean; overload;
+function fields_info(oConn_Tmp: TFDConnection; var oQryFlds: TFDQuery; field: string = '*'; DBName: string = ''; TableName: string = '')
+  : Boolean; overload;
 var
   cSqlCmdl: string;
 begin
@@ -4022,8 +4007,7 @@ begin
   if (Estimated_hours + Estimated_Minutes) = 0 then
     Result := 'Tiempo Transcurrido: ' + IntToStr(Estimated_seconds) + ' Segundos. '
   else
-    Result := 'Tiempo Transcurrido: ' + IntToStr(Estimated_hours) + ':' + IntToStr(Estimated_Minutes) + ':' +
-      IntToStr(Estimated_seconds);
+    Result := 'Tiempo Transcurrido: ' + IntToStr(Estimated_hours) + ':' + IntToStr(Estimated_Minutes) + ':' + IntToStr(Estimated_seconds);
 end;
 
 function TfUtilesV20.MapNetworkDriveDLG(const handle: THandle; const uncPath: string): string;
@@ -4194,8 +4178,7 @@ begin
     RaiseLastOSError();
 end;
 
-function TfUtilesV20.Ftp_Is_Alive(cHost: string; cUsername: string = 'remoto'; cPassword: string = '1234';
-  nPort: integer = 21): Boolean;
+function TfUtilesV20.Ftp_Is_Alive(cHost: string; cUsername: string = 'remoto'; cPassword: string = '1234'; nPort: integer = 21): Boolean;
 begin
   try
     begin
@@ -4276,8 +4259,7 @@ begin
   if bCheckActive = False then
     cSql := 'SELECT * FROM estaciones WHERE UCASE(TRIM(e_descripcion)) = ' + QuotedStr(UpperCase(trim(sEstacion)))
   else
-    cSql := 'SELECT * FROM estaciones WHERE e_activo = 1 AND UCASE(TRIM(e_descripcion)) = ' +
-      QuotedStr(UpperCase(trim(sEstacion)));
+    cSql := 'SELECT * FROM estaciones WHERE e_activo = 1 AND UCASE(TRIM(e_descripcion)) = ' + QuotedStr(UpperCase(trim(sEstacion)));
 
   if Exec_Select_SQL(oQry1, cSql, True, True, False) = True then
     Result := oQry1.FieldByName('e_id').AsString
@@ -4472,8 +4454,7 @@ begin
   end;
 end;
 
-function Execute_SQL_Query(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False)
-  : Boolean; overload;
+function Execute_SQL_Query(oConn_Tmp: TFDConnection; var oQry: TFDQuery; sSql: string; oQryExec: Boolean = False): Boolean; overload;
 begin
   with fUtilesV20 do
   begin
@@ -4562,9 +4543,9 @@ begin
   oQry_UsrCk := TFDQuery.Create(nil);
 
   cSql_Ln := '';
-  cSql_Ln := cSql_Ln + 'SELECT u_usuario,u_acceso1,BASE64_DECODE(u_clave) AS clave ';
+  cSql_Ln := cSql_Ln + 'SELECT u_acceso1 ';
   cSql_Ln := cSql_Ln + 'FROM usuarios ';
-  cSql_Ln := cSql_Ln + 'WHERE  u_usuario="' + trim(UtilesV20.sUserName) + '"';
+  cSql_Ln := cSql_Ln + 'WHERE  u_usuario=' + QuotedStr(trim(UtilesV20.sUserName)) + ' ';
   cSql_Ln := cSql_Ln + 'ORDER BY u_usuario ';
   UtilesV20.Exec_Select_SQL(oQry_UsrCk, cSql_Ln, True, False);
 
