@@ -285,6 +285,7 @@ begin
     utilesV20.sPathReports := ExtractFilePath(application.ExeName) + 'Reportes';
     utilesV20.sSlectedHost := trim(self.oLst_Server.Text);
     utilesV20.iId_Empresa := oQryUser.FieldByName('emp_id').AsInteger;
+    utilesV20.cDe_Empresa := self.oLst_emp.Text;
     utilesV20.sUserName := trim(self.oUser.Text);
     // utilesV20.nSuperUsr := iDB_Acce;
     fUtilesV20.Get_Values3;

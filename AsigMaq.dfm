@@ -69,7 +69,7 @@ object fAsigMaq: TfAsigMaq
         Top = 39
         Width = 118
         Height = 16
-        Caption = 'Lista de clientes:'
+        Caption = 'Lista de clientes.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -15
@@ -148,11 +148,11 @@ object fAsigMaq: TfAsigMaq
         DynProps = <>
         Enabled = False
         FooterParams.Color = clWindow
-        IndicatorOptions = [gioShowRowIndicatorEh]
         TabOrder = 0
         OnExit = oDBGrid_AsignExit
         Columns = <
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'UniCod'
@@ -162,6 +162,7 @@ object fAsigMaq: TfAsigMaq
             Title.Caption = 'C'#243'digo'
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'maqtc_modelo'
@@ -171,6 +172,7 @@ object fAsigMaq: TfAsigMaq
             Width = 147
           end
           item
+            CellButtons = <>
             Checkboxes = True
             DynProps = <>
             EditButtons = <>
@@ -188,6 +190,7 @@ object fAsigMaq: TfAsigMaq
         Top = 61
         Width = 292
         Height = 24
+        DynProps = <>
         DataField = ''
         EditButtons = <>
         Font.Charset = DEFAULT_CHARSET
@@ -539,11 +542,11 @@ object fAsigMaq: TfAsigMaq
         DynProps = <>
         Enabled = False
         FooterParams.Color = clWindow
-        IndicatorOptions = [gioShowRowIndicatorEh]
         TabOrder = 5
         OnExit = oDBGrid_DispExit
         Columns = <
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'UniCod'
@@ -552,6 +555,7 @@ object fAsigMaq: TfAsigMaq
             Title.Caption = 'C'#243'digo'
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'maqtc_modelo'
@@ -561,6 +565,7 @@ object fAsigMaq: TfAsigMaq
             Width = 147
           end
           item
+            CellButtons = <>
             Checkboxes = True
             DynProps = <>
             EditButtons = <>

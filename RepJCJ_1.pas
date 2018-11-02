@@ -15,7 +15,7 @@ uses
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Phys.MySQL,
-  FireDAC.Phys.MySQLDef, inifiles, FireDAC.VCLUI.Wait;
+  FireDAC.Phys.MySQLDef, inifiles, FireDAC.VCLUI.Wait, DateUtils;
 
 type
   TFRepJCJ_1 = class(TForm)
@@ -874,7 +874,8 @@ BEGIN
   cSql_Ln := cSql_Ln + '		SUM(op.op_tot_sub)      AS op_tot_sub, ';
   cSql_Ln := cSql_Ln + '		SUM(op.op_tot_netoemp)  AS op_tot_netoemp, ';
   cSql_Ln := cSql_Ln + '		SUM(op.op_tot_brutoemp) AS op_tot_brutoemp, ';
-  cSql_Ln := cSql_Ln + '		IF(SUM(op.op_tot_colect)=0,0,(SUM(op.op_tot_cred)/SUM(op.op_tot_colect))*100) AS Porc_Pag, ';
+  cSql_Ln := cSql_Ln +
+    '		IF(SUM(op.op_tot_colect)=0,0,(SUM(op.op_tot_cred)/SUM(op.op_tot_colect))*100) AS Porc_Pag, ';
   cSql_Ln := cSql_Ln +
     '		@NetWin := ROUND(IF(SUM(op.op_tot_colect)=0,0.00,(SUM(op.op_tot_colect)-SUM(op.op_tot_cred))),2) AS NetWinM ';
   cSql_Ln := cSql_Ln + '	FROM operacion op ';
@@ -928,6 +929,9 @@ var
   sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Modelo: string;
   sFecha_Ini: string;
   sFecha_Fin: string;
+  dFech_Ini: Tdatetime;
+  dFech_Fin: Tdatetime;
+
 begin
 
   FormatSettings.ShortDateFormat := 'yyyy-MM-dd';
@@ -936,10 +940,22 @@ begin
   FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
 
   reportes.Initialize;
-  reportes.Report.Vars[1].Name := 'Fecha_desde';
-  reportes.Report.Vars[1].Value := FormatDateTime('dd/mm/yyyy', self.oFecha1.Value);
-  reportes.Report.Vars[2].Name := 'Fecha_hasta';
-  reportes.Report.Vars[2].Value := FormatDateTime('dd/mm/yyyy', self.oFecha2.Value);
+  if (self.oFecha1.EditFormat <> 'MM/YYYY') then
+  BEGIN
+    reportes.Report.Vars[1].Name := 'Fecha_desde';
+    reportes.Report.Vars[1].Value := FormatDateTime('dd/mm/yyyy', self.oFecha1.Value);
+    reportes.Report.Vars[2].Name := 'Fecha_hasta';
+    reportes.Report.Vars[2].Value := FormatDateTime('dd/mm/yyyy', self.oFecha2.Value);
+  END
+  else
+  begin
+    dFech_Ini := EncodeDateTime(YearOf(self.oFecha1.Value), monthof(self.oFecha1.Value), 01, 01, 00, 00, 789);
+    dFech_Fin := EncodeDateTime(YearOf(self.oFecha1.Value), monthof(self.oFecha1.Value) + 1, 01, 01, 00, 00, 789) - 1;
+    reportes.Report.Vars[1].Name := 'Fecha_desde';
+    reportes.Report.Vars[1].Value := FormatDateTime('dd/mm/yyyy', dFech_Ini);
+    reportes.Report.Vars[2].Name := 'Fecha_hasta';
+    reportes.Report.Vars[2].Value := FormatDateTime('dd/mm/yyyy', dFech_Fin);
+  end;
   reportes.oFrom := FRepJCJ_1;
   sLn1 := 'SELECT * FROM empresas WHERE emp_id= ' + QuotedStr(IntToStr(UtilesV20.iId_Empresa)) +
     ' ORDER BY emp_descripcion ';

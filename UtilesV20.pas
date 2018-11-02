@@ -310,6 +310,7 @@ var
   iUserID: integer;
   sSlectedHost: string;
   iId_Empresa: integer;
+  cDe_Empresa: String;
   cId_Estacion: string = '';
   bId_Estacion_Force: Boolean;
   iUser_Logged: integer = 0;

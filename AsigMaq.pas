@@ -14,7 +14,8 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Phys.MySQL,
+  FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait, EhLibVCL;
 
 type
   TfAsigMaq = class(TForm)
@@ -115,6 +116,8 @@ begin
   self.oTbl_Ctes.Filter := '(cte_inactivo=0) AND (cte_emp_id=0 OR cte_emp_id=' + IntToStr(UtilesV20.iId_Empresa) + ')';
   self.oTbl_Ctes.Filtered := TRUE;
   self.oTbl_Ctes.First;
+
+  self.Label1.Caption := 'Lista de clientes de [' + UtilesV20.cDe_Empresa + '] O clientes com varias empresas.';
 
   if oTbl_Ctes.FieldByName('cte_id').Value <> null then
   begin

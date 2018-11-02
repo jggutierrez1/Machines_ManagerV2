@@ -155,7 +155,7 @@ object fCaptura1: TfCaptura1
     ParentFont = False
   end
   object Label5: TLabel
-    Left = 217
+    Left = 185
     Top = 11
     Width = 61
     Height = 13
@@ -173,7 +173,7 @@ object fCaptura1: TfCaptura1
     OnDblClick = Label5DblClick
   end
   object Label6: TLabel
-    Left = 403
+    Left = 355
     Top = 11
     Width = 63
     Height = 13
@@ -329,7 +329,7 @@ object fCaptura1: TfCaptura1
     TabOrder = 7
   end
   object oMaquina: TDBEdit
-    Left = 284
+    Left = 252
     Top = 8
     Width = 90
     Height = 21
@@ -402,7 +402,7 @@ object fCaptura1: TfCaptura1
       ParentFont = False
     end
     object Label12: TLabel
-      Left = 201
+      Left = 197
       Top = 62
       Width = 43
       Height = 13
@@ -600,7 +600,7 @@ object fCaptura1: TfCaptura1
       ParentFont = False
     end
     object Label17: TLabel
-      Left = 30
+      Left = 32
       Top = 62
       Width = 43
       Height = 13
@@ -2351,9 +2351,9 @@ object fCaptura1: TfCaptura1
   end
   object oDoc_Fnd: TEdit
     Tag = 1
-    Left = 472
+    Left = 424
     Top = 35
-    Width = 89
+    Width = 146
     Height = 24
     Color = clMoneyGreen
     Font.Charset = DEFAULT_CHARSET
@@ -2368,9 +2368,9 @@ object fCaptura1: TfCaptura1
     OnKeyPress = oDoc_FndKeyPress
   end
   object oDocumento: TDBEdit
-    Left = 472
+    Left = 424
     Top = 8
-    Width = 89
+    Width = 146
     Height = 21
     DataField = 'op_nodoc'
     DataSource = oDC_Operacion

@@ -333,7 +333,7 @@ end;
 procedure TfCaptura1.Label10Click(Sender: TObject);
 begin
 
-  if (iOption = 1) then
+  if ((iOption = 1) or (iOption = 2)) then
   begin
     if (UtilesV20.Is_Super_User() = true) then
       self.bOk_Chg_Mts := true
@@ -363,7 +363,7 @@ end;
 
 procedure TfCaptura1.Label12Click(Sender: TObject);
 begin
-  if (iOption = 1) then
+  if ((iOption = 1) or (iOption = 2)) then
   begin
     if (UtilesV20.Is_Super_User() = true) then
       self.bOk_Chg_Mts := true
@@ -429,7 +429,7 @@ end;
 
 procedure TfCaptura1.Label17Click(Sender: TObject);
 begin
-  if (iOption = 1) then
+  if ((iOption = 1) or (iOption = 2)) then
   begin
     if (UtilesV20.Is_Super_User() = true) then
       self.bOk_Chg_Mts := true
@@ -459,7 +459,7 @@ end;
 
 procedure TfCaptura1.Label19Click(Sender: TObject);
 begin
-  if (iOption = 1) then
+  if ((iOption = 1) or (iOption = 2)) then
   begin
     if (UtilesV20.Is_Super_User() = true) then
       self.bOk_Chg_Mts := true
@@ -653,16 +653,31 @@ begin
   dIni := self.otOperaciones.FieldByName('op_fecha_alta').AsDateTime;
   dEnd := fUtilesV20.DateTimeAdd(self.otOperaciones.FieldByName('op_fecha_alta').AsDateTime, dtpDay, 7);
 
-  if (DateUtils.DateInRange(now(), dIni, dEnd) = false) then
+  if (UtilesV20.Is_Super_User() = true) then
   begin
-    Application.CreateForm(Tfacceso1, facceso1);
-    facceso1.ShowModal;
-    if (facceso1.bPass_Ok = false) then
+    self.bOk_Chg_Mts := true;
+  end
+  ELSE
+  begin
+    if (self.bOk_Chg_Mts = false) then
     begin
-      Application.MessageBox('No cuenta con permisos para relalizar esta operación?', '', MB_OK);
-      exit;
+
+      if (DateUtils.DateInRange(now(), dIni, dEnd) = false) then
+      begin
+        Application.CreateForm(Tfacceso1, facceso1);
+        facceso1.ShowModal;
+        if (facceso1.bPass_Ok = false) then
+        begin
+          Application.MessageBox('No cuenta con permisos para relalizar esta operación?', '', MB_OK);
+          self.bOk_Chg_Mts := false;
+          exit;
+        end
+        ELSE
+          self.bOk_Chg_Mts := true;
+
+        freeandnil(facceso1);
+      end;
     end;
-    freeandnil(facceso1);
   end;
 
   iOption := 2;
