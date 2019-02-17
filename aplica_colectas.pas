@@ -12,14 +12,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, Vcl.ComCtrls,
   Vcl.StdCtrls, Vcl.Buttons, PngBitBtn, FireDAC.Comp.ScriptCommands,
-  FireDAC.Stan.Util, FireDAC.Comp.Script, ResizeKit, System.DateUtils,
-  System.JSON,
-  System.JSON.BSON,
-  System.JSON.Writers,
-  System.JSON.Builders,
-  IPPeerClient, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope, REST.Response.Adapter,
-  REST.Types;
-
+  FireDAC.Stan.Util, FireDAC.Comp.Script, ResizeKit, System.DateUtils;
 type
   Tfaplica_colectas = class(TForm)
     oConection: TFDConnection;
@@ -69,9 +62,9 @@ type
     ResizeKit1: TResizeKit;
     oQry_TmpCab: TFDQuery;
     oQry_TmpDet: TFDQuery;
-    RESTClient1: TRESTClient;
-    RESTRequest1: TRESTRequest;
-    RESTResponse1: TRESTResponse;
+    oTmp_Opop_fecha: TDateTimeField;
+    oTmp_Opop_tot_porc_cons: TBCDField;
+    oTmp_Opop_fact_global: TWideStringField;
     procedure oBtnDeleteClick(Sender: TObject);
     procedure oBtnExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -237,7 +230,7 @@ begin
   cSql_ln := cSql_ln + ' 	op.op_tot_brutoemp = IF(ct.cte_poc_ret=100, op.op_tot_tot , (op.op_tot_tot - op.op_tot_brutoloc)   ), ';
   cSql_ln := cSql_ln + ' 	op.op_tot_netoloc	 = (op.op_tot_dev + op.op_tot_otros + op.op_tot_cred + op.op_tot_brutoloc), ';
   cSql_ln := cSql_ln +
-    ' 	op.op_tot_netoemp	 = (op.op_tot_timbres + op.op_tot_impmunic + op.op_tot_impjcj + op.op_tot_tec + op.op_tot_brutoemp) ';
+    ' 	op.op_tot_netoemp	 = (op.op_tot_porc_cons + op.op_tot_timbres + op.op_tot_impmunic + op.op_tot_impjcj + op.op_tot_tec + op.op_tot_brutoemp) ';
   cSql_ln := cSql_ln + 'WHERE (op.op_emp_id ="' + trim(cEmp_Id) + '") ';
   cSql_ln := cSql_ln + 'AND 	(op.id_device ="' + trim(cDev_Id) + '") ';
   cSql_ln := cSql_ln + 'AND 	(op.cte_id    ="' + trim(cCte_Id) + '") ';
@@ -254,6 +247,7 @@ begin
   self.oTmp_Op.First;
   MessageDlg('Proceso finalizado.', mtConfirmation, [mboK], 0);
   self.oBtnApply.Enabled := true;
+  self.PageControl1.TabIndex := 0;
 end;
 
 procedure Tfaplica_colectas.oBtnDeleteClick(Sender: TObject);
@@ -336,6 +330,7 @@ begin
   cSqlLn := cSqlLn + ' SUM(op.op_tot_impmunic) AS op_tot_impmunic, ';
   cSqlLn := cSqlLn + ' SUM(op.op_tot_impjcj) AS op_tot_impjcj, ';
   cSqlLn := cSqlLn + ' SUM(op.op_tot_timbres) AS op_tot_timbres, ';
+  cSqlLn := cSqlLn + ' SUM(op.op_tot_porc_cons) AS op_tot_porc_cons, ';
   cSqlLn := cSqlLn + ' SUM(op.op_tot_tec) AS op_tot_tec, ';
   cSqlLn := cSqlLn + ' SUM(op.op_tot_dev) AS op_tot_dev, ';
   cSqlLn := cSqlLn + ' SUM(op.op_tot_otros) AS op_tot_otros, ';
@@ -371,8 +366,8 @@ end;
 function Tfaplica_colectas.Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string): boolean;
 var
   cMaq_Chap, cMaq_Mode: string;
-  ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_tecn, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp,
-    ctot_nloc, ctot_nemp, ctot_bajp, ctot_dev: String;
+  ctot_cole, ctot_impu, ctot__jcj, ctot_timb, ctot_cons, ctot_tecn, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota, ctot_bloc,
+    ctot_bemp, ctot_nloc, ctot_nemp, ctot_bajp, ctot_dev: String;
   cLine: String;
   cEmp_De, cCte_De: string;
 begin
@@ -385,18 +380,18 @@ begin
   end
   else
   begin
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('* * * ' + trim(cEmp_De) + ' * * *', 200));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('LISTADO DE MAQUINAS COLECTADAS', 200));
-    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('CLIENTE: [' + cCte_Id + '] / [' + trim(cCte_De) + ']', 200));
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 210));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('* * * ' + trim(cEmp_De) + ' * * *', 210));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('LISTADO DE MAQUINAS COLECTADAS', 210));
+    self.otext_lst2_t.Lines.Append(Utilesv20.CenterString('CLIENTE: [' + cCte_Id + '] / [' + trim(cCte_De) + ']', 210));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 210));
 
     self.oQry_Prn_Maq.First;
-    cLine := String.format('%8s %18s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s',
-      [' CHAPA ', ' MODELO ', ' COL ', ' MUN ', ' JCJ ', ' TIM ', ' TEC ', ' DEV ', ' OTR ', ' CRED.', ' SUBT ', ' IMP.', ' TOT ', ' BLOC ',
-      ' BEMP ', ' NLOC ', ' NEMP ']);
+    cLine := String.format('%8s %18s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s %10s',
+      [' CHAPA ', ' MODELO ', ' COL ', ' MUN ', ' JCJ ', ' TIM ', ' CONS', ' TEC ', ' DEV ', ' OTR ', ' CRED.', ' SUBT ', ' IMP.', ' TOT ',
+      ' BLOC ', ' BEMP ', ' NLOC ', ' NEMP ']);
     self.otext_lst2_t.Lines.Append(cLine);
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 210));
 
     while not self.oQry_Prn_Maq.Eof do
     begin
@@ -407,6 +402,7 @@ begin
       ctot_impu := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_impmunic').AsFloat]);
       ctot__jcj := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_impjcj').AsFloat]);
       ctot_timb := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_timbres').AsFloat]);
+      ctot_cons := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_porc_cons').AsFloat]);
       ctot_tecn := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_tec').AsFloat]);
       ctot_otos := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_otros').AsFloat]);
       ctot_dev := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_dev').AsFloat]);
@@ -420,14 +416,15 @@ begin
       ctot_nemp := String.format('%10.2f', [self.oQry_Prn_Maq.FieldByName('op_tot_netoemp').AsFloat]);
       ctot_bajp := String.format('%2d', [self.oQry_Prn_Maq.FieldByName('op_baja_prod').AsInteger]);
 
-      cLine := String.format('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s', [cMaq_Chap, cMaq_Mode, ctot_cole, ctot_impu, ctot__jcj,
-        ctot_timb, ctot_tecn, ctot_dev, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp]);
+      cLine := String.format('%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s', [cMaq_Chap, cMaq_Mode, ctot_cole, ctot_impu,
+        ctot__jcj, ctot_timb, ctot_cons, ctot_tecn, ctot_dev, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp,
+        ctot_nloc, ctot_nemp]);
 
       self.otext_lst2_t.Lines.Append(cLine);
       self.oQry_Prn_Maq.Next;
     end;
 
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 210));
     cLine := String.format('%s %6s', ['TOTAL DE MAQUNAS: ', trim(IntToStr(self.oQry_Prn_Maq.RecordCount))]);
     self.otext_lst2_t.Lines.Append(cLine);
 
@@ -446,6 +443,7 @@ begin
   cSqlLn := cSqlLn + 'SUM(op.op_tot_impmunic) AS op_tot_impmunic, ';
   cSqlLn := cSqlLn + 'SUM(op.op_tot_impjcj) AS op_tot_impjcj, ';
   cSqlLn := cSqlLn + 'SUM(op.op_tot_timbres) AS op_tot_timbres, ';
+  cSqlLn := cSqlLn + 'SUM(op.op_tot_porc_cons) AS op_tot_porc_cons, ';
   cSqlLn := cSqlLn + 'SUM(op.op_tot_tec) AS op_tot_tec, ';
   cSqlLn := cSqlLn + 'SUM(op.op_tot_dev) AS op_tot_dev, ';
   cSqlLn := cSqlLn + 'SUM(op.op_tot_otros) AS op_tot_otros, ';
@@ -499,6 +497,8 @@ begin
       self.otext_lst2_t.Lines.Append('TIMBRES    : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_timbres').AsFloat]));
       self.otext_lst2_t.Lines.Append('IMUESTOS   : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_impmunic').AsFloat]));
       self.otext_lst2_t.Lines.Append('J.C.J      : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_impjcj').AsFloat]));
+      self.otext_lst2_t.Lines.Append('CONSESION  : ' + String.format('%10.2f',
+        [self.oQry_Prn_Mnt.FieldByName('op_tot_porc_cons').AsFloat]));
       self.otext_lst2_t.Lines.Append('SERV.TEC.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_tec').AsFloat]));
       self.otext_lst2_t.Lines.Append('TOT.DEVO.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_dev').AsFloat]));
       self.otext_lst2_t.Lines.Append('TOT.OTRO   : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_otros').AsFloat]));
@@ -512,7 +512,7 @@ begin
       self.otext_lst2_t.Lines.Append('NETO EMP.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_netoemp').AsFloat]));
       self.oQry_Prn_Mnt.Next;
     end;
-    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
+    self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 210));
 
     result := true;
   end;

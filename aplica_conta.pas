@@ -49,6 +49,9 @@ type
     oDs_Qry_Op: TDataSource;
     oQry_Op: TFDQuery;
     DBGridEh2: TDBGridEh;
+    RESTClient1: TRESTClient;
+    RESTRequest1: TRESTRequest;
+    RESTResponse1: TRESTResponse;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Make_Qry_Det;
@@ -60,14 +63,23 @@ type
     Function Make_Json_Fact: WideString;
     procedure Make_Json_Interf;
     procedure oBtnApply_InterfuerzaClick(Sender: TObject);
+    function Send_Interfuerza(cJson: WideString): String;
+    function Parse_JSonValue(cJson: WideString): boolean;
   private
     { Private declarations }
   public
     { Public declarations }
   end;
 
+type
+  TJsonResp = object
+    Response: boolean;
+    OperNumb: string;
+  end;
+
 var
   faplica_conta: Tfaplica_conta;
+  oJsonResp: TJsonResp;
 
 implementation
 
@@ -165,27 +177,27 @@ begin
   sFecha_Fin := DateToStr(self.oFecha2.Value);
   FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
 
-  sCod_Emp := self.oLst_emp.KeyValue;
-  sCod_Cte := fUtilesV20.iif(self.oAll_Ctes.Checked = true, '%', self.oLst_Ctes.KeyValue);
+  sCod_Emp := trim(self.oLst_emp.KeyValue);
+  sCod_Cte := fUtilesV20.iif(self.oAll_Ctes.Checked = true, '%', trim(self.oLst_Ctes.KeyValue));
 
   cSql_Ln := '';
   cSql_Ln := cSql_Ln + 'SELECT ';
   cSql_Ln := cSql_Ln + ' `id_autoin`, `op_emp_id`, `op_fecha`, `cte_id`, `cte_nombre_loc`, ';
-  cSql_Ln := cSql_Ln + ' `op_tot_colect`, `op_tot_impjcj`, `op_tot_tec`,';
+  cSql_Ln := cSql_Ln + ' `op_tot_colect`, `op_tot_impjcj`,`op_tot_porc_cons`, `op_tot_tec`,';
   cSql_Ln := cSql_Ln + ' `op_tot_dev`, `op_tot_otros`, `op_tot_cred`, `op_cal_cred`, `op_tot_sub`, `op_tot_itbm`,';
   cSql_Ln := cSql_Ln + ' `op_tot_tot`,`op_tot_brutoemp`, `op_tot_netoemp`, ';
   cSql_Ln := cSql_Ln + ' `id_device`,`id_group` ';
   cSql_Ln := cSql_Ln + 'FROM operacionG ';
-  cSql_Ln := cSql_Ln + 'WHERE (`op_aplica_interf` =0) ';
+  cSql_Ln := cSql_Ln + 'WHERE (ifnull(`op_aplica_interf`,0) =0) ';
 
-  if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
-    cSql_Ln := cSql_Ln + 'AND (`cte_id`="' + trim(sCod_Cte) + '") ';
+  if not((trim(sCod_Cte) = '%') or (sCod_Cte = '')) then
+    cSql_Ln := cSql_Ln + 'AND (`cte_id`="' + sCod_Cte + '") ';
 
   cSql_Ln := cSql_Ln + 'AND   (';
   cSql_Ln := cSql_Ln + '(DATE_FORMAT(`op_fecha`, "%Y-%m-%d") >= "' + sFecha_Ini + '") AND ';
   cSql_Ln := cSql_Ln + '(DATE_FORMAT(`op_fecha`, "%Y-%m-%d") <= "' + sFecha_Fin + '") ';
   cSql_Ln := cSql_Ln + '      )  ';
-  cSql_Ln := cSql_Ln + 'ORDER BY `op_emp_id`, `op_fecha`, `cte_id` ';
+  cSql_Ln := cSql_Ln + 'ORDER BY `op_emp_id`, `op_fecha`, `cte_id` LIMIT 20';
 
   // cSql_Ln := cSql_Ln + 'LIMIT 50 ';
   self.oQry_Op.close;
@@ -208,18 +220,20 @@ begin
 
   cSql_Ln := '';
   cSql_Ln := cSql_Ln + 'SELECT ';
-  cSql_Ln := cSql_Ln + ' `id_op`,`op_emp_id`,`op_fecha`,`cte_id`,`cte_nombre_loc`,`maqtc_id`,`op_chapa`,';
-  cSql_Ln := cSql_Ln + ' `jueg_cod`,`op_nodoc`,`op_modelo`,`op_tot_colect`,`op_tot_impjcj`,`op_tot_tec`,';
-  cSql_Ln := cSql_Ln + ' `op_tot_dev`,`op_tot_otros`,`op_tot_cred`,`op_cal_cred`,`op_tot_sub`,`op_tot_itbm`,';
-  cSql_Ln := cSql_Ln + ' `op_tot_tot`,`op_tot_brutoemp`, `op_tot_netoemp`, `op_baja_prod`, ';
-  cSql_Ln := cSql_Ln + ' `id_device`,`id_group` ';
-  cSql_Ln := cSql_Ln + 'FROM operacion ';
-  cSql_Ln := cSql_Ln + 'WHERE (`op_aplica_interf` =0) ';
-  cSql_Ln := cSql_Ln + 'AND   (`op_emp_id`="' + trim(cEmp_Id) + '") ';
-  cSql_Ln := cSql_Ln + 'AND   (`cte_id`   ="' + trim(cCte_Id) + '") ';
-  cSql_Ln := cSql_Ln + 'AND   (`id_device`="' + trim(cDevice) + '") ';
-  cSql_Ln := cSql_Ln + 'AND   (`id_group` ="' + trim(cGrp_Id) + '") ';
-  cSql_Ln := cSql_Ln + 'ORDER BY `op_emp_id`, `op_fecha`, `cte_id`, `op_chapa` ';
+  cSql_Ln := cSql_Ln + ' op.`id_op`,op.`op_emp_id`,op.`op_fecha`,op.`cte_id`,op.`cte_nombre_loc`,op.`maqtc_id`,op.`op_chapa`,';
+  cSql_Ln := cSql_Ln +
+    ' op.`jueg_cod`,op.`op_nodoc`,op.`op_modelo`,op.`op_tot_colect`,op.`op_tot_impjcj`,op.`op_tot_porc_cons`,op.`op_tot_tec`,';
+  cSql_Ln := cSql_Ln + ' op.`op_tot_dev`,op.`op_tot_otros`,op.`op_tot_cred`,op.`op_cal_cred`,op.`op_tot_sub`,op.`op_tot_itbm`,';
+  cSql_Ln := cSql_Ln + ' op.`op_tot_tot`,op.`op_tot_brutoemp`, op.`op_tot_netoemp`, op.`op_baja_prod`, ';
+  cSql_Ln := cSql_Ln + ' op.`id_device`,op.`id_group`,ct.`cte_id_interf` ';
+  cSql_Ln := cSql_Ln + 'FROM operacion op ';
+  cSql_Ln := cSql_Ln + 'INNER JOIN clientes ct ON (op.`cte_id`= ct.`cte_id`) ';
+  cSql_Ln := cSql_Ln + 'WHERE (IFNULL(op.`op_aplica_interf`,0) =0) ';
+  cSql_Ln := cSql_Ln + 'AND   (op.`op_emp_id`="' + trim(cEmp_Id) + '") ';
+  cSql_Ln := cSql_Ln + 'AND   (op.`cte_id`   ="' + trim(cCte_Id) + '") ';
+  cSql_Ln := cSql_Ln + 'AND   (op.`id_device`="' + trim(cDevice) + '") ';
+  cSql_Ln := cSql_Ln + 'AND   (op.`id_group` ="' + trim(cGrp_Id) + '") ';
+  cSql_Ln := cSql_Ln + 'ORDER BY op.`op_emp_id`, op.`op_fecha`, op.`cte_id`, op.`op_chapa`';
 
   self.oQry_Det.close;
   Utilesv20.Exec_Select_SQL(self.oQry_Det, cSql_Ln);
@@ -260,24 +274,81 @@ begin
 end;
 
 procedure Tfaplica_conta.Make_Json_Interf;
+var
+  cJsonBody: WideString;
+  cJsonResp: WideString;
+  JSonObject: TJSonObject;
+  JSonValue: TJSonValue;
+  cSql_Ln: string;
+  cOp_id: string;
+  cChapa: string;
+  cValue: string;
 begin
   self.oJson_Script.Text := '';
   while not self.oQry_Det.eof do
   begin
-    self.oJson_Script.Lines.Append(self.Make_Json_Fact);
+    cOp_id := self.oQry_Det.FieldByName('id_op').AsString;
+    cChapa := self.oQry_Det.FieldByName('op_chapa').AsString;
+    cJsonBody := self.Make_Json_Fact;
+    cJsonResp := self.Send_Interfuerza(cJsonBody);
+    if (self.Parse_JSonValue(cJsonResp) = true) then
+    begin
+      cSql_Ln := '';
+      cSql_Ln := cSql_Ln + 'UPDATE operacion SET ';
+      cSql_Ln := cSql_Ln + '  op_aplica_interf=1, ';
+      cSql_Ln := cSql_Ln + '  op_aplica_num="' + trim(oJsonResp.OperNumb) + '" ';
+      cSql_Ln := cSql_Ln + 'WHERE (id_op="' + cOp_id + '") ';
+      Utilesv20.Execute_SQL_Command(cSql_Ln);
+    end;
+    cValue := 'CHAPA[' + cChapa + ']->' + fUtilesV20.iif(oJsonResp.Response = true, 'Enviada:[' + trim(oJsonResp.OperNumb) + ']',
+      'Falló el envío:.');
+    self.oJson_Script.Lines.Add(cValue);
     self.oQry_Det.Next;
   end;
 end;
 
+function Tfaplica_conta.Parse_JSonValue(cJson: WideString): boolean;
+var
+  JSonObject: TJSonObject;
+  JSonValue: TJSonValue;
+  // st: string;
+Begin
+  // st := '{"class": "PUT","action": "invoice","response": {"response": "Success", "id": "00012"}}';
+  JSonObject := TJSonObject.Create;
+  JSonValue := JSonObject.ParseJSONValue(cJson);
+  JSonValue := (JSonValue as TJSonObject).Get('response').JSonValue;
+  oJsonResp.Response := fUtilesV20.iif(UpperCase(JSonValue.GetValue<string>('response')) = UpperCase('Success'), true, false);
+  oJsonResp.OperNumb := JSonValue.GetValue<string>('id');
+  JSonObject.Free;
+  result := oJsonResp.Response;
+End;
+
+function Tfaplica_conta.Send_Interfuerza(cJson: WideString): String;
+var
+  cJsonResp: WideString;
+  cResult: string;
+begin
+  cResult := '';
+  cJsonResp := '';
+  if (trim(cJson) <> '') then
+  begin
+    self.RESTRequest1.Params.Clear;
+    self.RESTRequest1.AddParameter('X-IFX-Token', 'f0210ebdb504c31b20272772a11c55bf', TRESTRequestParameterKind.pkHTTPHEADER);
+    self.RESTRequest1.Body.Add(trim(cJson), REST.Types.ContentTypeFromString('application/json'));
+    self.RESTRequest1.Execute;
+    cResult := self.RESTResponse1.StatusText;
+    cJsonResp := self.RESTResponse1.Content;
+  end;
+  result := cJsonResp;
+end;
+
 Function Tfaplica_conta.Make_Json_Fact: WideString;
 var
-  oOMain: TJSONObject;
-  oOData: TJSONObject;
+  oOMain: TJSonObject;
+  oOData: TJSonObject;
   oALines: TJSONArray;
-  oOLines1, oOLines2, oOLines3, oOLines4, oOLines5, oOLines6: TJSONObject;
-  fMonSub: extended;
-  fMonImp: extended;
-  fMonTot: extended;
+  oOLines1, oOLines2, oOLines3, oOLines4, oOLines5, oOLines6: TJSonObject;
+  fMonSub, fMonImp, fMonCon, fMonTot: extended;
   fLinVal: extended;
   cLinVal: String;
   cLineNo: string;
@@ -298,27 +369,28 @@ begin
   // while not oQry_Det.eof do
   begin
 
-    oOMain := TJSONObject.Create;
-    oOData := TJSONObject.Create;
+    oOMain := TJSonObject.Create;
+    oOData := TJSonObject.Create;
     oALines := TJSONArray.Create;
-    oOLines1 := TJSONObject.Create;
-    oOLines2 := TJSONObject.Create;
-    oOLines3 := TJSONObject.Create;
-    oOLines4 := TJSONObject.Create;
-    oOLines5 := TJSONObject.Create;
-    oOLines6 := TJSONObject.Create;
+    oOLines1 := TJSonObject.Create;
+    oOLines2 := TJSonObject.Create;
+    oOLines3 := TJSonObject.Create;
+    oOLines4 := TJSonObject.Create;
+    oOLines5 := TJSonObject.Create;
+    oOLines6 := TJSonObject.Create;
 
     inc(iFactNo);
     cFactNo := fUtilesV20.PadL(trim(IntToStr(iFactNo)), 5, '0');
 
     fMonSub := self.oQry_Det.FieldByName('op_tot_sub').AsFloat;
     fMonImp := self.oQry_Det.FieldByName('op_tot_impjcj').AsFloat;
+    fMonCon := self.oQry_Det.FieldByName('op_tot_porc_cons').AsFloat;
     fMonTot := self.oQry_Det.FieldByName('op_tot_sub').AsFloat + self.oQry_Op.FieldByName('op_tot_impjcj').AsFloat;
     cCod_Maq := self.oQry_Det.FieldByName('maqtc_id').AsString;
 
     oOData.AddPair('id', cFactNo);
-    // oOData.AddPair('Cliente', 'C' + fUtilesV20.PadL(trim(self.oQry_TmpCab.FieldByName('cte_id').AsString), 4, '0'));
-    oOData.AddPair('Cliente', 'C0014');
+    oOData.AddPair('Cliente', trim(self.oQry_Op.FieldByName('cte_id_interf').AsString));
+    // oOData.AddPair('Cliente', 'C0014');
     oOData.AddPair('Bodega', 'Bodega Principal');
     oOData.AddPair('Status', 'ACTIVE');
     oOData.AddPair('Date', FormatDateTime('YYYY-MM-DD', self.oQry_Op.FieldByName('op_fecha').AsDateTime));
@@ -479,12 +551,11 @@ begin
         oALines.Add(oOLines5);
       end;
 
-      // if self.oQry_Det.FieldByName('').AsFloat > 0 then
-      if (1 = 0) then
+      if self.oQry_Det.FieldByName('op_tot_porc_cons').AsFloat > 0 then
       begin
         inc(iLineNo);
         cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
-        fLinVal := self.oQry_Det.FieldByName('op_tot_otros').AsFloat;
+        fLinVal := self.oQry_Det.FieldByName('op_tot_porc_cons').AsFloat;
         cLinVal := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
 
         oOLines6.AddPair('Item_Number', cLineNo);

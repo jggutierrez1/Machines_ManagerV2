@@ -3,7 +3,7 @@ object faplica_colectas: Tfaplica_colectas
   Top = 0
   Caption = 'SISTEMA DE CONTROL DE COLECTAS ELECTRONICAS.'
   ClientHeight = 745
-  ClientWidth = 1041
+  ClientWidth = 1040
   Color = clBtnFace
   DefaultMonitor = dmDesktop
   Font.Charset = DEFAULT_CHARSET
@@ -21,7 +21,7 @@ object faplica_colectas: Tfaplica_colectas
     Top = 8
     Width = 1024
     Height = 664
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Pendientes por aplicar'
@@ -165,6 +165,30 @@ object faplica_colectas: Tfaplica_colectas
             Title.Font.Name = 'Tahoma'
             Title.Font.Style = [fsBold]
             Width = 85
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = '##,###,##0.00'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'op_tot_porc_cons'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.DisplayFormat = '##,###,##0.00'
+            Footer.FieldName = 'op_tot_porc_cons'
+            Footer.Value = '0.00'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            Title.Alignment = taCenter
+            Title.Caption = 'Consesi'#243'n'
+            Title.Font.Charset = DEFAULT_CHARSET
+            Title.Font.Color = clWindowText
+            Title.Font.Height = -11
+            Title.Font.Name = 'Tahoma'
+            Title.Font.Style = [fsBold]
           end
           item
             CellButtons = <>
@@ -924,6 +948,24 @@ object faplica_colectas: Tfaplica_colectas
       FieldName = 'op_usermodify'
       Origin = 'op_usermodify'
     end
+    object oTmp_Opop_fecha: TDateTimeField
+      AutoGenerateValue = arDefault
+      FieldName = 'op_fecha'
+      Origin = 'op_fecha'
+    end
+    object oTmp_Opop_tot_porc_cons: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'op_tot_porc_cons'
+      Origin = 'op_tot_porc_cons'
+      Precision = 12
+      Size = 2
+    end
+    object oTmp_Opop_fact_global: TWideStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'op_fact_global'
+      Origin = 'op_fact_global'
+      Size = 30
+    end
   end
   object oDS_Tmp_Op: TDataSource
     DataSet = oTmp_Op
@@ -969,7 +1011,7 @@ object faplica_colectas: Tfaplica_colectas
     ValidTaskbar = True
     Left = 472
     Top = 658
-    DesignFrmW = 1041
+    DesignFrmW = 1040
     DesignFrmH = 745
     DesignDpiW = 96
     DesignDpiH = 96
@@ -983,42 +1025,5 @@ object faplica_colectas: Tfaplica_colectas
     Connection = oConection
     Left = 182
     Top = 64
-  end
-  object RESTClient1: TRESTClient
-    Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
-    AcceptCharset = 'UTF-8, *;q=0.8'
-    BaseURL = 'https://app.interfuerza.com/api'
-    ContentType = 'application/json'
-    Params = <>
-    HandleRedirects = True
-    RaiseExceptionOn500 = False
-    Left = 432
-    Top = 40
-  end
-  object RESTRequest1: TRESTRequest
-    Client = RESTClient1
-    Method = rmPUT
-    Params = <
-      item
-        Kind = pkHTTPHEADER
-        name = 'X-IFX-Token'
-        Value = 'f0210ebdb504c31b20272772a11c55bf'
-      end
-      item
-        Kind = pkREQUESTBODY
-        name = 'body'
-        Options = [poDoNotEncode]
-        ContentType = ctAPPLICATION_JSON
-      end>
-    Response = RESTResponse1
-    SynchronizedEvents = False
-    Left = 550
-    Top = 40
-  end
-  object RESTResponse1: TRESTResponse
-    ContentType = 'application/json'
-    ContentEncoding = 'UTF-8'
-    Left = 668
-    Top = 40
   end
 end

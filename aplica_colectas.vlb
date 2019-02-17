@@ -139,22 +139,13 @@ Coordinates=657,496,131,36
 [oTmp_Op]
 Coordinates=10,10,102,696
 
-[RESTRequest1]
-Coordinates=245,10,123,146
-Visible=True
-
 [oQry_TmpDet]
 Coordinates=10,716,95,58
 
 [oQry_TmpCab]
 Coordinates=641,10,98,58
 
-[RESTClient1]
-Coordinates=378,10,89,80
-
-[RESTResponse1]
-Coordinates=122,10,113,344
-
 []
-Coordinates=201,716,87,58
+Coordinates=122,10,113,344
+Visible=True
 
