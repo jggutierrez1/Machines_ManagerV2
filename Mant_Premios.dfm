@@ -570,7 +570,6 @@ object fMant_Premios: TfMant_Premios
     Width = 835
     Height = 19
     Panels = <>
-    ExplicitWidth = 827
   end
   object oBtnExit: TPngBitBtn
     Tag = 8

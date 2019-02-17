@@ -2,8 +2,8 @@ object fCaptura1: TfCaptura1
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
-  ClientHeight = 631
-  ClientWidth = 703
+  ClientHeight = 632
+  ClientWidth = 706
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -199,15 +199,9 @@ object fCaptura1: TfCaptura1
     Height = 13
     Caption = 'Fecha:'
   end
-  object Shape2: TShape
-    Left = -3
-    Top = 104
-    Width = 775
-    Height = 1
-  end
   object Label23: TLabel
     Left = 8
-    Top = 433
+    Top = 413
     Width = 75
     Height = 13
     Caption = 'Observaciones:'
@@ -239,13 +233,14 @@ object fCaptura1: TfCaptura1
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 612
-    Width = 703
+    Top = 613
+    Width = 706
     Height = 19
     Panels = <
       item
         Width = 50
       end>
+    ExplicitTop = 612
   end
   object oFecha: TDBDateTimeEditEh
     Left = 59
@@ -354,8 +349,8 @@ object fCaptura1: TfCaptura1
     OnClick = oSemanaClick
   end
   object GroupBox1: TGroupBox
-    Left = 10
-    Top = 116
+    Left = 7
+    Top = 99
     Width = 389
     Height = 137
     Align = alCustom
@@ -580,7 +575,7 @@ object fCaptura1: TfCaptura1
   end
   object GroupBox2: TGroupBox
     Left = 8
-    Top = 259
+    Top = 247
     Width = 389
     Height = 137
     Align = alCustom
@@ -805,619 +800,13 @@ object fCaptura1: TfCaptura1
   end
   object otOp_observ: TDBMemo
     Left = 8
-    Top = 450
+    Top = 430
     Width = 389
-    Height = 56
+    Height = 86
     Color = 11794687
     DataField = 'op_observ'
     DataSource = oDC_Operacion
     TabOrder = 12
-  end
-  object GroupBox3: TGroupBox
-    Left = 405
-    Top = 116
-    Width = 290
-    Height = 431
-    Caption = 'Montos/Totales'
-    TabOrder = 13
-    object olTot_Colectado: TLabel
-      Left = 24
-      Top = 21
-      Width = 79
-      Height = 13
-      Cursor = crHelp
-      Caption = 'Total Colectado:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlue
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsUnderline]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object olOp_tot_timbres: TLabel
-      Left = 62
-      Top = 55
-      Width = 41
-      Height = 13
-      Caption = 'Timbres:'
-    end
-    object olOp_tot_impmunic: TLabel
-      Left = 31
-      Top = 79
-      Width = 72
-      Height = 13
-      Caption = 'Imp. Municipal:'
-    end
-    object olOp_tot_impjcj: TLabel
-      Left = 45
-      Top = 103
-      Width = 58
-      Height = 13
-      Caption = 'Imp. J.C.J.:'
-    end
-    object olOp_tot_tec: TLabel
-      Left = 23
-      Top = 127
-      Width = 80
-      Height = 13
-      Caption = 'Servicio T'#233'cnico:'
-    end
-    object olOp_tot_dev: TLabel
-      Left = 36
-      Top = 161
-      Width = 67
-      Height = 13
-      Caption = 'Devolusiones:'
-    end
-    object olOp_tot_otros: TLabel
-      Left = 72
-      Top = 185
-      Width = 31
-      Height = 13
-      Caption = 'Otros:'
-    end
-    object olTot_Credito: TLabel
-      Left = 64
-      Top = 210
-      Width = 39
-      Height = 13
-      Cursor = crHelp
-      Caption = 'Cr'#233'dito:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlue
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsUnderline]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object olOp_tot_sub: TLabel
-      Left = 53
-      Top = 245
-      Width = 50
-      Height = 13
-      Caption = 'Sub-Total:'
-    end
-    object olOp_tot_itbm: TLabel
-      Left = 49
-      Top = 269
-      Width = 54
-      Height = 13
-      Caption = 'I.T.B.M.S.:'
-    end
-    object olOp_tot_tot: TLabel
-      Left = 75
-      Top = 293
-      Width = 28
-      Height = 13
-      Caption = 'Total:'
-    end
-    object olOp_tot_brutoemp: TLabel
-      Left = 38
-      Top = 358
-      Width = 65
-      Height = 13
-      Caption = 'Bruto [Casa]:'
-    end
-    object olBruto_Cte: TLabel
-      Left = 37
-      Top = 335
-      Width = 66
-      Height = 13
-      Cursor = crHelp
-      Caption = 'Bruto Cliente:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlue
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsUnderline]
-      ParentFont = False
-    end
-    object olNeto_Cte: TLabel
-      Left = 40
-      Top = 382
-      Width = 63
-      Height = 13
-      Cursor = crHelp
-      Caption = 'Neto Cliente:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlue
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsUnderline]
-      ParentFont = False
-    end
-    object olOp_tot_netoemp: TLabel
-      Left = 41
-      Top = 407
-      Width = 62
-      Height = 13
-      Caption = 'Neto [Casa]:'
-    end
-    object Label44: TLabel
-      Tag = 2
-      Left = 267
-      Top = 330
-      Width = 17
-      Height = 13
-      Caption = '(1)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label45: TLabel
-      Tag = 2
-      Left = 267
-      Top = 377
-      Width = 17
-      Height = 13
-      Caption = '(1)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label49: TLabel
-      Tag = 2
-      Left = 267
-      Top = 353
-      Width = 17
-      Height = 13
-      Caption = '(2)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label50: TLabel
-      Tag = 2
-      Left = 267
-      Top = 402
-      Width = 17
-      Height = 13
-      Caption = '(2)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Shape3: TShape
-      Left = -5
-      Top = 318
-      Width = 301
-      Height = 1
-      Pen.Color = clScrollBar
-    end
-    object Shape4: TShape
-      Left = -3
-      Top = 44
-      Width = 301
-      Height = 1
-      Pen.Color = clScrollBar
-    end
-    object Label56: TLabel
-      Tag = 2
-      Left = 267
-      Top = 55
-      Width = 17
-      Height = 13
-      Caption = '(1)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label57: TLabel
-      Tag = 2
-      Left = 267
-      Top = 79
-      Width = 17
-      Height = 13
-      Caption = '(1)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label58: TLabel
-      Tag = 2
-      Left = 267
-      Top = 103
-      Width = 17
-      Height = 13
-      Caption = '(1)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label59: TLabel
-      Tag = 2
-      Left = 262
-      Top = 127
-      Width = 22
-      Height = 13
-      Caption = '(-1)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label60: TLabel
-      Tag = 2
-      Left = 267
-      Top = 157
-      Width = 17
-      Height = 13
-      Caption = '(2)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label61: TLabel
-      Tag = 2
-      Left = 267
-      Top = 185
-      Width = 17
-      Height = 13
-      Caption = '(2)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Label62: TLabel
-      Tag = 2
-      Left = 267
-      Top = 210
-      Width = 17
-      Height = 13
-      Caption = '(2)'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object Shape5: TShape
-      Left = -11
-      Top = 150
-      Width = 301
-      Height = 1
-      Pen.Color = clScrollBar
-    end
-    object Shape6: TShape
-      Left = -11
-      Top = 234
-      Width = 301
-      Height = 1
-      Pen.Color = clScrollBar
-    end
-    object otOp_tot_colect2: TDBNumberEditEh
-      Left = 125
-      Top = 18
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_colect2'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 15
-      Visible = False
-      OnClick = otOp_tot_colectClick
-      OnExit = otOp_tot_colectExit
-    end
-    object otOp_tot_colect: TDBNumberEditEh
-      Left = 115
-      Top = 18
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_colect'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 0
-      Visible = True
-      OnClick = otOp_tot_colectClick
-      OnExit = otOp_tot_colectExit
-    end
-    object otOp_tot_timbres: TDBNumberEditEh
-      Left = 115
-      Top = 52
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_timbres'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 1
-      Visible = True
-      OnClick = otOp_tot_timbresClick
-      OnExit = otOp_tot_timbresExit
-    end
-    object otOp_tot_impmunic: TDBNumberEditEh
-      Left = 115
-      Top = 76
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_impmunic'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 2
-      Visible = True
-      OnClick = otOp_tot_impmunicClick
-      OnExit = otOp_tot_impmunicExit
-    end
-    object otOp_tot_impjcj: TDBNumberEditEh
-      Left = 115
-      Top = 100
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_impjcj'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 3
-      Visible = True
-      OnClick = otOp_tot_impjcjClick
-      OnExit = otOp_tot_impjcjExit
-    end
-    object otOp_tot_tec: TDBNumberEditEh
-      Left = 115
-      Top = 124
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_tec'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 4
-      Visible = True
-      OnClick = otOp_tot_tecClick
-      OnExit = otOp_tot_tecExit
-    end
-    object otOp_tot_dev: TDBNumberEditEh
-      Left = 115
-      Top = 158
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_dev'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 5
-      Visible = True
-      OnClick = otOp_tot_devClick
-      OnExit = otOp_tot_devExit
-    end
-    object otOp_tot_otros: TDBNumberEditEh
-      Left = 115
-      Top = 182
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_otros'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 6
-      Visible = True
-      OnClick = otOp_tot_otrosClick
-      OnExit = otOp_tot_otrosExit
-    end
-    object otOp_tot_cred: TDBNumberEditEh
-      Left = 115
-      Top = 207
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_cred'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 7
-      Visible = True
-      OnClick = otOp_tot_credClick
-      OnExit = otOp_tot_credExit
-    end
-    object otOp_tot_sub: TDBNumberEditEh
-      Tag = 1
-      Left = 115
-      Top = 242
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_sub'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      Enabled = False
-      EditButtons = <>
-      TabOrder = 8
-      Visible = True
-      OnClick = otOp_tot_subClick
-    end
-    object otOp_tot_itbm: TDBNumberEditEh
-      Tag = 1
-      Left = 115
-      Top = 266
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_itbm'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      Enabled = False
-      EditButtons = <>
-      TabOrder = 9
-      Visible = True
-      OnClick = otOp_tot_itbmClick
-    end
-    object otOp_tot_tot: TDBNumberEditEh
-      Tag = 1
-      Left = 115
-      Top = 290
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_tot'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      Enabled = False
-      EditButtons = <>
-      TabOrder = 10
-      Visible = True
-      OnClick = otOp_tot_totClick
-    end
-    object otOp_tot_brutoemp: TDBNumberEditEh
-      Tag = 1
-      Left = 115
-      Top = 351
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_brutoemp'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      Enabled = False
-      EditButtons = <>
-      TabOrder = 11
-      Visible = True
-      OnClick = otOp_tot_brutoempClick
-    end
-    object otOp_tot_brutoloc: TDBNumberEditEh
-      Tag = 1
-      Left = 115
-      Top = 327
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_brutoloc'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      Enabled = False
-      EditButtons = <>
-      TabOrder = 12
-      Visible = True
-      OnClick = otOp_tot_brutolocClick
-    end
-    object otOp_tot_netoloc: TDBNumberEditEh
-      Tag = 1
-      Left = 115
-      Top = 375
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_netoloc'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      Enabled = False
-      EditButtons = <>
-      TabOrder = 13
-      Visible = True
-      OnClick = otOp_tot_netolocClick
-    end
-    object otOp_tot_netoemp: TDBNumberEditEh
-      Tag = 1
-      Left = 115
-      Top = 399
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_netoemp'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      Enabled = False
-      EditButtons = <>
-      TabOrder = 14
-      Visible = True
-      OnClick = otOp_tot_netoempClick
-    end
-    object otOp_tot_cred2: TDBNumberEditEh
-      Left = 125
-      Top = 207
-      Width = 124
-      Height = 21
-      currency = False
-      DataField = 'op_tot_cred2'
-      DataSource = oDC_Operacion
-      DisplayFormat = '#,###,##0.00'
-      DynProps = <>
-      EditButtons = <>
-      TabOrder = 16
-      Visible = False
-      OnClick = otOp_tot_credClick
-      OnExit = otOp_tot_credExit
-    end
   end
   object oBtnNew: TPngBitBtn
     Tag = 1
@@ -2135,7 +1524,7 @@ object fCaptura1: TfCaptura1
   end
   object oSql_Text: TMemo
     Left = 251
-    Top = 420
+    Top = 400
     Width = 27
     Height = 24
     Lines.Strings = (
@@ -2380,7 +1769,7 @@ object fCaptura1: TfCaptura1
   end
   object oCk_Baja_Prod: TDBCheckBox
     Left = 8
-    Top = 410
+    Top = 390
     Width = 121
     Height = 17
     Caption = 'Baja producci'#243'n'
@@ -2422,6 +1811,657 @@ object fCaptura1: TfCaptura1
       '5')
     TabOrder = 25
     Visible = True
+  end
+  object GroupBox3: TGroupBox
+    Left = 405
+    Top = 98
+    Width = 290
+    Height = 448
+    Caption = 'Montos/Totales'
+    TabOrder = 13
+    object olTot_Colectado: TLabel
+      Left = 24
+      Top = 21
+      Width = 79
+      Height = 13
+      Cursor = crHelp
+      Caption = 'Total Colectado:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object olOp_tot_timbres: TLabel
+      Left = 62
+      Top = 53
+      Width = 41
+      Height = 13
+      Caption = 'Timbres:'
+    end
+    object olOp_tot_impmunic: TLabel
+      Left = 31
+      Top = 77
+      Width = 72
+      Height = 13
+      Caption = 'Imp. Municipal:'
+    end
+    object olOp_tot_impjcj: TLabel
+      Left = 45
+      Top = 101
+      Width = 58
+      Height = 13
+      Caption = 'Imp. J.C.J.:'
+    end
+    object olOp_tot_tec: TLabel
+      Left = 23
+      Top = 149
+      Width = 80
+      Height = 13
+      Caption = 'Servicio T'#233'cnico:'
+    end
+    object olOp_tot_dev: TLabel
+      Left = 36
+      Top = 181
+      Width = 67
+      Height = 13
+      Caption = 'Devolusiones:'
+    end
+    object olOp_tot_otros: TLabel
+      Left = 72
+      Top = 205
+      Width = 31
+      Height = 13
+      Caption = 'Otros:'
+    end
+    object olTot_Credito: TLabel
+      Left = 64
+      Top = 230
+      Width = 39
+      Height = 13
+      Cursor = crHelp
+      Caption = 'Cr'#233'dito:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object olOp_tot_sub: TLabel
+      Left = 53
+      Top = 265
+      Width = 50
+      Height = 13
+      Caption = 'Sub-Total:'
+    end
+    object olOp_tot_itbm: TLabel
+      Left = 49
+      Top = 289
+      Width = 54
+      Height = 13
+      Caption = 'I.T.B.M.S.:'
+    end
+    object olOp_tot_tot: TLabel
+      Left = 75
+      Top = 313
+      Width = 28
+      Height = 13
+      Caption = 'Total:'
+    end
+    object olOp_tot_brutoemp: TLabel
+      Left = 38
+      Top = 376
+      Width = 65
+      Height = 13
+      Caption = 'Bruto [Casa]:'
+    end
+    object olBruto_Cte: TLabel
+      Left = 37
+      Top = 353
+      Width = 66
+      Height = 13
+      Cursor = crHelp
+      Caption = 'Bruto Cliente:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+    end
+    object olNeto_Cte: TLabel
+      Left = 40
+      Top = 400
+      Width = 63
+      Height = 13
+      Cursor = crHelp
+      Caption = 'Neto Cliente:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+    end
+    object olOp_tot_netoemp: TLabel
+      Left = 41
+      Top = 425
+      Width = 62
+      Height = 13
+      Caption = 'Neto [Casa]:'
+    end
+    object Label44: TLabel
+      Tag = 2
+      Left = 267
+      Top = 348
+      Width = 17
+      Height = 13
+      Caption = '(1)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label45: TLabel
+      Tag = 2
+      Left = 267
+      Top = 395
+      Width = 17
+      Height = 13
+      Caption = '(1)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label49: TLabel
+      Tag = 2
+      Left = 267
+      Top = 371
+      Width = 17
+      Height = 13
+      Caption = '(2)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label50: TLabel
+      Tag = 2
+      Left = 267
+      Top = 420
+      Width = 17
+      Height = 13
+      Caption = '(2)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Shape3: TShape
+      Left = -5
+      Top = 337
+      Width = 301
+      Height = 1
+      Pen.Color = clScrollBar
+    end
+    object Shape4: TShape
+      Left = -3
+      Top = 44
+      Width = 301
+      Height = 1
+      Pen.Color = clScrollBar
+    end
+    object Label56: TLabel
+      Tag = 2
+      Left = 267
+      Top = 55
+      Width = 17
+      Height = 13
+      Caption = '(1)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label57: TLabel
+      Tag = 2
+      Left = 267
+      Top = 79
+      Width = 17
+      Height = 13
+      Caption = '(1)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label58: TLabel
+      Tag = 2
+      Left = 267
+      Top = 103
+      Width = 17
+      Height = 13
+      Caption = '(1)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label59: TLabel
+      Tag = 2
+      Left = 262
+      Top = 147
+      Width = 22
+      Height = 13
+      Caption = '(-1)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label60: TLabel
+      Tag = 2
+      Left = 267
+      Top = 177
+      Width = 17
+      Height = 13
+      Caption = '(2)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label61: TLabel
+      Tag = 2
+      Left = 267
+      Top = 205
+      Width = 17
+      Height = 13
+      Caption = '(2)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label62: TLabel
+      Tag = 2
+      Left = 267
+      Top = 230
+      Width = 17
+      Height = 13
+      Caption = '(2)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Shape5: TShape
+      Left = -11
+      Top = 171
+      Width = 301
+      Height = 1
+      Pen.Color = clScrollBar
+    end
+    object Shape6: TShape
+      Left = -11
+      Top = 254
+      Width = 301
+      Height = 1
+      Pen.Color = clScrollBar
+    end
+    object Label26: TLabel
+      Tag = 2
+      Left = 265
+      Top = 125
+      Width = 17
+      Height = 13
+      Caption = '(1)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object olTot_Conses: TLabel
+      Left = 32
+      Top = 125
+      Width = 71
+      Height = 13
+      Caption = 'Consesionario:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsUnderline]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object otOp_tot_colect2: TDBNumberEditEh
+      Left = 125
+      Top = 18
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_colect2'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 16
+      Visible = False
+      OnClick = otOp_tot_colectClick
+      OnExit = otOp_tot_colectExit
+    end
+    object otOp_tot_colect: TDBNumberEditEh
+      Left = 115
+      Top = 18
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_colect'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 0
+      Visible = True
+      OnClick = otOp_tot_colectClick
+      OnExit = otOp_tot_colectExit
+    end
+    object otOp_tot_timbres: TDBNumberEditEh
+      Left = 115
+      Top = 50
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_timbres'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 1
+      Visible = True
+      OnClick = otOp_tot_timbresClick
+      OnExit = otOp_tot_timbresExit
+    end
+    object otOp_tot_impmunic: TDBNumberEditEh
+      Left = 115
+      Top = 74
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_impmunic'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 2
+      Visible = True
+      OnClick = otOp_tot_impmunicClick
+      OnExit = otOp_tot_impmunicExit
+    end
+    object otOp_tot_impjcj: TDBNumberEditEh
+      Left = 115
+      Top = 98
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_impjcj'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 3
+      Visible = True
+      OnClick = otOp_tot_impjcjClick
+      OnExit = otOp_tot_impjcjExit
+    end
+    object otOp_tot_tec: TDBNumberEditEh
+      Left = 115
+      Top = 146
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_tec'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 5
+      Visible = True
+      OnClick = otOp_tot_tecClick
+      OnExit = otOp_tot_tecExit
+    end
+    object otOp_tot_dev: TDBNumberEditEh
+      Left = 115
+      Top = 178
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_dev'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 6
+      Visible = True
+      OnClick = otOp_tot_devClick
+      OnExit = otOp_tot_devExit
+    end
+    object otOp_tot_otros: TDBNumberEditEh
+      Left = 115
+      Top = 202
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_otros'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 7
+      Visible = True
+      OnClick = otOp_tot_otrosClick
+      OnExit = otOp_tot_otrosExit
+    end
+    object otOp_tot_cred: TDBNumberEditEh
+      Left = 115
+      Top = 227
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_cred'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 8
+      Visible = True
+      OnClick = otOp_tot_credClick
+      OnExit = otOp_tot_credExit
+    end
+    object otOp_tot_sub: TDBNumberEditEh
+      Tag = 1
+      Left = 115
+      Top = 262
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_sub'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      Enabled = False
+      EditButtons = <>
+      TabOrder = 9
+      Visible = True
+      OnClick = otOp_tot_subClick
+    end
+    object otOp_tot_itbm: TDBNumberEditEh
+      Tag = 1
+      Left = 115
+      Top = 286
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_itbm'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      Enabled = False
+      EditButtons = <>
+      TabOrder = 10
+      Visible = True
+      OnClick = otOp_tot_itbmClick
+    end
+    object otOp_tot_tot: TDBNumberEditEh
+      Tag = 1
+      Left = 115
+      Top = 310
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_tot'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      Enabled = False
+      EditButtons = <>
+      TabOrder = 11
+      Visible = True
+      OnClick = otOp_tot_totClick
+    end
+    object otOp_tot_brutoemp: TDBNumberEditEh
+      Tag = 1
+      Left = 115
+      Top = 369
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_brutoemp'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      Enabled = False
+      EditButtons = <>
+      TabOrder = 13
+      Visible = True
+      OnClick = otOp_tot_brutoempClick
+    end
+    object otOp_tot_brutoloc: TDBNumberEditEh
+      Tag = 1
+      Left = 115
+      Top = 345
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_brutoloc'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      Enabled = False
+      EditButtons = <>
+      TabOrder = 12
+      Visible = True
+      OnClick = otOp_tot_brutolocClick
+    end
+    object otOp_tot_netoloc: TDBNumberEditEh
+      Tag = 1
+      Left = 115
+      Top = 393
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_netoloc'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      Enabled = False
+      EditButtons = <>
+      TabOrder = 14
+      Visible = True
+      OnClick = otOp_tot_netolocClick
+    end
+    object otOp_tot_netoemp: TDBNumberEditEh
+      Tag = 1
+      Left = 115
+      Top = 417
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_netoemp'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      Enabled = False
+      EditButtons = <>
+      TabOrder = 15
+      Visible = True
+      OnClick = otOp_tot_netoempClick
+    end
+    object otOp_tot_cred2: TDBNumberEditEh
+      Left = 125
+      Top = 227
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_cred2'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 17
+      Visible = False
+      OnClick = otOp_tot_credClick
+      OnExit = otOp_tot_credExit
+    end
+    object otop_tot_porc_cons: TDBNumberEditEh
+      Left = 115
+      Top = 122
+      Width = 124
+      Height = 21
+      currency = False
+      DataField = 'op_tot_porc_cons'
+      DataSource = oDC_Operacion
+      DisplayFormat = '#,###,##0.00'
+      DynProps = <>
+      EditButtons = <>
+      TabOrder = 4
+      Visible = True
+      OnClick = otOp_tot_impjcjClick
+      OnExit = otOp_tot_impjcjExit
+    end
   end
   object XPManifest1: TXPManifest
     Left = 719

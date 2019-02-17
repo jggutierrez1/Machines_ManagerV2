@@ -40,7 +40,6 @@ type
     oSemana: TDBNumberEditEh;
     Shape1: TShape;
     Label8: TLabel;
-    Shape2: TShape;
     GroupBox1: TGroupBox;
     Label9: TLabel;
     otOp_ea_metroac: TDBNumberEditEh;
@@ -144,6 +143,9 @@ type
     otOp_tot_cred2: TDBNumberEditEh;
     oCk_MetrosDl_S: TCheckBox;
     oCk_MetrosDl_E: TCheckBox;
+    otop_tot_porc_cons: TDBNumberEditEh;
+    Label26: TLabel;
+    olTot_Conses: TLabel;
     procedure oBtnExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure oBtnNewClick(Sender: TObject);
@@ -235,9 +237,11 @@ type
     procedure mask_fields(bEsEntrada: boolean = false; bDecimals: boolean = false);
     procedure oCk_MetrosDl_SClick(Sender: TObject);
     procedure oCk_MetrosDl_EClick(Sender: TObject);
+    procedure Calc_Conses(iSkip: integer);
   private
     iOption: integer;
     bOk_Chg_Mts: boolean;
+    bSkip_Conse: boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -275,6 +279,7 @@ uses UtilesV20, Denominaciones, Clientes, Empresa, MaquinasTC, Municipios,
 
 procedure TfCaptura1.FormCreate(Sender: TObject);
 begin
+  self.bSkip_Conse := true;
   iOption := 0;
   self.bOk_Chg_Mts := false;
   // self.ResizeKit1.Enabled := utiles.Ctrl_Resize;
@@ -326,8 +331,8 @@ begin
   self.Mostrar_Baja_Prod;
   Enabled_Screen(false);
   self.oMaquinaExit(self);
-  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' +
-    fUtilesV20.oPublicCnn.Params.Values['Database'];
+  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' + fUtilesV20.oPublicCnn.Params.Values
+    ['Database'];
 end;
 
 procedure TfCaptura1.Label10Click(Sender: TObject);
@@ -606,9 +611,10 @@ begin
   self.DBNavigator1.visible := true;
   self.Enabled_Screen(false);
   self.Action_Control(7);
-  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' +
-    fUtilesV20.oPublicCnn.Params.Values['Database'];
+  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' + fUtilesV20.oPublicCnn.Params.Values
+    ['Database'];
   iOption := 0;
+  self.bSkip_Conse := true;
   self.Mostrar_Baja_Prod;
 end;
 
@@ -650,6 +656,7 @@ procedure TfCaptura1.oBtnEditClick(Sender: TObject);
 var
   dIni, dEnd: Tdatetime;
 begin
+  self.bSkip_Conse := true;
   dIni := self.otOperaciones.FieldByName('op_fecha_alta').AsDateTime;
   dEnd := fUtilesV20.DateTimeAdd(self.otOperaciones.FieldByName('op_fecha_alta').AsDateTime, dtpDay, 7);
 
@@ -727,6 +734,7 @@ var
   oFileIni: Tinifile;
   dLastDate: TDate;
 begin
+  self.bSkip_Conse := false;
   iOption := 1;
   oFileIni := Tinifile.Create(ExtractFilePath(Application.ExeName) + 'Data\Config.ini');
   dLastDate := oFileIni.ReadDate('GENERAL', 'lastdate', now());
@@ -776,9 +784,10 @@ begin
   self.DBNavigator1.visible := true;
   self.Enabled_Screen(false);
   self.Action_Control(6);
-  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' +
-    fUtilesV20.oPublicCnn.Params.Values['Database'];
+  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' + fUtilesV20.oPublicCnn.Params.Values
+    ['Database'];
   iOption := 0;
+  self.bSkip_Conse := true;
 end;
 
 function TfCaptura1.Find_In_Op(Nodoc: string): boolean;
@@ -826,8 +835,7 @@ begin
     begin
       cCadena := '';
       cCadena := cCadena + 'MAQUINA   :[' + trim(self.oQuery_Gen.FieldByName('op_chapa').AsString) + ']' + #13;
-      cCadena := cCadena + 'FECHA     :[' + formatdatetime('dd/mm/yyyy', self.oQuery_Gen.FieldByName('op_fecha')
-        .AsDateTime) + ']' + #13;
+      cCadena := cCadena + 'FECHA     :[' + formatdatetime('dd/mm/yyyy', self.oQuery_Gen.FieldByName('op_fecha').AsDateTime) + ']' + #13;
       cCadena := cCadena + 'MODELO    :[' + trim(self.oQuery_Gen.FieldByName('op_modelo').AsString) + ']' + #13;
       cCadena := cCadena + 'LOCAL     :[' + trim(self.oQuery_Gen.FieldByName('cte_nombre_loc').AsString) + ']' + #13;
       cCadena := cCadena + 'DOCUMENTO :[' + trim(self.oQuery_Gen.FieldByName('op_nodoc').AsString) + ']' + #13;
@@ -925,16 +933,13 @@ begin
     else
       self.mask_fields(false, false);
 
-    MyOp.Porc_Loc := fUtilesV20.iif(oQry_Fnd.FieldByName('cte_poc_ret').AsSingle = 0, 1,
-      oQry_Fnd.FieldByName('cte_poc_ret').AsSingle);
+    MyOp.Porc_Loc := fUtilesV20.iif(oQry_Fnd.FieldByName('cte_poc_ret').AsSingle = 0, 1, oQry_Fnd.FieldByName('cte_poc_ret').AsSingle);
 
     MyOp.Porc_Loc := oQry_Fnd.FieldByName('cte_poc_ret').AsSingle;
 
-    self.olBruto_Cte.Hint := 'Porcentaje Cliente [' + FormatFloat('##,##0.00', oQry_Fnd.FieldByName('cte_poc_ret')
-      .AsSingle) + '%]';
+    self.olBruto_Cte.Hint := 'Porcentaje Cliente [' + FormatFloat('##,##0.00', oQry_Fnd.FieldByName('cte_poc_ret').AsSingle) + '%]';
     self.olBruto_Cte.ShowHint := true;
-    self.olNeto_Cte.Hint := 'Porcentaje Cliente [' + FormatFloat('##,##0.00', oQry_Fnd.FieldByName('cte_poc_ret')
-      .AsSingle) + '%]';
+    self.olNeto_Cte.Hint := 'Porcentaje Cliente [' + FormatFloat('##,##0.00', oQry_Fnd.FieldByName('cte_poc_ret').AsSingle) + '%]';
     self.olNeto_Cte.ShowHint := true;
     self.olTot_Colectado.Hint := 'Factor de Conversión [' + IntToStr(MyOp.Denom_Ent_Fac) + '/ $' +
       FormatFloat('##,##0.00', MyOp.Denom_Ent_Val) + ']';
@@ -946,17 +951,25 @@ begin
     otOperaciones.FieldByName('op_modelo').AsString := oQry_Fnd.FieldByName('maqtc_modelo').AsString;
     otOperaciones.FieldByName('cte_nombre_loc').AsString := oQry_Fnd.FieldByName('cte_nombre_loc').AsString;
     otOperaciones.FieldByName('cte_nombre_com').AsString := oQry_Fnd.FieldByName('cte_nombre_com').AsString;
-    otOperaciones.FieldByName('cte_pag_jcj').Value := oQry_Fnd.FieldByName('cte_pag_jcj').Value;
-    otOperaciones.FieldByName('cte_pag_spac').Value := oQry_Fnd.FieldByName('cte_pag_spac').Value;
-    otOperaciones.FieldByName('cte_pag_impm').Value := oQry_Fnd.FieldByName('cte_pag_impm').Value;
+    otOperaciones.FieldByName('cte_pag_jcj').AsInteger := oQry_Fnd.FieldByName('cte_pag_jcj').AsInteger;
+    otOperaciones.FieldByName('cte_pag_spac').AsInteger := oQry_Fnd.FieldByName('cte_pag_spac').AsInteger;
+    otOperaciones.FieldByName('cte_pag_impm').AsInteger := oQry_Fnd.FieldByName('cte_pag_impm').AsInteger;
     otOperaciones.FieldByName('op_cporc_Loc').AsInteger := oQry_Fnd.FieldByName('cte_poc_ret').AsInteger;
     otOperaciones.FieldByName('maqtc_denom_e').AsInteger := oQry_Fnd.FieldByName('maqtc_denom_e').AsInteger;
     otOperaciones.FieldByName('maqtc_denom_s').AsInteger := oQry_Fnd.FieldByName('maqtc_denom_s').AsInteger;
     otOperaciones.FieldByName('maqtc_tipomaq').AsInteger := oQry_Fnd.FieldByName('maqtc_tipomaq').AsInteger;
-    otOperaciones.FieldByName('den_fact_e').Value := oQry_Fnd.FieldByName('den_fact_e').Value;
-    otOperaciones.FieldByName('den_fact_s').Value := oQry_Fnd.FieldByName('den_fact_s').Value;
+    otOperaciones.FieldByName('den_fact_e').AsInteger := oQry_Fnd.FieldByName('den_fact_e').AsInteger;
+    otOperaciones.FieldByName('den_fact_s').AsInteger := oQry_Fnd.FieldByName('den_fact_s').AsInteger;
     otOperaciones.FieldByName('den_valore').AsSingle := oQry_Fnd.FieldByName('den_valore').AsSingle;
     otOperaciones.FieldByName('den_valors').AsSingle := oQry_Fnd.FieldByName('den_valors').AsSingle;
+    otOperaciones.FieldByName('maqtc_id').AsInteger := oQry_Fnd.FieldByName('maqtc_id').AsInteger;
+    otOperaciones.FieldByName('jueg_cod').AsInteger := oQry_Fnd.FieldByName('jueg_cod').AsInteger;
+    otOperaciones.FieldByName('prov_cod').AsInteger := oQry_Fnd.FieldByName('prov_cod').AsInteger;
+    otOperaciones.FieldByName('op_maq_proc_cons').AsSingle := oQry_Fnd.FieldByName('maqtc_porc_conc').AsSingle;
+    self.olTot_Conses.Hint := 'Porcentaje en consesión [' + FormatFloat('##,##0.00', oQry_Fnd.FieldByName('maqtc_porc_conc')
+      .AsSingle) + '%]';
+    if (otOperaciones.State = dsInsert) THEN
+      otOperaciones.FieldByName('op_tot_porc_cons').AsSingle := 0.00;
 
     if (self.otOperaciones.State = dsInsert) then
     begin
@@ -1001,8 +1014,7 @@ begin
             // Entradas A
             self.otOp_ea_metroac.visible := true; { Actual }
             self.otOp_ea_metroan.visible := true; { Anterior }
-            self.otOperaciones.FieldByName('Op_ea_metroac').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_act')
-              .AsInteger;
+            self.otOperaciones.FieldByName('Op_ea_metroac').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_act').AsInteger;
             otOperaciones.FieldByName('Op_ea_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_ant').AsInteger;
             // Salidas A
             self.otOp_sa_metroac.visible := true; { Actual }
@@ -1030,15 +1042,13 @@ begin
             self.otOp_ea_metroan.visible := true; { Anterior }
             self.otOperaciones.FieldByName('Op_ea_metroac').AsInteger := 0
             { &&maquinas.m1e_act };
-            self.otOperaciones.FieldByName('Op_ea_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_act')
-              .AsInteger;
+            self.otOperaciones.FieldByName('Op_ea_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1e_act').AsInteger;
             // Salidas A
             self.otOp_sa_metroac.visible := true; { Actual }
             self.otOp_sa_metroan.visible := true; { Anterior }
             self.otOperaciones.FieldByName('Op_sa_metroac').AsInteger := 0;
             { maquinas.m1s_act }
-            self.otOperaciones.FieldByName('Op_sa_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1s_act')
-              .AsInteger;
+            self.otOperaciones.FieldByName('Op_sa_metroan').AsInteger := oQry_Fnd.FieldByName('maqtc_m1s_act').AsInteger;
             if oQry_Fnd.FieldByName('maqtc_m1e_ant').AsInteger = 0 then
               self.otOp_ea_metroan.Enabled := true
             else
@@ -1087,8 +1097,7 @@ begin
           end;
         end;
     else
-      ShowMessage
-        ('A las máquinas no se le han sido asiganado la información de metros, favor asignar la información de metros');
+      ShowMessage('A las máquinas no se le han sido asiganado la información de metros, favor asignar la información de metros');
       // Entradas A
       self.otOp_ea_metroac.visible := true; { Actual }
       self.otOp_ea_metroan.visible := true; { Anterior }
@@ -1385,6 +1394,9 @@ begin
   sSql := sSql + '  maquinastc.maqtc_m2s_act, ';
   sSql := sSql + '  maquinastc.maqtc_m2s_ant, ';
   sSql := sSql + '  maquinastc.maqtc_m1s_act, ';
+  sSql := sSql + '  maquinastc.jueg_cod, ';
+  sSql := sSql + '  maquinastc.prov_cod, ';
+  sSql := sSql + '  maquinastc.maqtc_porc_conc, ';
   sSql := sSql + '  maquinas_lnk.MaqLnk_Id, ';
   sSql := sSql + '  clientes.cte_id, ';
   sSql := sSql + '  clientes.cte_nombre_loc, ';
@@ -1420,7 +1432,9 @@ begin
   sSql := sSql + 'AND TRIM(maquinastc.maqtc_chapa) =' + QuotedStr(trim(pNum_Maq)) + ' ';
   sSql := sSql + 'AND empresas.emp_id =' + QuotedStr(IntToStr(UtilesV20.iId_Empresa)) + ' ';
   result := UtilesV20.Exec_Select_SQL(oQry_Fnd, sSql, true, true);
-  if result = false then
+  self.bSkip_Conse := false;
+
+  if (result = false) then
   begin
     Application.MessageBox('el código de máquina no existe o no tiene un cliente asignado', 'Precausión');
     exit;
@@ -1467,8 +1481,7 @@ begin
   if (ipFac_s = 0) then
     iTot := (MyOp.MetroA_SalDif + MyOp.MetroB_SalDif)
   else
-    iTot := ((MyOp.MetroA_SalDif + MyOp.MetroB_SalDif) / ipFac_s) * fUtilesV20.iif(MyOp.Denom_Sal_Val = 0, 1,
-      MyOp.Denom_Sal_Val);
+    iTot := ((MyOp.MetroA_SalDif + MyOp.MetroB_SalDif) / ipFac_s) * fUtilesV20.iif(MyOp.Denom_Sal_Val = 0, 1, MyOp.Denom_Sal_Val);
   MyOp.Suma_Cred := iTot;
   if (iForce = 1) then
   begin
@@ -1492,12 +1505,14 @@ var
   ipK_porc: single;
   iTot1: single;
   iTot2: single;
+  iTotImp: single;
 begin
+  self.Calc_Conses(0);
   ipK_porc := fUtilesV20.iif(MyOp.Porc_Loc = 0, 1, MyOp.Porc_Loc);
   ipK_porc := MyOp.Porc_Loc;
-  iTot1 := (self.otOp_tot_timbres.Value + self.otOp_tot_impmunic.Value + self.otOp_tot_impjcj.Value +
-    self.otOp_tot_tec.Value);
+  iTotImp := (self.otOp_tot_timbres.Value + self.otOp_tot_impmunic.Value + self.otOp_tot_impjcj.Value + self.otop_tot_porc_cons.Value);
 
+  iTot1 := (iTotImp + self.otOp_tot_tec.Value);
   iTot2 := (self.otOp_tot_dev.Value + self.otOp_tot_otros.Value + self.otOp_tot_cred.Value);
 
   self.otOp_tot_sub.Value := (self.otOp_tot_colect.Value - iTot1 - iTot2);
@@ -1516,8 +1531,7 @@ begin
   end;
   self.otOp_tot_netoloc.Value := (self.otOp_tot_dev.Value + self.otOp_tot_otros.Value + self.otOp_tot_cred.Value +
     self.otOp_tot_brutoloc.Value);
-  self.otOp_tot_netoemp.Value := (self.otOp_tot_timbres.Value + self.otOp_tot_impmunic.Value +
-    self.otOp_tot_impjcj.Value + self.otOp_tot_tec.Value + self.otOp_tot_brutoemp.Value);
+  self.otOp_tot_netoemp.Value := (iTotImp + self.otOp_tot_tec.Value + self.otOp_tot_brutoemp.Value);
   self.Refresh;
 end;
 
@@ -1672,48 +1686,57 @@ end;
 procedure TfCaptura1.Enabled_Screen(bFlag: boolean);
 var
   j: integer;
+  oComponents: TControl;
 begin
   for j := 0 to ComponentCount - 1 do
   begin
     if (Components[j] is TCheckBox) then
     begin
-      if (Components[j] as TCheckBox).TAG <> 1 then
-        (Components[j] as TCheckBox).Enabled := bFlag;
+      oComponents := TCheckBox(self.Components[j]);
+      if (oComponents.TAG <> 1) then
+        oComponents.Enabled := bFlag;
     end;
     if (Components[j] is TDBCheckBox) then
     begin
-      if (Components[j] as TDBCheckBox).TAG <> 1 then
-        (Components[j] as TDBCheckBox).Enabled := bFlag;
+      oComponents := TDBCheckBox(self.Components[j]);
+      if (oComponents.TAG <> 1) then
+        oComponents.Enabled := bFlag;
     end;
     if (Components[j] is TDBMemo) then
     begin
-      if (Components[j] as TDBMemo).TAG <> 1 then
-        (Components[j] as TDBMemo).Enabled := bFlag;
+      oComponents := TDBMemo(self.Components[j]);
+      if (oComponents.TAG <> 1) then
+        oComponents.Enabled := bFlag;
     end;
     if (Components[j] is TDBEdit) then
     begin
-      if (Components[j] as TDBEdit).TAG <> 1 then
-        (Components[j] as TDBEdit).Enabled := bFlag;
+      oComponents := TDBEdit(self.Components[j]);
+      if (oComponents.TAG <> 1) then
+        oComponents.Enabled := bFlag;
     end;
     if (Components[j] is TDBDateTimeEditEh) then
     begin
-      if (Components[j] as TDBDateTimeEditEh).TAG <> 1 then
-        (Components[j] as TDBDateTimeEditEh).Enabled := bFlag;
+      oComponents := TDBDateTimeEditEh(self.Components[j]);
+      if (oComponents.TAG <> 1) then
+        oComponents.Enabled := bFlag;
     end;
     if (Components[j] is TDBNumberEditEh) then
     begin
-      if (Components[j] as TDBNumberEditEh).TAG <> 1 then
-        (Components[j] as TDBNumberEditEh).Enabled := bFlag;
+      oComponents := TDBNumberEditEh(self.Components[j]);
+      if (oComponents.TAG <> 1) then
+        oComponents.Enabled := bFlag;
     end;
     if (Components[j] is TDBLookupComboboxEh) then
     begin
-      if (Components[j] as TDBLookupComboboxEh).TAG <> 1 then
-        (Components[j] as TDBLookupComboboxEh).Enabled := bFlag;
+      oComponents := TDBLookupComboboxEh(self.Components[j]);
+      if (oComponents.TAG <> 1) then
+        oComponents.Enabled := bFlag;
     end;
     if (Components[j] is TDBComboBoxEh) then
     begin
-      if (Components[j] as TDBComboBoxEh).TAG <> 1 then
-        (Components[j] as TDBComboBoxEh).Enabled := bFlag;
+      oComponents := TDBComboBoxEh(self.Components[j]);
+      if (oComponents.TAG <> 1) then
+        oComponents.Enabled := bFlag;
     end;
   end;
   // self.DBNavigator1.visible := false;
@@ -1919,6 +1942,26 @@ begin
     self.otOp_s_pantalla.DisplayFormat := fUtilesV20.iif(bDecimals = true, '#########0.00', '#########0');
     self.otOp_s_pantalla.DecimalPlaces := fUtilesV20.iif(bDecimals = true, 2, 0);
 
+  end;
+end;
+
+procedure TfCaptura1.Calc_Conses(iSkip: integer);
+var
+  fMonto_impu: extended;
+  fMonto_Base: extended;
+  fMonto_cons: extended;
+begin
+  if (self.bSkip_Conse = true) then
+    exit;
+
+  if ((self.otOperaciones.FieldByName('op_maq_proc_cons').AsSingle > 0) and (self.otOp_tot_colect.Value > 0)) then
+  begin
+    fMonto_impu := fUtilesV20.RoundD(self.otOp_tot_timbres.Value + self.otOp_tot_impmunic.Value + self.otOp_tot_impjcj.Value, 2);
+    fMonto_Base := fUtilesV20.RoundD(self.otOp_tot_colect.Value - fMonto_impu, 2);
+    fMonto_cons := fUtilesV20.RoundD(fMonto_Base * (otOperaciones.FieldByName('op_maq_proc_cons').AsSingle / 100), 2);
+
+    otOperaciones.FieldByName('op_tot_porc_cons').AsSingle := fMonto_cons;
+    self.bSkip_Conse := true
   end;
 end;
 

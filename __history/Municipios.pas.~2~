@@ -1,0 +1,351 @@
+unit Municipios;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, FileCtrl,
+  Variants, Classes, Graphics, Controls,
+  Forms, DBCtrls, Dialogs,
+  StdCtrls, Mask, ExtCtrls, ComCtrls,
+  Buttons, GridsEh, DBGridEh, DB,
+  ADODB, DBCtrlsEh, pngimage, PngBitBtn,
+  PngSpeedButton, WideStrings,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
+  FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait;
+
+type
+  TfMunicipios = class(TForm)
+    oDBNav: TDBNavigator;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    oDS_Minucipios: TDataSource;
+    StatusBar1: TStatusBar;
+    oActivo: TDBCheckBox;
+    Label5: TLabel;
+    Label3: TLabel;
+    oNombre: TDBEdit;
+    Label4: TLabel;
+    oBtnExit: TPngBitBtn;
+    oBtnAbort: TPngBitBtn;
+    oBtnSave: TPngBitBtn;
+    oBtnFind: TPngBitBtn;
+    oBtnDelete: TPngBitBtn;
+    oBtnEdit: TPngBitBtn;
+    oBtnNew: TPngBitBtn;
+    oBtnPrint: TPngBitBtn;
+    oID: TDBEdit;
+    Label13: TLabel;
+    Label14: TLabel;
+    oFecha_Crea: TDBDateTimeEditEh;
+    oFecha_Mod: TDBDateTimeEditEh;
+    Label1: TLabel;
+    oImpuesto: TDBNumberEditEh;
+    oNotas: TDBMemo;
+    oConection: TFDConnection;
+    otMunicipios: TFDTable;
+    procedure Action_Control(pOption: integer);
+    procedure oBtnNewClick(Sender: TObject);
+    procedure oBtnEditClick(Sender: TObject);
+    procedure oBtnDeleteClick(Sender: TObject);
+    procedure oBtnFindClick(Sender: TObject);
+    procedure oBtnPrintClick(Sender: TObject);
+    procedure oBtnSaveClick(Sender: TObject);
+    procedure oBtnAbortClick(Sender: TObject);
+    procedure oBtnExitClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Activa_Objetos(bPar: boolean);
+    procedure FormShow(Sender: TObject);
+    procedure oNombreKeyPress(Sender: TObject; var Key: Char);
+    procedure oImpuestoKeyPress(Sender: TObject; var Key: Char);
+    procedure otMunicipiosAfterInsert(DataSet: TDataSet);
+    procedure otMunicipiosBeforePost(DataSet: TDataSet);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  fMunicipios: TfMunicipios;
+
+implementation
+
+USES utilesv20, BuscarGenM2;
+{$R *.dfm}
+
+procedure TfMunicipios.FormCreate(Sender: TObject);
+begin
+  // self.ResizeKit1.Enabled := utiles.Ctrl_Resize;
+  freeandnil(oConection);
+  self.PageControl1.ActivePageIndex := 0;
+  self.otMunicipios.Connection := futilesv20.oPublicCnn;
+  self.otMunicipios.Active := true;
+  self.oDS_Minucipios.Enabled := true;
+end;
+
+procedure TfMunicipios.FormShow(Sender: TObject);
+begin
+  self.PageControl1.ActivePageIndex := 0;
+  self.Activa_Objetos(false);
+end;
+
+procedure TfMunicipios.oBtnAbortClick(Sender: TObject);
+begin
+  self.otMunicipios.Cancel;
+  self.Action_Control(7);
+  self.PageControl1.ActivePageIndex := 0;
+  self.Activa_Objetos(false);
+end;
+
+procedure TfMunicipios.oBtnDeleteClick(Sender: TObject);
+var
+  nResp: integer;
+begin
+  if self.otMunicipios.isEmpty then
+  begin
+    self.Action_Control(6);
+    exit;
+  end;
+  self.Action_Control(3);
+  nResp := Application.MessageBox('Seguro desea borrar?', '', MB_YESNO);
+  If (nResp = ID_YES) Then
+  begin
+    self.oDBNav.DataSource.DataSet.Delete;
+    self.oDBNav.DataSource.DataSet.Refresh;
+  end;
+
+end;
+
+procedure TfMunicipios.oBtnEditClick(Sender: TObject);
+begin
+  if self.otMunicipios.isEmpty then
+  begin
+    self.Action_Control(6);
+    exit;
+  end;
+  self.otMunicipios.Edit;
+  self.Action_Control(2);
+  self.PageControl1.ActivePageIndex := 0;
+  self.Activa_Objetos(true);
+end;
+
+procedure TfMunicipios.oBtnExitClick(Sender: TObject);
+begin
+  self.close;
+end;
+
+procedure TfMunicipios.oBtnFindClick(Sender: TObject);
+begin
+  self.Action_Control(4);
+
+  Application.CreateForm(TfBuscarGenM2, fBuscarGenM2);
+  fBuscarGenM2.Hide;
+  fBuscarGenM2.oLst_campos.Clear;
+
+  BuscarGenM2.oListData[1].Texto := 'Código';
+  BuscarGenM2.oListData[1].Campo := 'mun_id';
+  BuscarGenM2.oListData[1].LLave := true;
+
+  BuscarGenM2.oListData[2].Texto := 'Nombre de municipio';
+  BuscarGenM2.oListData[2].Campo := 'mun_nombre';
+  BuscarGenM2.oListData[2].LLave := false;
+
+  fBuscarGenM2.oSql1.Clear;
+  fBuscarGenM2.oSql1.Lines.Add('SELECT mun_id,UCASE(mun_nombre) as mun_nombre FROM municipios WHERE 1=1 ');
+  fBuscarGenM2.ShowModal;
+  if BuscarGenM2.vFindResult <> '' then
+    self.oDBNav.DataSource.DataSet.Locate('mun_id', BuscarGenM2.vFindResult, []);
+  freeandnil(fBuscarGenM2);
+end;
+
+procedure TfMunicipios.oBtnNewClick(Sender: TObject);
+begin
+  self.otMunicipios.Insert;
+  self.oActivo.Checked := true;
+  self.Action_Control(1);
+  self.PageControl1.ActivePageIndex := 0;
+  self.Activa_Objetos(true);
+  self.otMunicipios.FieldByName('mun_inactivo').Value := 0;
+  self.oNombre.SetFocus;
+end;
+
+procedure TfMunicipios.oBtnPrintClick(Sender: TObject);
+begin
+  self.Action_Control(5);
+  ShowMessage('Opción aún no programada.');
+end;
+
+procedure TfMunicipios.oBtnSaveClick(Sender: TObject);
+begin
+  self.otMunicipios.Post;
+  self.Action_Control(6);
+  self.PageControl1.ActivePageIndex := 0;
+  self.Activa_Objetos(false);
+end;
+
+procedure TfMunicipios.oImpuestoKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then { if it's an enter key }
+  begin
+    Key := #0; { eat enter key }
+    Perform(WM_NEXTDLGCTL, 0, 0); { move to next control }
+  end
+end;
+
+procedure TfMunicipios.oNombreKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then { if it's an enter key }
+  begin
+    Key := #0; { eat enter key }
+    Perform(WM_NEXTDLGCTL, 0, 0); { move to next control }
+  end
+end;
+
+procedure TfMunicipios.otMunicipiosAfterInsert(DataSet: TDataSet);
+begin
+  DataSet.FieldByName('mun_notas').AsString := ' ';
+  DataSet.FieldByName('mun_inactivo').Value := 0;
+  DataSet.FieldByName('mun_impuesto').AsFloat := 0.00;
+end;
+
+procedure TfMunicipios.otMunicipiosBeforePost(DataSet: TDataSet);
+begin
+  if DataSet.State in [dsEdit, dsInsert] then
+  begin
+    if futilesv20.isEmpty(DataSet.FieldByName('mun_nombre').AsString) then
+    begin
+      ShowMessage('Para crear un municipio es necesario por lo menos el nombre.');
+      self.oNombre.SetFocus;
+      abort;
+    end;
+
+    if DataSet.State = dsEdit then
+    begin
+      DataSet.FieldByName('u_usuario_modif').AsString := sUserName;
+      DataSet.FieldByName('mun_fecha_Modif').Value := now();
+    end
+    else if DataSet.State = dsInsert then
+    begin
+      DataSet.FieldByName('u_usuario_alta').AsString := sUserName;
+      DataSet.FieldByName('mun_fecha_alta').Value := now();
+    end;
+  end;
+end;
+
+procedure TfMunicipios.Action_Control(pOption: integer);
+begin
+  if ((pOption = 1) or (pOption = 2)) then
+  begin
+    oDBNav.Visible := false;
+    oBtnNew.Visible := false;
+    oBtnEdit.Visible := false;
+    oBtnDelete.Visible := false;
+    oBtnFind.Visible := false;
+    oBtnPrint.Visible := false;
+    oBtnExit.Enabled := false;
+
+    oBtnSave.Top := oBtnNew.Top;
+    oBtnSave.Left := oBtnNew.Left;
+
+    oBtnAbort.Top := oBtnEdit.Top;
+    oBtnAbort.Left := oBtnEdit.Left;
+
+    oBtnAbort.Visible := true;
+    oBtnSave.Visible := true;
+    oBtnExit.Visible := false;
+  end;
+
+  if ((pOption = 6) or (pOption = 7)) then
+  begin
+    oDBNav.Visible := true;
+    oBtnNew.Visible := true;
+    oBtnEdit.Visible := true;
+    oBtnDelete.Visible := true;
+    oBtnFind.Visible := true;
+    oBtnPrint.Visible := false;
+    oBtnExit.Enabled := true;
+    oBtnSave.Top := oBtnNew.Top;
+    oBtnSave.Left := oBtnNew.Left;
+
+    oBtnAbort.Top := oBtnEdit.Top;
+    oBtnAbort.Left := oBtnEdit.Left;
+
+    oBtnAbort.Visible := false;
+    oBtnSave.Visible := false;
+    oBtnExit.Visible := true;
+  end;
+
+end;
+
+procedure TfMunicipios.Activa_Objetos(bPar: boolean);
+var
+  i: Word;
+  oComponents: TControl;
+begin
+  for i := 0 to self.ComponentCount - 1 do
+  begin
+    if (self.Components[i] is TDBEdit) then
+    begin
+      oComponents := TDBEdit(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBMemo) then
+    begin
+      oComponents := TDBMemo(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBNumberEditEh) then
+    begin
+      oComponents := TDBNumberEditEh(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBLookupComboBox) then
+    begin
+      oComponents := TDBLookupComboBox(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBCheckBox) then
+    begin
+      oComponents := TDBCheckBox(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TPngSpeedButton) then
+    begin
+      oComponents := TPngSpeedButton(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBComboBox) then
+    begin
+      oComponents := TDBComboBox(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBComboBoxEh) then
+    begin
+      oComponents := TDBComboBoxEh(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBDateTimeEditEh) then
+    begin
+      oComponents := TDBDateTimeEditEh(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBLookupComboboxEh) then
+    begin
+      oComponents := TDBLookupComboboxEh(self.Components[i]);
+      oComponents.Enabled := fUtilesV20.iif(oComponents.Tag = 3, false, fUtilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+
+    if (self.Components[i] is TBitBtn) then
+    begin
+      oComponents := TBitBtn(self.Components[i]);
+      if oComponents.Tag = 20 then
+        oComponents.Enabled := bPar;
+    end;
+  end;
+  self.oID.Enabled := false;
+end;
+
+end.

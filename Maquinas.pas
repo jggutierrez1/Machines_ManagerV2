@@ -6,15 +6,16 @@ uses
   Windows, Messages, SysUtils, Variants,
   Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, DBCtrls, Mask,
-  ExtCtrls, ComCtrls, Buttons, GridsEh,
-  DBGridEh, DB, DBCtrlsEh, PngBitBtn,
-  PngSpeedButton, WideStrings, DBLookupEh, DBGridEhGrouping,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
+  ExtCtrls, ComCtrls, Buttons,
+  DB, PngBitBtn,
+  PngSpeedButton, WideStrings,
+  DBGridEhGrouping, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, DBLookupEh, DynVarsEh, DBAxisGridsEh, DBGridEhToolCtrls,
   FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, DBAxisGridsEh, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, EhLibVCL, FireDAC.VCLUI.Wait,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, EhLibVCL,
+  FireDAC.VCLUI.Wait,
   Vcl.Imaging.pngimage;
 
 type
@@ -34,18 +35,12 @@ type
     TabSheet1: TTabSheet;
     Label5: TLabel;
     Label3: TLabel;
-    Label16: TLabel;
-    Label17: TLabel;
     oActivo: TDBCheckBox;
-    oCodigo: TDBEdit;
+    oSerie: TDBEdit;
     oID: TDBEdit;
-    oFecha_Alta: TDBDateTimeEditEh;
-    oFecha_Mof: TDBDateTimeEditEh;
     oDS_Denom: TDataSource;
     Label1: TLabel;
     Label2: TLabel;
-    Label6: TLabel;
-    oModelo: TDBEdit;
     Label7: TLabel;
     oGrid: TDBGridEh;
     oBtn_Denom: TPngSpeedButton;
@@ -99,6 +94,35 @@ type
     Label30: TLabel;
     oporc_conc: TDBNumberEditEh;
     oImage_Lock2: TImage;
+    oDs_Maq_Prov: TDataSource;
+    oMaq_Prov: TFDTable;
+    oLst_Prov: TDBLookupComboboxEh;
+    Label31: TLabel;
+    TabSheet3: TTabSheet;
+    Label16: TLabel;
+    oFecha_Alta: TDBDateTimeEditEh;
+    Label17: TLabel;
+    oFecha_Mof: TDBDateTimeEditEh;
+    Label32: TLabel;
+    Label33: TLabel;
+    DBEdit1: TDBEdit;
+    DBEdit2: TDBEdit;
+    Label34: TLabel;
+    oLst_Juego: TDBLookupComboboxEh;
+    oDs_Maq_Jueg: TDataSource;
+    oMaq_Jueg: TFDTable;
+    oBtn_Prov: TPngSpeedButton;
+    oBtn_Jueg: TPngSpeedButton;
+    Label6: TLabel;
+    oDs_Maq_Chap: TDataSource;
+    oMaq_Chap: TFDTable;
+    DBGridEh1: TDBGridEh;
+    oDs_MetroE: TDataSource;
+    oQry_MetroE: TFDQuery;
+    oQry_MetroS: TFDQuery;
+    oDs_MetroS: TDataSource;
+    DBGridEh2: TDBGridEh;
+    omaqtc_chapa: TDBEdit;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -117,6 +141,14 @@ type
     procedure oMaquinaTCAfterInsert(DataSet: TDataSet);
     procedure oMaquinaTCBeforePost(DataSet: TDataSet);
     procedure oImage_Lock2Click(Sender: TObject);
+    procedure oBtn_ProvClick(Sender: TObject);
+    procedure oBtn_JuegClick(Sender: TObject);
+    procedure oBtn_ChapClick(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
+    procedure refresh_metros;
+    procedure oDBNavClick(Sender: TObject; Button: TNavigateBtn);
+    procedure TabSheet2Show(Sender: TObject);
+    procedure oLst_ProvCloseUp(Sender: TObject; Accept: boolean);
   private
     bOk_Chg_Val: boolean;
     { Private declarations }
@@ -138,6 +170,7 @@ USES BuscarGenM2, Denominaciones, utilesV20, acceso1;
 
 procedure TfMaquinas.FormCreate(Sender: TObject);
 begin
+  self.iOpcion := 0;
   self.bOk_Chg_Val := false;
   // self.ResizeKit1.Enabled := utiles.Ctrl_Resize;
   // utiles.ResizeKit_DBGridEh_Prepare(self.DBGridEh1, oObjRez);
@@ -146,6 +179,10 @@ begin
   self.PageControl1.ActivePageIndex := 0;
   self.oMaquinaTC.Connection := futilesV20.oPublicCnn;
   self.oDenom.Connection := futilesV20.oPublicCnn;
+  self.oMaq_Prov.Connection := futilesV20.oPublicCnn;
+  self.oMaq_Jueg.Connection := futilesV20.oPublicCnn;
+  self.oMaq_Chap.Connection := futilesV20.oPublicCnn;
+
   // maqtc_tipomaq<>1 and
   self.oMaquinaTC.Filter := 'emp_id=' + SysUtils.QuotedStr(IntToStr(utilesV20.iId_Empresa));
   self.oMaquinaTC.Filtered := true;
@@ -153,6 +190,24 @@ begin
   self.oDS_Denom.DataSet := oDenom;
   self.oDS_Denom.Enabled := true;
   self.oDenom.Active := true;
+
+  self.oDs_Maq_Prov.DataSet := oMaq_Prov;
+  self.oDs_Maq_Prov.Enabled := true;
+  self.oMaq_Prov.Filter := '';
+  self.oMaq_Prov.Filtered := false;
+  self.oMaq_Prov.Active := true;
+
+  self.oDs_Maq_Jueg.DataSet := oMaq_Jueg;
+  self.oDs_Maq_Jueg.Enabled := true;
+  self.oMaq_Jueg.Filter := '';
+  self.oMaq_Jueg.Filtered := false;
+  self.oMaq_Jueg.Active := true;
+
+  self.oDs_Maq_Chap.DataSet := oMaq_Chap;
+  self.oDs_Maq_Chap.Enabled := true;
+  self.oMaq_Chap.Filter := '';
+  self.oMaq_Chap.Filtered := false;
+  self.oMaq_Chap.Active := true;
 
   self.oDS_Maquinas.DataSet := oMaquinaTC;
   self.oDS_Maquinas.Enabled := true;
@@ -186,7 +241,15 @@ begin
           self.oMaquinaTC.GotoBookmark(Rs_Bookmark);
       end;
   end;
-  iOpcion := 0;
+  self.iOpcion := 0;
+  self.oMaq_Prov.Filter := '';
+  self.oMaq_Prov.Filtered := false;
+
+  self.oMaq_Jueg.Filter := '';
+  self.oMaq_Jueg.Filtered := false;
+
+  self.oMaq_Chap.Filter := '';
+  self.oMaq_Chap.Filtered := false;
 end;
 
 procedure TfMaquinas.oBtnDeleteClick(Sender: TObject);
@@ -198,6 +261,7 @@ begin
     self.Action_Control(6);
     exit;
   end;
+  self.iOpcion := 3;
   self.Action_Control(3);
   nResp := Application.MessageBox('Seguro desea borrar?', '', MB_YESNO);
   If (nResp = ID_YES) Then
@@ -205,16 +269,17 @@ begin
     self.oDBNav.DataSource.DataSet.Delete;
     // self.oDBNav.DataSource.DataSet.Refresh;
   end;
+  self.iOpcion := 0;
 end;
 
 procedure TfMaquinas.oBtnEditClick(Sender: TObject);
 begin
-  iOpcion := 2;
   if self.oMaquinaTC.isEmpty then
   begin
     self.Action_Control(6);
     exit;
   end;
+  self.iOpcion := 2;
   self.PageControl1.ActivePageIndex := 0;
   self.oMaquinaTC.Edit;
   self.Action_Control(2);
@@ -248,7 +313,7 @@ begin
     self.omfecha_ant2.Enabled := false;
   end;
 
-  self.oCodigo.SetFocus;
+  self.oSerie.SetFocus;
 end;
 
 procedure TfMaquinas.oBtnExitClick(Sender: TObject);
@@ -257,6 +322,8 @@ begin
 end;
 
 procedure TfMaquinas.oBtnFindClick(Sender: TObject);
+var
+  cSql_Ln: string;
 begin
   if self.oMaquinaTC.isEmpty then
   begin
@@ -270,26 +337,40 @@ begin
   fBuscarGenM2.oLst_campos.Clear;
 
   BuscarGenM2.oListData[1].Texto := 'Código';
-  BuscarGenM2.oListData[1].Campo := 'maqtc_cod';
+  BuscarGenM2.oListData[1].Campo := 'maqtc_id';
   BuscarGenM2.oListData[1].LLave := true;
 
   BuscarGenM2.oListData[2].Texto := 'Nombre del Máquina';
   BuscarGenM2.oListData[2].Campo := 'maqtc_modelo';
   BuscarGenM2.oListData[2].LLave := false;
 
+  BuscarGenM2.oListData[3].Texto := 'Número de Chapa';
+  BuscarGenM2.oListData[3].Campo := 'maqtc_chapa';
+  BuscarGenM2.oListData[3].LLave := false;
+
+  cSql_Ln := '';
+  cSql_Ln := cSql_Ln + 'SELECT ';
+  cSql_Ln := cSql_Ln + '  maqtc_id, ';
+  cSql_Ln := cSql_Ln + '  UCASE(maqtc_modelo) AS maqtc_modelo, ';
+  cSql_Ln := cSql_Ln + '  maqtc_chapa ';
+  cSql_Ln := cSql_Ln + 'FROM maquinastc ';
+  cSql_Ln := cSql_Ln + 'WHERE emp_id=' + QuotedStr(IntToStr(utilesV20.iId_Empresa));
+
   fBuscarGenM2.oSql1.Clear;
-  fBuscarGenM2.oSql1.Lines.Add('SELECT maqtc_cod,UCASE(maqtc_modelo) as maqtc_modelo FROM maquinastc WHERE emp_id=' +
-    QuotedStr(IntToStr(utilesV20.iId_Empresa)));
+  fBuscarGenM2.oSql1.Text := cSql_Ln;
   fBuscarGenM2.ShowModal;
+
   if trim(BuscarGenM2.vFindResult) <> '' then
-    self.oDBNav.DataSource.DataSet.Locate('maqtc_cod', BuscarGenM2.vFindResult, []);
+    self.oDBNav.DataSource.DataSet.Locate('maqtc_id', BuscarGenM2.vFindResult, []);
   freeandnil(fBuscarGenM2);
 end;
 
 procedure TfMaquinas.oBtnNewClick(Sender: TObject);
+var
+  cNext: string;
 begin
   // self.oDenom.Filtered := true;
-  iOpcion := 1;
+  self.iOpcion := 1;
   self.PageControl1.ActivePageIndex := 0;
   self.oMaquinaTC.Insert;
   self.Action_Control(1);
@@ -297,10 +378,25 @@ begin
   // self.oTipoMaq.KeyItems.Values := 1;
   self.oMaquinaTC.FieldByName('maqtc_tipomaq').Value := 1;
   self.oMaquinaTC.FieldByName('maqtc_inactivo').Value := 0;
+  cNext := futilesV20.query_selectgen_result('SELECT IFNULL(corre_maq,0)+1 AS corre_maq FROM global LIMIT 1');
+  self.oMaquinaTC.FieldByName('maqtc_id').AsString := cNext;
   self.oActivo.Checked := false;
   // self.oMetros.ItemIndex := 0;
   self.oDenom.First;
-  self.oCodigo.SetFocus;
+
+  self.oMaq_Prov.Filter := 'prov_inactivo=0';
+  self.oMaq_Prov.Filtered := true;
+
+  self.oMaq_Jueg.Filter := 'jueg_inactivo=0';
+  self.oMaq_Jueg.Filtered := true;
+
+  self.oMaq_Chap.Filter := 'chapa_inactivo=0';
+  self.oMaq_Chap.Filtered := true;
+
+  self.TabSheet2.TabVisible := false;
+  self.TabSheet1.TabVisible := false;
+
+  self.oSerie.SetFocus;
 end;
 
 procedure TfMaquinas.oBtnPrintClick(Sender: TObject);
@@ -315,16 +411,57 @@ begin
 end;
 
 procedure TfMaquinas.oBtnSaveClick(Sender: TObject);
+var
+  cNext: string;
+  cSql_Ln: string;
 begin
+  if (self.iOpcion = 1) then
+  begin
+    cNext := futilesV20.query_selectgen_result('SELECT IFNULL(corre_maq,0)+1 AS corre_maq FROM global LIMIT 1');
+    self.oMaquinaTC.FieldByName('maqtc_id').AsString := cNext;
+    utilesV20.Execute_SQL_Command('UPDATE global SET corre_maq=IFNULL(corre_maq,0)+1 WHERE 1=1');
+
+    cSql_Ln := '';
+    cSql_Ln := cSql_Ln + 'SELECT maqtc_id ';
+    cSql_Ln := cSql_Ln + 'FROM maquinastc ';
+    cSql_Ln := cSql_Ln + 'WHERE (maqtc_chapa=' + SysUtils.QuotedStr(trim(self.omaqtc_chapa.Text)) + ') ';
+    if (utilesV20.Execute_SQL_Result(cSql_Ln) <> '') then
+    begin
+      ShowMessage('El número de la chapa de esta máquina ya fue asignado a otra máquina, revice y reintente nuevamente.');
+      self.omaqtc_chapa.SetFocus;
+      exit;
+    end;
+
+  end
+  else if (self.iOpcion = 2) then
+  begin
+
+    cSql_Ln := '';
+    cSql_Ln := cSql_Ln + 'SELECT maqtc_id ';
+    cSql_Ln := cSql_Ln + 'FROM maquinastc ';
+    cSql_Ln := cSql_Ln + 'WHERE (maqtc_id   <>' + SysUtils.QuotedStr(trim(self.oID.Text)) + ') ';
+    cSql_Ln := cSql_Ln + 'AND   (maqtc_chapa=' + SysUtils.QuotedStr(trim(self.omaqtc_chapa.Text)) + ') ';
+    if (utilesV20.Execute_SQL_Result(cSql_Ln) <> '') then
+    begin
+      ShowMessage('El número de la chapa de esta máquina ya fue asignado a otra máquina, revice y reintente nuevamente.');
+      self.omaqtc_chapa.SetFocus;
+      exit;
+    end;
+
+  end;
+
+  self.oMaquinaTC.FieldByName('maqtc_modelo').AsString := self.oLst_Juego.Text;
   self.oMaquinaTC.post;
   self.Action_Control(6);
   self.Activa_Objetos(false);
   // self.oDenom.Filtered := false;
   self.oMaquinaTC.Refresh;
-  case iOpcion of
+  case self.iOpcion of
     1:
       begin
-
+        cNext := futilesV20.query_selectgen_result('SELECT IFNULL(corre_maq,0)+1 AS corre_maq FROM global LIMIT 1');
+        self.oMaquinaTC.FieldByName('maqtc_id').AsString := cNext;
+        utilesV20.Execute_SQL_Command('UPDATE global SET corre_maq=IFNULL(corre_maq,0)+1 WHERE 1=1');
       end;
     2:
       begin
@@ -332,7 +469,24 @@ begin
           self.oMaquinaTC.GotoBookmark(Rs_Bookmark);
       end;
   end;
-  iOpcion := 0;
+  self.iOpcion := 0;
+
+  self.oMaq_Prov.Filter := '';
+  self.oMaq_Prov.Filtered := false;
+
+  self.oMaq_Jueg.Filter := '';
+  self.oMaq_Jueg.Filtered := false;
+
+  self.oMaq_Chap.Filter := '';
+  self.oMaq_Chap.Filtered := false;
+end;
+
+procedure TfMaquinas.oBtn_ChapClick(Sender: TObject);
+begin
+  Application.CreateForm(TfDenom, fDenom);
+  fDenom.ShowModal;
+  fDenom.free;
+  self.oDenom.Refresh;
 end;
 
 procedure TfMaquinas.oBtn_DenomClick(Sender: TObject);
@@ -341,6 +495,27 @@ begin
   fDenom.ShowModal;
   fDenom.free;
   self.oDenom.Refresh;
+end;
+
+procedure TfMaquinas.oBtn_JuegClick(Sender: TObject);
+begin
+  Application.CreateForm(TfDenom, fDenom);
+  fDenom.ShowModal;
+  fDenom.free;
+  self.oDenom.Refresh;
+end;
+
+procedure TfMaquinas.oBtn_ProvClick(Sender: TObject);
+begin
+  Application.CreateForm(TfDenom, fDenom);
+  fDenom.ShowModal;
+  fDenom.free;
+  self.oDenom.Refresh;
+end;
+
+procedure TfMaquinas.oDBNavClick(Sender: TObject; Button: TNavigateBtn);
+begin
+  self.refresh_metros();
 end;
 
 procedure TfMaquinas.oImage_Lock2Click(Sender: TObject);
@@ -364,6 +539,19 @@ begin
   end;
 end;
 
+procedure TfMaquinas.oLst_ProvCloseUp(Sender: TObject; Accept: boolean);
+begin
+  if ((self.iOpcion = 1) or (self.iOpcion = 2)) then
+  begin
+
+    if (self.oLst_Prov.KeyValue <> null) then
+    begin
+      self.oporc_conc.Value := self.oMaq_Prov.FieldByName('prov_porc').AsFloat;
+    end;
+  end;
+
+end;
+
 procedure TfMaquinas.oMaquinaTCAfterEdit(DataSet: TDataSet);
 begin
   DataSet.FieldByName('emp_id').Value := utilesV20.iId_Empresa;
@@ -378,16 +566,31 @@ procedure TfMaquinas.oMaquinaTCBeforePost(DataSet: TDataSet);
 begin
   if DataSet.State in [dsEdit, dsInsert] then
   begin
-    if futilesV20.isEmpty(DataSet.FieldByName('maqtc_modelo').AsString) then
+    if futilesV20.isEmpty(DataSet.FieldByName('maqtc_serie').AsString) then
     begin
-      ShowMessage('Para crear un Máquina es necesario el Modelo de la máquina');
-      self.oModelo.SetFocus;
+      ShowMessage('Para crear un Máquina es necesario el Número de serie de la máquina');
+      self.oSerie.SetFocus;
       abort;
     end;
-    if futilesV20.isEmpty(DataSet.FieldByName('maqtc_cod').AsString) then
+
+    if futilesV20.isEmpty(DataSet.FieldByName('prov_cod').AsString) then
     begin
-      ShowMessage('Para crear un Máquina es necesario el número de chapa/máquina');
-      self.oCodigo.SetFocus;
+      ShowMessage('Para crear un Máquina es necesario indicar el proveedor');
+      self.oLst_Prov.SetFocus;
+      abort;
+    end;
+
+    if futilesV20.isEmpty(DataSet.FieldByName('prov_cod').AsString) then
+    begin
+      ShowMessage('Para crear un Máquina es necesario indicar el juego a usar');
+      self.oLst_Juego.SetFocus;
+      abort;
+    end;
+
+    if futilesV20.isEmpty(DataSet.FieldByName('maqtc_chapa').AsString) then
+    begin
+      ShowMessage('Para crear un Máquina es necesario indicar la CHAPA ASOCIADA');
+      self.omaqtc_chapa.SetFocus;
       abort;
     end;
 
@@ -430,13 +633,28 @@ begin
       DataSet.FieldByName('u_usuario_alta').AsString := utilesV20.sUserName;
       DataSet.FieldByName('maqtc_fecha_alta').Value := now();
     end;
-    DataSet.FieldByName('maqtc_chapa').Value := DataSet.FieldByName('maqtc_cod').Value;
+    // DataSet.FieldByName('maqtc_chapa').Value := DataSet.FieldByName('maqtc_cod').Value;
+  end;
+end;
+
+procedure TfMaquinas.PageControl1Change(Sender: TObject);
+var
+  cSql_Ln: string;
+begin
+  if (self.PageControl1.ActivePageIndex = 2) then
+  begin
+    self.refresh_metros();
   end;
 end;
 
 procedure TfMaquinas.ResizeKit1ExitResize(Sender: TObject; XScale, YScale: Double);
 begin
   // utiles.ResizeKit_DBGridEh(self.DBGridEh1, XScale, YScale, oObjRez);
+end;
+
+procedure TfMaquinas.TabSheet2Show(Sender: TObject);
+begin
+  self.refresh_metros();
 end;
 
 procedure TfMaquinas.Action_Control(pOption: integer);
@@ -522,29 +740,125 @@ end;
 procedure TfMaquinas.Activa_Objetos(bPar: boolean);
 var
   i: Word;
+  oComponents: TControl;
 begin
   for i := 0 to self.ComponentCount - 1 do
   begin
     if (self.Components[i] is TDBEdit) then
-      TDBEdit(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBEdit(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBMemo) then
-      TDBMemo(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBMemo(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBNumberEditEh) then
-      TDBNumberEditEh(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBNumberEditEh(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBLookupComboBox) then
-      TDBLookupComboBox(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBLookupComboBox(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBCheckBox) then
-      TDBCheckBox(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBCheckBox(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TPngSpeedButton) then
-      TPngSpeedButton(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TPngSpeedButton(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBComboBox) then
-      TDBComboBox(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBComboBox(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBComboBoxEh) then
-      TDBComboBoxEh(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBComboBoxEh(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBDateTimeEditEh) then
-      TDBDateTimeEditEh(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBDateTimeEditEh(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBLookupComboboxEh) then
+    begin
+      oComponents := TDBLookupComboboxEh(self.Components[i]);
+      oComponents.Enabled := futilesV20.iif(oComponents.Tag = 3, false, futilesV20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+
+    if (self.Components[i] is TBitBtn) then
+    begin
+      oComponents := TBitBtn(self.Components[i]);
+      if oComponents.Tag = 20 then
+        oComponents.Enabled := bPar;
+    end;
+
   end;
   self.oID.Enabled := false;
+end;
+
+procedure TfMaquinas.refresh_metros;
+var
+  cSql_Ln: string;
+  cEmp, cMaq: string;
+begin
+  cEmp := trim(self.oMaquinaTC.FieldByName('emp_id').AsString);
+  cMaq := trim(self.oMaquinaTC.FieldByName('maqtc_id').AsString);
+
+  if (self.TabSheet2.TabVisible = true) then
+  begin
+    cSql_Ln := '';
+    cSql_Ln := cSql_Ln + 'SELECT ';
+    cSql_Ln := cSql_Ln + '  `maqtc_mfecha`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_m1e_act`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_m1e_ant`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_m2e_act`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_m2e_ant`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_fecha_alta`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_usuario_alta`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_fecha_modif`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_usuario_modif`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_nodoc` ';
+    cSql_Ln := cSql_Ln + 'FROM maquinastc_metros ';
+    cSql_Ln := cSql_Ln + 'WHERE (emp_id   =' + SysUtils.QuotedStr(cEmp) + ') ';
+    cSql_Ln := cSql_Ln + 'AND   (maqtc_id =' + SysUtils.QuotedStr(cMaq) + ') ';
+    cSql_Ln := cSql_Ln + 'ORDER BY maqtc_mfecha DESC LIMIT 30';
+
+    self.oQry_MetroE.Connection := futilesV20.oPublicCnn;
+    self.oQry_MetroE.close;
+    self.oQry_MetroE.SQL.Text := cSql_Ln;
+    self.oQry_MetroE.Open;
+
+    cSql_Ln := '';
+    cSql_Ln := cSql_Ln + 'SELECT ';
+    cSql_Ln := cSql_Ln + '  `maqtc_mfecha`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_m1s_act`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_m1s_ant`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_m2s_act`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_m2s_ant`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_fecha_alta`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_usuario_alta`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_fecha_modif`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_usuario_modif`, ';
+    cSql_Ln := cSql_Ln + '  `maqtc_nodoc` ';
+    cSql_Ln := cSql_Ln + 'FROM maquinastc_metros ';
+    cSql_Ln := cSql_Ln + 'WHERE (emp_id   =' + SysUtils.QuotedStr(cEmp) + ') ';
+    cSql_Ln := cSql_Ln + 'AND   (maqtc_id =' + SysUtils.QuotedStr(cMaq) + ') ';
+    cSql_Ln := cSql_Ln + 'ORDER BY maqtc_mfecha DESC LIMIT 30';
+    self.oQry_MetroS.Connection := futilesV20.oPublicCnn;
+    self.oQry_MetroS.close;
+    self.oQry_MetroS.SQL.Text := cSql_Ln;
+    self.oQry_MetroS.Open;
+  end;
 end;
 
 end.

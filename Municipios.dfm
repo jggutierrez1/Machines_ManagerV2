@@ -168,10 +168,6 @@ object fMunicipios: TfMunicipios
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 40
         Top = 18
@@ -192,20 +188,6 @@ object fMunicipios: TfMunicipios
         Width = 31
         Height = 13
         Caption = 'Notas:'
-      end
-      object Label13: TLabel
-        Left = 442
-        Top = 51
-        Width = 69
-        Height = 13
-        Caption = 'Fecha de Alta:'
-      end
-      object Label14: TLabel
-        Left = 442
-        Top = 93
-        Width = 76
-        Height = 13
-        Caption = 'Fecha '#218'lt. Mod.'
       end
       object Label1: TLabel
         Left = 40
@@ -253,48 +235,6 @@ object fMunicipios: TfMunicipios
         Enabled = False
         TabOrder = 0
       end
-      object oFecha_Crea: TDBDateTimeEditEh
-        Left = 528
-        Top = 48
-        Width = 132
-        Height = 21
-        DataField = 'mun_fecha_alta'
-        DataSource = oDS_Minucipios
-        DynProps = <>
-        Enabled = False
-        EditButtons = <>
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        Kind = dtkDateTimeEh
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 5
-        Visible = True
-      end
-      object oFecha_Mod: TDBDateTimeEditEh
-        Left = 528
-        Top = 90
-        Width = 132
-        Height = 21
-        DataField = 'mun_fecha_Modif'
-        DataSource = oDS_Minucipios
-        DynProps = <>
-        Enabled = False
-        EditButtons = <>
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        Kind = dtkDateTimeEh
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 6
-        Visible = True
-      end
       object oImpuesto: TDBNumberEditEh
         Left = 135
         Top = 90
@@ -319,6 +259,92 @@ object fMunicipios: TfMunicipios
         DataSource = oDS_Minucipios
         ScrollBars = ssVertical
         TabOrder = 4
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Auditor'#237'a'
+      ImageIndex = 1
+      object Label17: TLabel
+        Left = 27
+        Top = 32
+        Width = 69
+        Height = 13
+        Caption = 'Fecha de Alta:'
+      end
+      object Label32: TLabel
+        Left = 27
+        Top = 64
+        Width = 64
+        Height = 13
+        Caption = 'Usuario Creo:'
+      end
+      object Label19: TLabel
+        Left = 27
+        Top = 96
+        Width = 76
+        Height = 13
+        Caption = 'Fecha '#218'lt. Mod.'
+      end
+      object Label33: TLabel
+        Left = 27
+        Top = 128
+        Width = 82
+        Height = 13
+        Caption = 'Usuario Modific'#243':'
+      end
+      object oFecha_Alta: TDBDateTimeEditEh
+        Tag = 3
+        Left = 113
+        Top = 29
+        Width = 140
+        Height = 21
+        DataField = 'mun_fecha_alta'
+        DataSource = oDS_Minucipios
+        DynProps = <>
+        Enabled = False
+        EditButtons = <>
+        Kind = dtkDateTimeEh
+        TabOrder = 0
+        Visible = True
+      end
+      object DBEdit1: TDBEdit
+        Tag = 3
+        Left = 113
+        Top = 61
+        Width = 217
+        Height = 21
+        CharCase = ecUpperCase
+        DataField = 'u_usuario_alta'
+        DataSource = oDS_Minucipios
+        Enabled = False
+        TabOrder = 1
+      end
+      object oFecha_Mof: TDBDateTimeEditEh
+        Tag = 3
+        Left = 113
+        Top = 93
+        Width = 142
+        Height = 21
+        DataField = 'mun_fecha_modif'
+        DataSource = oDS_Minucipios
+        DynProps = <>
+        Enabled = False
+        EditButtons = <>
+        Kind = dtkDateTimeEh
+        TabOrder = 2
+        Visible = True
+      end
+      object DBEdit2: TDBEdit
+        Tag = 3
+        Left = 113
+        Top = 125
+        Width = 219
+        Height = 21
+        CharCase = ecUpperCase
+        DataField = 'u_usuario_modif'
+        DataSource = oDS_Minucipios
+        Enabled = False
+        TabOrder = 3
       end
     end
   end

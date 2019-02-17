@@ -2,10 +2,14 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>2018/05/06 22:08:52.000.729,=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas</Transaction>
-    <Transaction>2018/05/06 22:38:30.000.443,C:\Users\Usuario\Documents\GitHub\Machines_Manager\aplica_colectas.dfm=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.dfm</Transaction>
-    <Transaction>2018/05/06 22:38:30.000.443,C:\Users\Usuario\Documents\GitHub\Machines_Manager\aplica_colectas.pas=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas</Transaction>
+    <Transaction>2018/05/06 22:38:30.000.443,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.dfm=C:\Users\Usuario\Documents\GitHub\Machines_Manager\aplica_colectas.dfm</Transaction>
+    <Transaction>2018/05/06 22:38:30.000.443,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas=C:\Users\Usuario\Documents\GitHub\Machines_Manager\aplica_colectas.pas</Transaction>
     <Transaction>2018/06/25 11:46:48.000.703,=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas</Transaction>
-    <Transaction>2018/06/25 11:52:22.000.266,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.dfm=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Aplica_Fecha_Col.dfm</Transaction>
-    <Transaction>2018/06/25 11:52:22.000.266,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Aplica_Fecha_Col.pas</Transaction>
+    <Transaction>2018/06/25 11:52:22.000.266,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Aplica_Fecha_Col.dfm=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.dfm</Transaction>
+    <Transaction>2018/06/25 11:52:22.000.266,C:\Users\Usuario\Documents\GitHub\Machines_Manager\Aplica_Fecha_Col.pas=C:\Users\Usuario\Documents\GitHub\Machines_Manager\Unit1.pas</Transaction>
+    <Transaction>2019/02/11 20:45:13.000.060,=C:\Users\Optiplex\Documents\GitHub\Machines_ManagerV2\aplica_conta.pas</Transaction>
+    <Transaction>2019/02/16 19:21:03.000.606,=C:\Users\Optiplex\Documents\GitHub\Machines_ManagerV2\Proveedores.pas</Transaction>
+    <Transaction>2019/02/16 19:21:22.000.829,C:\Users\Optiplex\Documents\GitHub\Machines_ManagerV2\Proveedores.dfm=C:\Users\Optiplex\Documents\GitHub\Machines_ManagerV2\Prov_Maq.dfm</Transaction>
+    <Transaction>2019/02/16 19:21:22.000.829,C:\Users\Optiplex\Documents\GitHub\Machines_ManagerV2\Proveedores.pas=C:\Users\Optiplex\Documents\GitHub\Machines_ManagerV2\Prov_Maq.pas</Transaction>
   </Transactions>
 </BorlandProject>

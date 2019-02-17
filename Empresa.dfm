@@ -3,7 +3,7 @@ object fEmpresa: TfEmpresa
   Top = 119
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Secci'#243'n de Mantenimiento [Empresas].'
-  ClientHeight = 527
+  ClientHeight = 517
   ClientWidth = 713
   Color = clBtnFace
   DefaultMonitor = dmDesktop
@@ -243,20 +243,6 @@ object fEmpresa: TfEmpresa
         Height = 13
         Caption = 'Email:'
       end
-      object Label13: TLabel
-        Left = 434
-        Top = 236
-        Width = 69
-        Height = 13
-        Caption = 'Fecha de Alta:'
-      end
-      object Label14: TLabel
-        Left = 427
-        Top = 278
-        Width = 76
-        Height = 13
-        Caption = 'Fecha '#218'lt. Mod.'
-      end
       object Label6: TLabel
         Left = 40
         Top = 278
@@ -419,52 +405,6 @@ object fEmpresa: TfEmpresa
         ShowHint = True
         TabOrder = 0
       end
-      object oFecha_Crea: TDBDateTimeEditEh
-        Left = 509
-        Top = 233
-        Width = 133
-        Height = 21
-        Hint = 'Fecha de alta del registro.'
-        DataField = 'emp_fecha_alta'
-        DataSource = oDS_Empresa
-        DynProps = <>
-        Enabled = False
-        EditButtons = <>
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        Kind = dtkDateTimeEh
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 13
-        Visible = True
-      end
-      object oFecha_Mod: TDBDateTimeEditEh
-        Left = 509
-        Top = 275
-        Width = 133
-        Height = 21
-        Hint = 'Fecha de la '#218'ltima modificasi'#243'n.'
-        DataField = 'emp_fecha_modif'
-        DataSource = oDS_Empresa
-        DynProps = <>
-        Enabled = False
-        EditButtons = <>
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        Kind = dtkDateTimeEh
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 14
-        Visible = True
-      end
       object oReporte: TDBEdit
         Left = 135
         Top = 275
@@ -479,6 +419,7 @@ object fEmpresa: TfEmpresa
         OnKeyPress = oReporteKeyPress
       end
       object oBtn_Rep: TBitBtn
+        Tag = 1
         Left = 358
         Top = 269
         Width = 38
@@ -639,8 +580,8 @@ object fEmpresa: TfEmpresa
         Caption = 'Clave de metros:'
       end
       object oImage_Lock2: TImage
-        Left = 18
-        Top = 277
+        Left = 618
+        Top = 229
         Width = 48
         Height = 48
         AutoSize = True
@@ -743,6 +684,14 @@ object fEmpresa: TfEmpresa
         Visible = False
         OnClick = oImage_Lock2Click
       end
+      object Label1: TLabel
+        Left = 51
+        Top = 274
+        Width = 113
+        Height = 13
+        Caption = 'Clave modificar facturas'
+        Visible = False
+      end
       object oJCJ: TDBNumberEditEh
         Left = 180
         Top = 48
@@ -779,7 +728,7 @@ object fEmpresa: TfEmpresa
       end
       object oEmp_clave_montos: TDBNumberEditEh
         Left = 180
-        Top = 215
+        Top = 207
         Width = 125
         Height = 32
         currency = True
@@ -799,11 +748,11 @@ object fEmpresa: TfEmpresa
         ShowHint = True
         TabOrder = 2
         Visible = True
-        OnKeyPress = oJCJKeyPress
+        OnKeyPress = oEmp_clave_montosKeyPress
       end
       object oEmp_clave_metros: TDBNumberEditEh
         Left = 468
-        Top = 215
+        Top = 207
         Width = 125
         Height = 32
         currency = True
@@ -821,13 +770,125 @@ object fEmpresa: TfEmpresa
         ParentFont = False
         TabOrder = 3
         Visible = True
-        OnKeyPress = oSPACKeyPress
+        OnKeyPress = oEmp_clave_metrosKeyPress
+      end
+      object oEmp_clave_facturas: TDBNumberEditEh
+        Left = 180
+        Top = 263
+        Width = 125
+        Height = 32
+        currency = True
+        DataField = 'emp_clave_facturas'
+        DataSource = oDS_Empresa
+        DecimalPlaces = 0
+        DisplayFormat = '#####0'
+        DynProps = <>
+        EditButtons = <>
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -19
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        Visible = False
+        OnKeyPress = oEmp_clave_facturasKeyPress
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Auditor'#237'a'
+      ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 28
+      object Label17: TLabel
+        Left = 27
+        Top = 32
+        Width = 69
+        Height = 13
+        Caption = 'Fecha de Alta:'
+      end
+      object Label32: TLabel
+        Left = 27
+        Top = 64
+        Width = 64
+        Height = 13
+        Caption = 'Usuario Creo:'
+      end
+      object Label19: TLabel
+        Left = 27
+        Top = 96
+        Width = 76
+        Height = 13
+        Caption = 'Fecha '#218'lt. Mod.'
+      end
+      object Label33: TLabel
+        Left = 27
+        Top = 128
+        Width = 82
+        Height = 13
+        Caption = 'Usuario Modific'#243':'
+      end
+      object oFecha_Alta: TDBDateTimeEditEh
+        Tag = 3
+        Left = 113
+        Top = 29
+        Width = 142
+        Height = 21
+        DataField = 'emp_fecha_alta'
+        DataSource = oDS_Empresa
+        DynProps = <>
+        Enabled = False
+        EditButtons = <>
+        Kind = dtkDateTimeEh
+        TabOrder = 0
+        Visible = True
+      end
+      object DBEdit1: TDBEdit
+        Tag = 3
+        Left = 113
+        Top = 61
+        Width = 218
+        Height = 21
+        CharCase = ecUpperCase
+        DataField = 'u_usuario_alta'
+        DataSource = oDS_Empresa
+        Enabled = False
+        TabOrder = 1
+      end
+      object oFecha_Mof: TDBDateTimeEditEh
+        Tag = 3
+        Left = 113
+        Top = 93
+        Width = 143
+        Height = 21
+        DataField = 'emp_fecha_modif'
+        DataSource = oDS_Empresa
+        DynProps = <>
+        Enabled = False
+        EditButtons = <>
+        Kind = dtkDateTimeEh
+        TabOrder = 2
+        Visible = True
+      end
+      object DBEdit2: TDBEdit
+        Tag = 3
+        Left = 113
+        Top = 125
+        Width = 219
+        Height = 21
+        CharCase = ecUpperCase
+        DataField = 'u_usuario_modif'
+        DataSource = oDS_Empresa
+        Enabled = False
+        TabOrder = 3
       end
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 508
+    Top = 498
     Width = 713
     Height = 19
     Panels = <>

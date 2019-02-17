@@ -7,14 +7,15 @@ uses
   Variants, Classes, Graphics, Controls,
   Forms, DBCtrls, Dialogs,
   StdCtrls, Mask, ExtCtrls, ComCtrls,
-  Buttons, GridsEh, DBGridEh, DB,
-  ADODB, DBCtrlsEh, pngimage, PngBitBtn,
+  Buttons, DB,
+  ADODB, pngimage, PngBitBtn,
   PngSpeedButton, WideStrings,
+  DBGridEhGrouping, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, DBLookupEh, DynVarsEh, DBAxisGridsEh, DBGridEhToolCtrls,
   FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef;
+  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait;
 
 type
   TfMunicipios = class(TForm)
@@ -37,15 +38,20 @@ type
     oBtnNew: TPngBitBtn;
     oBtnPrint: TPngBitBtn;
     oID: TDBEdit;
-    Label13: TLabel;
-    Label14: TLabel;
-    oFecha_Crea: TDBDateTimeEditEh;
-    oFecha_Mod: TDBDateTimeEditEh;
     Label1: TLabel;
     oImpuesto: TDBNumberEditEh;
     oNotas: TDBMemo;
     oConection: TFDConnection;
     otMunicipios: TFDTable;
+    TabSheet2: TTabSheet;
+    Label17: TLabel;
+    oFecha_Alta: TDBDateTimeEditEh;
+    Label32: TLabel;
+    DBEdit1: TDBEdit;
+    Label19: TLabel;
+    oFecha_Mof: TDBDateTimeEditEh;
+    Label33: TLabel;
+    DBEdit2: TDBEdit;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -283,21 +289,67 @@ end;
 procedure TfMunicipios.Activa_Objetos(bPar: boolean);
 var
   i: Word;
+  oComponents: TControl;
 begin
   for i := 0 to self.ComponentCount - 1 do
   begin
     if (self.Components[i] is TDBEdit) then
-      TDBEdit(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBEdit(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBMemo) then
-      TDBMemo(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBMemo(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBNumberEditEh) then
-      TDBNumberEditEh(self.Components[i]).Enabled := bPar;
-    // if (self.Components[i] is TDBLookupComboboxEh) then
-    // TDBLookupComboboxEh(self.Components[i]).Enabled := bPar;
-    if (self.Components[i] is TDBCheckBoxEh) then
-      TDBCheckBoxEh(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBNumberEditEh(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBLookupComboBox) then
+    begin
+      oComponents := TDBLookupComboBox(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBCheckBox) then
-      TDBCheckBox(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBCheckBox(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TPngSpeedButton) then
+    begin
+      oComponents := TPngSpeedButton(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBComboBox) then
+    begin
+      oComponents := TDBComboBox(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBComboBoxEh) then
+    begin
+      oComponents := TDBComboBoxEh(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBDateTimeEditEh) then
+    begin
+      oComponents := TDBDateTimeEditEh(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBLookupComboboxEh) then
+    begin
+      oComponents := TDBLookupComboboxEh(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+
+    if (self.Components[i] is TBitBtn) then
+    begin
+      oComponents := TBitBtn(self.Components[i]);
+      if oComponents.Tag = 20 then
+        oComponents.Enabled := bPar;
+    end;
   end;
   self.oID.Enabled := false;
 end;

@@ -66,9 +66,10 @@ object fAsigMaq: TfAsigMaq
       Caption = 'General'
       object Label1: TLabel
         Left = 7
-        Top = 39
-        Width = 118
-        Height = 16
+        Top = 22
+        Width = 410
+        Height = 36
+        AutoSize = False
         Caption = 'Lista de clientes.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -76,10 +77,11 @@ object fAsigMaq: TfAsigMaq
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        WordWrap = True
       end
       object Label2: TLabel
         Left = 500
-        Top = 9
+        Top = 2
         Width = 301
         Height = 16
         Caption = 'Lista de m'#225'quinas dispobiles o sin asignar.'
@@ -127,7 +129,7 @@ object fAsigMaq: TfAsigMaq
       end
       object Label4: TLabel
         Left = 7
-        Top = 9
+        Top = 2
         Width = 295
         Height = 16
         Caption = 'Lista de m'#225'quinas asinadas a los clientes.'
@@ -139,9 +141,9 @@ object fAsigMaq: TfAsigMaq
         ParentFont = False
       end
       object oDBGrid_Asign: TDBGridEh
-        Left = 7
-        Top = 96
-        Width = 340
+        Left = 5
+        Top = 91
+        Width = 367
         Height = 400
         AllowedOperations = [alopUpdateEh]
         DataSource = oDS_Asign
@@ -149,6 +151,7 @@ object fAsigMaq: TfAsigMaq
         Enabled = False
         FooterParams.Color = clWindow
         TabOrder = 0
+        OnCellClick = oDBGrid_AsignCellClick
         OnExit = oDBGrid_AsignExit
         Columns = <
           item
@@ -157,6 +160,8 @@ object fAsigMaq: TfAsigMaq
             EditButtons = <>
             FieldName = 'UniCod'
             Footers = <>
+            MaxWidth = 50
+            MinWidth = 50
             ReadOnly = True
             Title.Alignment = taCenter
             Title.Caption = 'C'#243'digo'
@@ -167,9 +172,23 @@ object fAsigMaq: TfAsigMaq
             EditButtons = <>
             FieldName = 'maqtc_modelo'
             Footers = <>
+            MaxWidth = 140
+            MinWidth = 140
             ReadOnly = True
             Title.Caption = 'Modelo'
-            Width = 147
+            Width = 140
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'maqtc_chapa'
+            Footers = <>
+            MaxWidth = 80
+            MinWidth = 80
+            Title.Alignment = taCenter
+            Title.Caption = 'Chapa'
+            Width = 80
           end
           item
             CellButtons = <>
@@ -178,9 +197,11 @@ object fAsigMaq: TfAsigMaq
             EditButtons = <>
             FieldName = 'Checked'
             Footers = <>
+            MaxWidth = 64
+            MinWidth = 64
             Title.Alignment = taCenter
             Title.Caption = 'Selecci'#243'n'
-            Width = 66
+            Width = 64
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -226,9 +247,9 @@ object fAsigMaq: TfAsigMaq
       end
       object oBtn_Add_Line: TPngBitBtn
         Tag = 3
-        Left = 370
+        Left = 376
         Top = 147
-        Width = 109
+        Width = 95
         Height = 57
         Align = alCustom
         BiDiMode = bdLeftToRight
@@ -379,9 +400,9 @@ object fAsigMaq: TfAsigMaq
       end
       object oBtn_Del_Line: TPngBitBtn
         Tag = 3
-        Left = 370
+        Left = 376
         Top = 379
-        Width = 109
+        Width = 95
         Height = 57
         Align = alCustom
         BiDiMode = bdLeftToRight
@@ -533,9 +554,9 @@ object fAsigMaq: TfAsigMaq
         PngOptions = [pngBlendOnDisabled, pngGrayscaleOnDisabled]
       end
       object oDBGrid_Disp: TDBGridEh
-        Left = 500
+        Left = 476
         Top = 96
-        Width = 340
+        Width = 367
         Height = 400
         AllowedOperations = [alopUpdateEh]
         DataSource = oDS_Disp
@@ -551,6 +572,8 @@ object fAsigMaq: TfAsigMaq
             EditButtons = <>
             FieldName = 'UniCod'
             Footers = <>
+            MaxWidth = 50
+            MinWidth = 50
             Title.Alignment = taCenter
             Title.Caption = 'C'#243'digo'
           end
@@ -560,9 +583,23 @@ object fAsigMaq: TfAsigMaq
             EditButtons = <>
             FieldName = 'maqtc_modelo'
             Footers = <>
+            MaxWidth = 140
+            MinWidth = 140
             ReadOnly = True
             Title.Caption = 'Modelo'
-            Width = 147
+            Width = 140
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'maqtc_chapa'
+            Footers = <>
+            MaxWidth = 80
+            MinWidth = 80
+            Title.Alignment = taCenter
+            Title.Caption = 'Chapa'
+            Width = 80
           end
           item
             CellButtons = <>
@@ -571,12 +608,56 @@ object fAsigMaq: TfAsigMaq
             EditButtons = <>
             FieldName = 'Checked'
             Footers = <>
+            MaxWidth = 64
+            MinWidth = 64
             Title.Alignment = taCenter
             Title.Caption = 'Selecci'#243'n'
-            Width = 66
+            Width = 64
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Auditor'#237'a'
+      ImageIndex = 1
+      ExplicitLeft = 0
+      object Label17: TLabel
+        Left = 27
+        Top = 32
+        Width = 69
+        Height = 13
+        Caption = 'Fecha de Alta:'
+      end
+      object Label32: TLabel
+        Left = 27
+        Top = 64
+        Width = 64
+        Height = 13
+        Caption = 'Usuario Creo:'
+      end
+      object oFecha_Alta: TDBDateTimeEditEh
+        Tag = 3
+        Left = 113
+        Top = 29
+        Width = 141
+        Height = 21
+        DynProps = <>
+        Enabled = False
+        EditButtons = <>
+        Kind = dtkDateTimeEh
+        TabOrder = 0
+        Visible = True
+      end
+      object DBEdit1: TDBEdit
+        Tag = 3
+        Left = 113
+        Top = 56
+        Width = 217
+        Height = 21
+        CharCase = ecUpperCase
+        Enabled = False
+        TabOrder = 1
       end
     end
   end

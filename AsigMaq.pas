@@ -47,6 +47,11 @@ type
     oTbl_Ctes: TFDTable;
     oQry_Asign: TFDQuery;
     oQry_Disp: TFDQuery;
+    TabSheet2: TTabSheet;
+    Label17: TLabel;
+    oFecha_Alta: TDBDateTimeEditEh;
+    Label32: TLabel;
+    DBEdit1: TDBEdit;
     procedure Action_Control(pOption: integer);
     procedure oBtnDeleteClick(Sender: TObject);
     procedure oBtnSaveClick(Sender: TObject);
@@ -67,6 +72,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ResizeKit1ExitResize(Sender: TObject; XScale, YScale: Double);
     procedure FormShow(Sender: TObject);
+    procedure oDBGrid_AsignCellClick(Column: TColumnEh);
 
   private
     { Private declarations }
@@ -133,25 +139,21 @@ end;
 
 procedure TfAsigMaq.FormShow(Sender: TObject);
 begin
-  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' +
-    fUtilesV20.oPublicCnn.Params.Values['Server'];
+  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' + fUtilesV20.oPublicCnn.Params.Values
+    ['Server'];
 end;
 
 procedure TfAsigMaq.oBtnAbortClick(Sender: TObject);
+var
+  cSql_Ln: string;
 begin
   self.Action_Control(7);
-  with oSqlCmd do
-  begin
-    Clear;
-    Lines.Clear;
-    Lines.Add('DELETE * FROM ' + TRIM(sTmp_File2) + ' WHERE Pending=1 ');
-    fUtilesV20.oPublicCnn.ExecSQL(oSqlCmd.Text);
+  cSql_Ln := 'DELETE FROM ' + TRIM(sTmp_File2) + ' WHERE `Pending`=1 ';
+  fUtilesV20.oPublicCnn.ExecSQL(cSql_Ln);
 
-    Clear;
-    Lines.Clear;
-    Lines.Add('UPDATE ' + TRIM(sTmp_File1) + ' SET Checked=0 WHERE Checked=1 ');
-    fUtilesV20.oPublicCnn.ExecSQL(oSqlCmd.Text);
-  end;
+  cSql_Ln := 'UPDATE ' + TRIM(sTmp_File1) + ' SET `Checked`=0 WHERE `Checked`=1 ';
+  fUtilesV20.oPublicCnn.ExecSQL(cSql_Ln);
+
   oQry_Asign.Refresh;
   oQry_Disp.Refresh;
   nOption := 0;
@@ -186,39 +188,39 @@ begin
       Clear;
       Lines.Clear;
       Lines.Add('INSERT INTO ' + TRIM(sTmp_File2) + ' ');
-      Lines.Add(' (maqtc_cod,maqtc_modelo,maqtc_chapa, ');
-      Lines.Add('  maqtc_inactivo,emp_id,maqtc_id,UniCod,Pending) ');
+      Lines.Add(' (`maqtc_cod`,`maqtc_modelo`,`maqtc_chapa`, ');
+      Lines.Add('  `maqtc_inactivo`,`emp_id`,`maqtc_id`,`UniCod`,`Pending`) ');
       Lines.Add(' SELECT ');
-      Lines.Add('   t1.maqtc_cod   ,	t1.maqtc_modelo,	t1.maqtc_chapa, ');
-      Lines.Add('   t1.maqtc_inactivo,	t1.emp_id      ,	t1.maqtc_id   , ');
-      Lines.Add('   t1.UniCod,1 ');
+      Lines.Add('   t1.`maqtc_cod`   ,	t1.`maqtc_modelo`,	t1.`maqtc_chapa`, ');
+      Lines.Add('   t1.`maqtc_inactivo`,	t1.`emp_id`      ,	t1.`maqtc_id`   , ');
+      Lines.Add('   t1.`UniCod`,1 ');
       Lines.Add(' FROM ' + TRIM(sTmp_File1) + ' t1 ');
-      Lines.Add(' WHERE t1.Checked=1');
-      Lines.Add(' AND   t1.maqtc_id NOT IN ');
+      Lines.Add(' WHERE t1.`Checked`=1');
+      Lines.Add(' AND   t1.`maqtc_id` NOT IN ');
       Lines.Add('	  (SELECT ');
-      Lines.Add('	  st2.maqtc_id ');
+      Lines.Add('	  st2.`maqtc_id` ');
       Lines.Add('	  FROM ' + TRIM(sTmp_File2) + ' st2 ');
-      Lines.Add('	  WHERE (st2.emp_id=t1.emp_id)) ');
+      Lines.Add('	  WHERE (st2.`emp_id`=t1.`emp_id`)) ');
       fUtilesV20.oPublicCnn.ExecSQL(oSqlCmd.Text);
       oQry_Asign.Refresh;
 
       Clear;
       Lines.Clear;
       Lines.Add('DELETE t1.* FROM  maquinas_lnk t1');
-      Lines.Add(' WHERE t1.maqtc_id IN ');
+      Lines.Add(' WHERE t1.`maqtc_id` IN ');
       Lines.Add('	  (SELECT ');
-      Lines.Add('	  st2.maqtc_id ');
+      Lines.Add('	  st2.`maqtc_id` ');
       Lines.Add('	  FROM ' + TRIM(sTmp_File2) + ' st2 ');
-      Lines.Add('	  WHERE (st2.emp_id=t1.emp_id)) ');
+      Lines.Add('	  WHERE (st2.`emp_id`=t1.`emp_id`)) ');
       fUtilesV20.oPublicCnn.ExecSQL(oSqlCmd.Text);
 
       Clear;
       Lines.Clear;
       Lines.Add('INSERT INTO maquinas_lnk ');
-      Lines.Add(' (emp_id,cte_id,maqtc_id, ');
-      Lines.Add('  MaqLnk_fecha_alta,MaqLnk_fecha_modif) ');
-      Lines.Add('   SELECT emp_id,' + IntToStr(oLst_Cte.KeyValue));
-      Lines.Add('   as  cte_id,maqtc_id, now(), now() ');
+      Lines.Add(' (`emp_id`,`cte_id`,`maqtc_id`, ');
+      Lines.Add('  `MaqLnk_fecha_alta`,`MaqLnk_usuario_alta`) ');
+      Lines.Add('   SELECT `emp_id`,' + IntToStr(oLst_Cte.KeyValue));
+      Lines.Add('   as  cte_id,`maqtc_id`, now(), "' + UtilesV20.sUserName + '" ');
       Lines.Add('   FROM ' + TRIM(sTmp_File2));
       fUtilesV20.oPublicCnn.ExecSQL(oSqlCmd.Text);
     end;
@@ -230,11 +232,11 @@ begin
       Clear;
       Lines.Clear;
       Lines.Add('DELETE t1.* FROM  maquinas_lnk t1');
-      Lines.Add(' WHERE t1.maqtc_id IN ');
+      Lines.Add(' WHERE t1.`maqtc_id` IN ');
       Lines.Add('	  (SELECT ');
-      Lines.Add('	  st2.maqtc_id ');
+      Lines.Add('	  st2.`maqtc_id` ');
       Lines.Add('	  FROM ' + TRIM(sTmp_File2) + ' st2 ');
-      Lines.Add('	  WHERE (st2.emp_id=t1.emp_id) AND st2.Checked=1) ');
+      Lines.Add('	  WHERE (st2.`emp_id`=t1.`emp_id`) AND st2.`Checked`=1) ');
       fUtilesV20.oPublicCnn.ExecSQL(oSqlCmd.Text);
     end;
   end;
@@ -322,6 +324,32 @@ begin
   oQry_Asign.Refresh;
 end;
 
+procedure TfAsigMaq.oDBGrid_AsignCellClick(Column: TColumnEh);
+var
+  cSql_Ln: string;
+  cEmp, cCte, cMaq: string;
+  oQry_Aud: TFDQuery;
+begin
+  oQry_Aud := TFDQuery(nil);
+
+  cEmp := TRIM(oQry_Asign.FieldByName('emp_id').AsString);
+  cCte := TRIM(self.oLst_Cte.Value);
+  cMaq := TRIM(oQry_Asign.FieldByName('maqtc_id').AsString);
+
+  cSql_Ln := '';
+  cSql_Ln := cSql_Ln + 'SELECT MaqLnk_fecha_alta, MaqLnk_usuario_alta ';
+  cSql_Ln := cSql_Ln + 'FROM maquinas_lnk ';
+  cSql_Ln := cSql_Ln + 'WHERE (emp_id  =' + SysUtils.QuotedStr(cEmp) + ') ';
+  cSql_Ln := cSql_Ln + 'AND   (cte_id=' + SysUtils.QuotedStr(cCte) + ') ';
+  cSql_Ln := cSql_Ln + 'AND   (maqtc_id=' + SysUtils.QuotedStr(cMaq) + ') ';
+  if (UtilesV20.Exec_Select_SQL(oQry_Aud, cSql_Ln) = TRUE) then
+  begin
+    self.oFecha_Alta.Value := oQry_Aud.FieldByName('MaqLnk_fecha_alta').AsDateTime;
+    self.DBEdit1.Text := oQry_Aud.FieldByName('MaqLnk_usuario_alta').AsString;
+  end;
+
+end;
+
 procedure TfAsigMaq.oDBGrid_AsignExit(Sender: TObject);
 begin
   if oQry_Asign.State = dsEdit then
@@ -394,6 +422,8 @@ begin
 end;
 
 procedure TfAsigMaq.Cargar_Disponibles(TipoMaq: String);
+var
+  cSql_Ln: string;
 begin
   with oSqlCmd do
   begin
@@ -413,10 +443,8 @@ begin
     Lines.Add('	m1.maqtc_inactivo, ');
     Lines.Add('	m1.emp_id, ');
     Lines.Add('	0 as Checked, ');
-    Lines.Add('	CASE maqtc_tipomaq WHEN 1 ');
-    Lines.Add('	THEN m1.maqtc_chapa ');
-    Lines.Add('	ELSE m1.maqtc_cod ');
-    Lines.Add('	END AS UniCod ');
+    Lines.Add('	0 as Pending, ');
+    Lines.Add('	m1.maqtc_id AS UniCod ');
     Lines.Add('FROM maquinastc m1 ');
     Lines.Add('WHERE m1.emp_id=' + QuotedStr(IntToStr(UtilesV20.iId_Empresa)) + ' ');
     Lines.Add(' AND  maqtc_tipomaq=' + TipoMaq + ' ');
@@ -429,6 +457,20 @@ begin
     Lines.Add('	AND (l2.emp_id=l1.emp_id)) ');
     fUtilesV20.oPublicCnn.ExecSQL(oSqlCmd.Text);
 
+    cSql_Ln := '';
+    cSql_Ln := cSql_Ln + 'ALTER TABLE ' + TRIM(sTmp_File1) + '';
+    cSql_Ln := cSql_Ln + 'Add COLUMN `autoinc` INT(11) NOT null AUTO_INCREMENT First, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `maqtc_id` `maqtc_id` INT(11) NOT null DEFAULT "0" AFTER `autoinc`, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `maqtc_cod` `maqtc_cod` CHAR(12) NOT null DEFAULT " " AFTER `maqtc_id`, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `maqtc_modelo` `maqtc_modelo` CHAR(60) NOT null DEFAULT " " AFTER `maqtc_cod`, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `Checked` `Checked` INT(1) NOT null DEFAULT "0" AFTER `emp_id`, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `Pending` `Pending` INT(1) NOT null DEFAULT "0" AFTER `Checked`, ';
+    cSql_Ln := cSql_Ln + 'Add INDEX `maqtc_id`(`maqtc_id`), Add INDEX `maqtc_cod`(`maqtc_cod`), ';
+    cSql_Ln := cSql_Ln + 'Add INDEX `maqtc_inactivo`(`maqtc_inactivo`), Add INDEX `emp_id`(`emp_id`), ';
+    cSql_Ln := cSql_Ln + 'Add INDEX `Checked`(`Checked`), Add INDEX `Pending`(`Pending`), Add INDEX `UniCod`(`UniCod`), ';
+    cSql_Ln := cSql_Ln + 'Add PRIMARY KEY(`autoinc`), Add INDEX `maqtc_chapa`(`maqtc_chapa`); ';
+    fUtilesV20.oPublicCnn.ExecSQL(cSql_Ln);
+
     Clear;
     Lines.Clear;
     Lines.Add('SELECT * FROM ' + TRIM(sTmp_File1) + ' ');
@@ -439,6 +481,8 @@ begin
 end;
 
 procedure TfAsigMaq.Cargar_Asignados(Cliente: String);
+var
+  cSql_Ln: string;
 begin
   with oSqlCmd do
   begin
@@ -459,7 +503,7 @@ begin
     Lines.Add('	m1.emp_id, ');
     Lines.Add('	0 as Checked, ');
     Lines.Add('	0 as Pending, ');
-    Lines.Add('	CASE maqtc_tipomaq WHEN 1 THEN m1.maqtc_chapa else m1.maqtc_cod END AS UniCod ');
+    Lines.Add('	m1.maqtc_id AS UniCod ');
     Lines.Add('FROM maquinastc m1 ');
     Lines.Add('WHERE m1.emp_id=' + QuotedStr(IntToStr(UtilesV20.iId_Empresa)) + ' ');
     Lines.Add('AND   m1.maqtc_id IN ');
@@ -471,6 +515,20 @@ begin
     Lines.Add('	AND (l2.emp_id=l1.emp_id) ');
     Lines.Add('	AND (l1.cte_id=' + Cliente + ')) ');
     fUtilesV20.oPublicCnn.ExecSQL(oSqlCmd.Text);
+
+    cSql_Ln := '';
+    cSql_Ln := cSql_Ln + 'ALTER TABLE ' + TRIM(sTmp_File2) + ' ';
+    cSql_Ln := cSql_Ln + 'Add COLUMN `autoinc` INT(11) NOT null AUTO_INCREMENT First, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `maqtc_id` `maqtc_id` INT(11) NOT null DEFAULT "0" AFTER `autoinc`, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `maqtc_cod` `maqtc_cod` CHAR(12) NOT null DEFAULT " " AFTER `maqtc_id`, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `maqtc_modelo` `maqtc_modelo` CHAR(60) NOT null DEFAULT " " AFTER `maqtc_cod`, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `Checked` `Checked` INT(1) NOT null DEFAULT "0" AFTER `emp_id`, ';
+    cSql_Ln := cSql_Ln + 'CHANGE COLUMN `Pending` `Pending` INT(1) NOT null DEFAULT "0" AFTER `Checked`, ';
+    cSql_Ln := cSql_Ln + 'Add INDEX `maqtc_id`(`maqtc_id`), Add INDEX `maqtc_cod`(`maqtc_cod`), ';
+    cSql_Ln := cSql_Ln + 'Add INDEX `maqtc_inactivo`(`maqtc_inactivo`), Add INDEX `emp_id`(`emp_id`), ';
+    cSql_Ln := cSql_Ln + 'Add INDEX `Checked`(`Checked`), Add INDEX `Pending`(`Pending`), Add INDEX `UniCod`(`UniCod`), ';
+    cSql_Ln := cSql_Ln + 'Add PRIMARY KEY(`autoinc`), Add INDEX `maqtc_chapa`(`maqtc_chapa`); ';
+    fUtilesV20.oPublicCnn.ExecSQL(cSql_Ln);
 
     Clear;
     Lines.Clear;

@@ -12,7 +12,13 @@ uses
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, Vcl.ComCtrls,
   Vcl.StdCtrls, Vcl.Buttons, PngBitBtn, FireDAC.Comp.ScriptCommands,
-  FireDAC.Stan.Util, FireDAC.Comp.Script, ResizeKit, System.DateUtils;
+  FireDAC.Stan.Util, FireDAC.Comp.Script, ResizeKit, System.DateUtils,
+  System.JSON,
+  System.JSON.BSON,
+  System.JSON.Writers,
+  System.JSON.Builders,
+  IPPeerClient, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope, REST.Response.Adapter,
+  REST.Types;
 
 type
   Tfaplica_colectas = class(TForm)
@@ -58,10 +64,14 @@ type
     otext_lst2_t: TMemo;
     oQry_Prn_Maq: TFDQuery;
     oQry_Prn_Mnt: TFDQuery;
-    oText_Script: TMemo;
     oScript: TFDScript;
     oCmdProc: TFDStoredProc;
     ResizeKit1: TResizeKit;
+    oQry_TmpCab: TFDQuery;
+    oQry_TmpDet: TFDQuery;
+    RESTClient1: TRESTClient;
+    RESTRequest1: TRESTRequest;
+    RESTResponse1: TRESTResponse;
     procedure oBtnDeleteClick(Sender: TObject);
     procedure oBtnExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -71,10 +81,8 @@ type
     function Listar2_Montos(cEmp_Id: string; cDevice: string; cCte_Id: string; cGrp_Id: string): boolean;
     function Imprimir2_Montos(cEmp_Id: string; cCte_Id: string): boolean;
     procedure oBtnApplyClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     function getHeightOfTaskBar: integer;
     procedure Max_;
-    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -88,11 +96,6 @@ implementation
 
 uses Utilesv20, Aplica_Fecha_Col;
 {$R *.dfm}
-
-procedure Tfaplica_colectas.FormActivate(Sender: TObject);
-begin
-  //self.Max_;
-end;
 
 procedure Tfaplica_colectas.FormCreate(Sender: TObject);
 begin
@@ -209,15 +212,8 @@ begin
     AsString := cGrp_Id;
   end;
 
-  self.oScript.Connection := fUtilesV20.oPublicCnn;
-  self.oScript.SQLScripts.Clear;
-  self.oScript.SQLScripts.Add;
-  self.oScript.SQLScripts[0].SQL.text := self.oText_Script.text;
-  self.oScript.ValidateAll;
-  self.oScript.ExecuteAll;
-
   self.oCmdProc.Connection := fUtilesV20.oPublicCnn;
-  self.oCmdProc.StoredProcName := 'actualiza_maquinas';
+  self.oCmdProc.StoredProcName := 'actualiza_maquinasV2';
   self.oCmdProc.Prepare;
   self.oCmdProc.Params[0].AsString := cEmp_Id;
   self.oCmdProc.Params[1].AsString := cDev_Id;
@@ -372,11 +368,6 @@ begin
   end;
 end;
 
-procedure Tfaplica_colectas.FormShow(Sender: TObject);
-begin
-  //self.ResizeKit1.Enabled := true;
-end;
-
 function Tfaplica_colectas.Imprimir2_Maquinas(cEmp_Id: string; cCte_Id: string): boolean;
 var
   cMaq_Chap, cMaq_Mode: string;
@@ -407,7 +398,7 @@ begin
     self.otext_lst2_t.Lines.Append(cLine);
     self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 
-    while not self.oQry_Prn_Maq.eof do
+    while not self.oQry_Prn_Maq.Eof do
     begin
 
       cMaq_Chap := String.format('%8s', [trim(self.oQry_Prn_Maq.FieldByName('op_chapa').AsString)]);
@@ -433,7 +424,7 @@ begin
         ctot_timb, ctot_tecn, ctot_dev, ctot_otos, ctot_cred, ctot_subt, ctot_itbm, ctot_tota, ctot_bloc, ctot_bemp, ctot_nloc, ctot_nemp]);
 
       self.otext_lst2_t.Lines.Append(cLine);
-      self.oQry_Prn_Maq.next;
+      self.oQry_Prn_Maq.Next;
     end;
 
     self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
@@ -502,7 +493,7 @@ begin
     self.oQry_Prn_Mnt.First;
 
     self.otext_lst2_t.Lines.Append('');
-    while not self.oQry_Prn_Mnt.eof do
+    while not self.oQry_Prn_Mnt.Eof do
     begin
       self.otext_lst2_t.Lines.Append('COLECTADO  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('tot_cole').AsFloat]));
       self.otext_lst2_t.Lines.Append('TIMBRES    : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_timbres').AsFloat]));
@@ -519,7 +510,7 @@ begin
       self.otext_lst2_t.Lines.Append('BRUTO EMP. : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_brutoemp').AsFloat]));
       self.otext_lst2_t.Lines.Append('NETO CTE.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_netoloc').AsFloat]));
       self.otext_lst2_t.Lines.Append('NETO EMP.  : ' + String.format('%10.2f', [self.oQry_Prn_Mnt.FieldByName('op_tot_netoemp').AsFloat]));
-      self.oQry_Prn_Mnt.next;
+      self.oQry_Prn_Mnt.Next;
     end;
     self.otext_lst2_t.Lines.Append(Utilesv20.RepeatString('=', 200));
 

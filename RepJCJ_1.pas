@@ -931,17 +931,16 @@ var
   sFecha_Fin: string;
   dFech_Ini: Tdatetime;
   dFech_Fin: Tdatetime;
-
+  dFech_Fn: Tdatetime;
+  wYear, wMonth: Word;
 begin
-
-  FormatSettings.ShortDateFormat := 'yyyy-MM-dd';
-  sFecha_Ini := DateToStr(self.oFecha1.Value);
-  sFecha_Fin := DateToStr(self.oFecha2.Value);
-  FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
-
+  FormatSettings.ShortDateFormat := 'yyyy-mm-dd';
   reportes.Initialize;
   if (self.oFecha1.EditFormat <> 'MM/YYYY') then
   BEGIN
+    sFecha_Ini := DateToStr(self.oFecha1.Value) + ' 01:00:00';
+    sFecha_Fin := DateToStr(self.oFecha2.Value) + ' 23:59:59';
+
     reportes.Report.Vars[1].Name := 'Fecha_desde';
     reportes.Report.Vars[1].Value := FormatDateTime('dd/mm/yyyy', self.oFecha1.Value);
     reportes.Report.Vars[2].Name := 'Fecha_hasta';
@@ -949,8 +948,17 @@ begin
   END
   else
   begin
-    dFech_Ini := EncodeDateTime(YearOf(self.oFecha1.Value), monthof(self.oFecha1.Value), 01, 01, 00, 00, 789);
-    dFech_Fin := EncodeDateTime(YearOf(self.oFecha1.Value), monthof(self.oFecha1.Value) + 1, 01, 01, 00, 00, 789) - 1;
+    // self.oFecha2.Value := self.oFecha1.Value;
+    wYear := YearOf(self.oFecha1.Value);
+    wMonth := monthof(self.oFecha1.Value);
+    dFech_Fn := EndOfAMonth(wYear, wMonth);
+
+    dFech_Ini := EncodeDateTime(YearOf(self.oFecha1.Value), monthof(self.oFecha1.Value), 01, 01, 01, 01, 789);
+    dFech_Fin := EncodeDateTime(YearOf(dFech_Fn), monthof(dFech_Fn), dayof(dFech_Fn), 23, 59, 01, 789);
+
+    sFecha_Ini := DateToStr(dFech_Ini) + ' 01:00:00';
+    sFecha_Fin := DateToStr(dFech_Fin) + ' 23:59:59';
+
     reportes.Report.Vars[1].Name := 'Fecha_desde';
     reportes.Report.Vars[1].Value := FormatDateTime('dd/mm/yyyy', dFech_Ini);
     reportes.Report.Vars[2].Name := 'Fecha_hasta';
@@ -1015,11 +1023,13 @@ begin
   begin
 
     sOrder := '4';
-    reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_14.fr3';
+    if (self.oOpt4.Checked = true) then
+      reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_04.fr3'
+    else
+      reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_14.fr3';
 
     sLn2 := self.JCJ_Qry();
 
-    // reportes.Report.File_Name := ExtractFilePath(application.ExeName) + 'Reportes\Rep_04.fr3';
     reportes.Report.Vars[3].Name := 'F_MesAno';
     reportes.Report.Vars[3].Value := sMesAno;
 
@@ -1167,6 +1177,7 @@ begin
 
   reportes.Make_report;
   reportes.Clear_all;
+  FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
 end;
 
 procedure TFRepJCJ_1.Escribe_ini;

@@ -4,7 +4,7 @@ object FRepJCJ_1: TFRepJCJ_1
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Teportes de Producci'#243'n TIPO C.'
   ClientHeight = 541
-  ClientWidth = 488
+  ClientWidth = 485
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -137,12 +137,13 @@ object FRepJCJ_1: TFRepJCJ_1
   object StatusBar1: TStatusBar
     Left = 0
     Top = 522
-    Width = 488
+    Width = 485
     Height = 19
     Panels = <
       item
         Width = 50
       end>
+    ExplicitWidth = 488
   end
   object oOpt1: TRadioButton
     Tag = 1

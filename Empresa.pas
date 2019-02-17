@@ -1,5 +1,5 @@
 unit Empresa;
-
+
 interface
 
 uses
@@ -7,8 +7,9 @@ uses
   Variants, Classes, Graphics, Controls,
   Forms, DBCtrls, Jpeg,
   Dialogs, StdCtrls, Mask, ExtCtrls,
-  ComCtrls, Buttons, GridsEh, DBGridEh,
-  DB, ADODB, DBCtrlsEh, pngimage,
+  ComCtrls, Buttons,
+  DB, ADODB, pngimage,
+  DBGridEhGrouping, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, DBLookupEh, DynVarsEh, DBAxisGridsEh, DBGridEhToolCtrls,
   PngBitBtn, PngSpeedButton, WideStrings, SqlExpr, XPMan,
   FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
@@ -55,10 +56,6 @@ type
     oBtnPrint: TPngBitBtn;
     oID: TDBEdit;
     FileOpenDialog1: TFileOpenDialog;
-    Label13: TLabel;
-    Label14: TLabel;
-    oFecha_Crea: TDBDateTimeEditEh;
-    oFecha_Mod: TDBDateTimeEditEh;
     Label15: TLabel;
     Label16: TLabel;
     oJCJ: TDBNumberEditEh;
@@ -76,6 +73,17 @@ type
     Label21: TLabel;
     oEmp_clave_metros: TDBNumberEditEh;
     oImage_Lock2: TImage;
+    oEmp_clave_facturas: TDBNumberEditEh;
+    Label1: TLabel;
+    TabSheet3: TTabSheet;
+    Label17: TLabel;
+    oFecha_Alta: TDBDateTimeEditEh;
+    Label32: TLabel;
+    DBEdit1: TDBEdit;
+    Label19: TLabel;
+    oFecha_Mof: TDBDateTimeEditEh;
+    Label33: TLabel;
+    DBEdit2: TDBEdit;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -102,7 +110,11 @@ type
     procedure otEmpresaBeforePost(DataSet: TDataSet);
     procedure otEmpresaAfterInsert(DataSet: TDataSet);
     procedure oImage_Lock2Click(Sender: TObject);
+    procedure oEmp_clave_facturasKeyPress(Sender: TObject; var Key: Char);
+    procedure oEmp_clave_montosKeyPress(Sender: TObject; var Key: Char);
+    procedure oEmp_clave_metrosKeyPress(Sender: TObject; var Key: Char);
   private
+    iOption: integer;
     { Private declarations }
   public
     { Public declarations }
@@ -138,6 +150,7 @@ procedure TfEmpresa.FormCreate(Sender: TObject);
 begin
   freeandnil(oConection);
   // self.ResizeKit1.Enabled := utiles.Ctrl_Resize;
+  self.iOption := 0;
   self.PageControl1.ActivePageIndex := 0;
   self.otEmpresa.Connection := futilesv20.oPublicCnn;
   self.otEmpresa.Active := true;
@@ -162,6 +175,7 @@ begin
   self.Activa_Objetos(false);
   self.PageControl1.ActivePageIndex := 0;
   self.oID.Visible := true;
+  self.iOption := 0;
 end;
 
 procedure TfEmpresa.oBtnDeleteClick(Sender: TObject);
@@ -173,6 +187,7 @@ begin
     self.Action_Control(6);
     exit;
   end;
+  self.iOption := 3;
   self.Action_Control(3);
   nResp := MessageDlg('Seguro que desea borrar eliminar el registro alctual?', mtConfirmation, [mbYes, mbNo], 0);
   If (nResp = mrYes) Then
@@ -180,7 +195,7 @@ begin
     self.oDBNav.DataSource.DataSet.Delete;
     self.oDBNav.DataSource.DataSet.Refresh;
   end;
-
+  self.iOption := 0;
 end;
 
 procedure TfEmpresa.oBtnEditClick(Sender: TObject);
@@ -190,6 +205,7 @@ begin
     self.Action_Control(6);
     exit;
   end;
+  self.iOption := 2;
   self.PageControl1.ActivePageIndex := 0;
   self.otEmpresa.Edit;
   self.Action_Control(2);
@@ -226,9 +242,14 @@ begin
 end;
 
 procedure TfEmpresa.oBtnNewClick(Sender: TObject);
+var
+  cNext: string;
 begin
+  self.iOption := 1;
   self.PageControl1.ActivePageIndex := 0;
   self.otEmpresa.Insert;
+  cNext := futilesv20.query_selectgen_result('SELECT IFNULL(corre_emp,0)+1 AS corre_emp FROM global LIMIT 1');
+  self.otEmpresa.FieldByName('emp_id').AsString := cNext;
   self.oActivo.Checked := true;
   self.Action_Control(1);
   self.Activa_Objetos(true);
@@ -244,12 +265,21 @@ begin
 end;
 
 procedure TfEmpresa.oBtnSaveClick(Sender: TObject);
+var
+  cNext: string;
 begin
+  if (self.iOption = 1) then
+  begin
+    cNext := futilesv20.query_selectgen_result('SELECT IFNULL(corre_emp,0)+1 AS corre_emp FROM global LIMIT 1');
+    self.otEmpresa.FieldByName('emp_id').AsString := cNext;
+    utilesv20.Execute_SQL_Command('UPDATE global SET corre_emp=IFNULL(corre_emp,0)+1 WHERE 1=1');
+  end;
   self.otEmpresa.Post;
   self.Action_Control(6);
   self.Activa_Objetos(false);
   self.PageControl1.ActivePageIndex := 0;
   self.oID.Visible := true;
+  self.iOption := 0;
 end;
 
 procedure TfEmpresa.oBtn_RepClick(Sender: TObject);
@@ -279,6 +309,33 @@ begin
 end;
 
 procedure TfEmpresa.oEmailKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then { if it's an enter key }
+  begin
+    Key := #0; { eat enter key }
+    Perform(WM_NEXTDLGCTL, 0, 0); { move to next control }
+  end
+end;
+
+procedure TfEmpresa.oEmp_clave_facturasKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then { if it's an enter key }
+  begin
+    Key := #0; { eat enter key }
+    Perform(WM_NEXTDLGCTL, 0, 0); { move to next control }
+  end
+end;
+
+procedure TfEmpresa.oEmp_clave_metrosKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then { if it's an enter key }
+  begin
+    Key := #0; { eat enter key }
+    Perform(WM_NEXTDLGCTL, 0, 0); { move to next control }
+  end
+end;
+
+procedure TfEmpresa.oEmp_clave_montosKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then { if it's an enter key }
   begin
@@ -461,21 +518,70 @@ end;
 procedure TfEmpresa.Activa_Objetos(bPar: boolean);
 var
   i: Word;
+  oComponents: TControl;
 begin
   for i := 0 to self.ComponentCount - 1 do
   begin
     if (self.Components[i] is TDBEdit) then
-      TDBEdit(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBEdit(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBMemo) then
-      TDBMemo(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBMemo(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBNumberEditEh) then
-      TDBNumberEditEh(self.Components[i]).Enabled := bPar;
-    if (self.Components[i] is TDBCheckBoxEh) then
-      TDBCheckBoxEh(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBNumberEditEh(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBLookupComboBox) then
+    begin
+      oComponents := TDBLookupComboBox(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
     if (self.Components[i] is TDBCheckBox) then
-      TDBCheckBox(self.Components[i]).Enabled := bPar;
+    begin
+      oComponents := TDBCheckBox(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TPngSpeedButton) then
+    begin
+      oComponents := TPngSpeedButton(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBComboBox) then
+    begin
+      oComponents := TDBComboBox(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBComboBoxEh) then
+    begin
+      oComponents := TDBComboBoxEh(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBDateTimeEditEh) then
+    begin
+      oComponents := TDBDateTimeEditEh(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+    if (self.Components[i] is TDBLookupComboboxEh) then
+    begin
+      oComponents := TDBLookupComboboxEh(self.Components[i]);
+      oComponents.Enabled := futilesv20.iif(oComponents.Tag = 3, false, futilesv20.iif(oComponents.Tag = 1, not bPar, bPar));
+    end;
+
+    if (self.Components[i] is TBitBtn) then
+    begin
+      oComponents := TBitBtn(self.Components[i]);
+      if oComponents.Tag = 20 then
+        oComponents.Enabled := bPar;
+    end;
   end;
   self.oID.Enabled := false;
 end;
 
 end.
+

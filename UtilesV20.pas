@@ -244,6 +244,7 @@ type
     procedure GetDefault_Decinal_Thousand_Separator;
     procedure Set_Decinal_Thousand_Separator;
     function FloatToStr2(Value: extended): string;
+    function FloatToStr3(Value: extended; iDigits: integer = 2): string;
     function RoundD(X: extended; d: integer): extended;
     function Inlist(aCadena: string; aLista: array of string): Boolean;
     function Ctrl_Resize: Boolean;
@@ -3351,7 +3352,19 @@ function TfUtilesV20.FloatToStr2(Value: extended): string;
 begin
   FormatSettings.DecimalSeparator := '.';
   Result := floattostr(Value);
-  Set_Decinal_Thousand_Separator;
+  fUtilesV20.Set_Decinal_Thousand_Separator;
+end;
+
+function TfUtilesV20.FloatToStr3(Value: extended; iDigits: integer = 2): string;
+var
+  fValue: extended;
+  cMask: string;
+begin
+  FormatSettings.DecimalSeparator := '.';
+  fValue := fUtilesV20.RoundD(Value, iDigits);
+  cMask := '%12.' + trim(IntToStr(iDigits)) + 'f';
+  Result := String.Format(cMask, [fValue]);
+  fUtilesV20.Set_Decinal_Thousand_Separator;
 end;
 
 { -------------------------------------------------------------------------------------------------

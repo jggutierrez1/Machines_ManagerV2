@@ -37,7 +37,9 @@ uses
   acceso1 in 'acceso1.pas' {facceso1},
   claves_automaticas in 'claves_automaticas.pas' {fclaves_automaticas},
   aplica_colectas in 'aplica_colectas.pas' {faplica_colectas},
-  Aplica_Fecha_Col in 'Aplica_Fecha_Col.pas' {fAplica_Fecha_Col};
+  Aplica_Fecha_Col in 'Aplica_Fecha_Col.pas' {fAplica_Fecha_Col},
+  aplica_conta in 'aplica_conta.pas' {faplica_conta},
+  Prov_Maq in 'Prov_Maq.pas' {fProv_Maq};
 
 {$R *.res}
 

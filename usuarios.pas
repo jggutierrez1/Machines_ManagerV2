@@ -13,7 +13,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.DApt, FireDAC.Comp.DataSet;
+  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait;
 
 type
   TFusuarios = class(TForm)
@@ -46,6 +46,15 @@ type
     oConection: TFDConnection;
     oEmpresa: TFDQuery;
     oTable_Users: TFDTable;
+    TabSheet2: TTabSheet;
+    Label17: TLabel;
+    oFecha_Alta: TDBDateTimeEditEh;
+    Label32: TLabel;
+    DBEdit1: TDBEdit;
+    Label19: TLabel;
+    oFecha_Mof: TDBDateTimeEditEh;
+    Label33: TLabel;
+    DBEdit2: TDBEdit;
     procedure FormCreate(Sender: TObject);
     procedure Validarcodigo;
     procedure Enabled_objects(bApply: boolean = false);

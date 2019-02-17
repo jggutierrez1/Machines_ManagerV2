@@ -48,6 +48,8 @@ type
     N9: TMenuItem;
     c1: TMenuItem;
     A1: TMenuItem;
+    A2: TMenuItem;
+    P1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure Salir1Click(Sender: TObject);
     procedure Acercade1Click(Sender: TObject);
@@ -72,6 +74,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure c1Click(Sender: TObject);
     procedure A1Click(Sender: TObject);
+    procedure A2Click(Sender: TObject);
+    procedure P1Click(Sender: TObject);
   private
     { Private declarations }
     FGraphic: TGraphic;
@@ -88,7 +92,7 @@ uses
   acceso, About, Empresa, UtilesV20, Clientes, Municipios, Rutas, Maquinas,
   Denominaciones, AsigMaq, usuarios, Mant_Adelantos, Mant_Premios, Captura1,
   RepJCJ_1, ReporteAdelantos, ReportePremios, Base64, claves_automaticas,
-  aplica_colectas;
+  aplica_colectas, aplica_conta, Prov_Maq;
 {$R *.dfm}
 
 // Database_Backup_Restore,
@@ -97,6 +101,13 @@ begin
   Application.CreateForm(Tfaplica_colectas, faplica_colectas);
   faplica_colectas.showmodal;
   freeandnil(faplica_colectas);
+end;
+
+procedure TfMain.A2Click(Sender: TObject);
+begin
+  Application.CreateForm(Tfaplica_conta, faplica_conta);
+  faplica_conta.showmodal;
+  freeandnil(faplica_conta);
 end;
 
 procedure TfMain.Acercade1Click(Sender: TObject);
@@ -259,6 +270,13 @@ begin
   Application.CreateForm(TfReporteAdelantos, fReporteAdelantos);
   fReporteAdelantos.showmodal;
   freeandnil(fReporteAdelantos);
+end;
+
+procedure TfMain.P1Click(Sender: TObject);
+begin
+  Application.CreateForm(TfProv_Maq, fProv_Maq);
+  fProv_Maq.showmodal;
+  freeandnil(fProv_Maq);
 end;
 
 procedure TfMain.Premios1Click(Sender: TObject);

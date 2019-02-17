@@ -169,11 +169,8 @@ object fDenom: TfDenom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object DBGridEh1: TDBGridEh
+        Tag = 1
         Left = 16
         Top = 193
         Width = 350
@@ -182,7 +179,6 @@ object fDenom: TfDenom
         DynProps = <>
         EditActions = [geaCopyEh, geaPasteEh]
         FooterParams.Color = clWindow
-        IndicatorOptions = [gioShowRowIndicatorEh]
         Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghDialogFind, dghColumnMove, dghExtendVertLines]
         TabOrder = 0
@@ -190,6 +186,7 @@ object fDenom: TfDenom
         OnDblClick = DBGridEh1DblClick
         Columns = <
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'den_id'
@@ -201,6 +198,7 @@ object fDenom: TfDenom
             Width = 31
           end
           item
+            CellButtons = <>
             DynProps = <>
             EditButtons = <>
             FieldName = 'den_descripcion'
@@ -212,6 +210,7 @@ object fDenom: TfDenom
             Width = 148
           end
           item
+            CellButtons = <>
             DisplayFormat = '###0.00'
             DynProps = <>
             EditButtons = <>
@@ -224,6 +223,7 @@ object fDenom: TfDenom
             Width = 66
           end
           item
+            CellButtons = <>
             Checkboxes = True
             DynProps = <>
             EditButtons = <>
@@ -277,20 +277,6 @@ object fDenom: TfDenom
           Width = 36
           Height = 13
           Caption = '$ Valor:'
-        end
-        object Label14: TLabel
-          Left = 423
-          Top = 137
-          Width = 76
-          Height = 13
-          Caption = 'Fecha '#218'lt. Mod.'
-        end
-        object Label13: TLabel
-          Left = 423
-          Top = 95
-          Width = 69
-          Height = 13
-          Caption = 'Fecha de Alta:'
         end
         object oSalidas: TDBNumberEditEh
           Left = 122
@@ -367,36 +353,6 @@ object fDenom: TfDenom
           TabOrder = 3
           Visible = True
           OnKeyPress = oValorKeyPress
-        end
-        object oFecha_Crea: TDBDateTimeEditEh
-          Left = 506
-          Top = 92
-          Width = 129
-          Height = 21
-          DataField = 'den_fecha_alta'
-          DataSource = oDS_Deno
-          DynProps = <>
-          Enabled = False
-          EditButtons = <>
-          Kind = dtkDateTimeEh
-          ReadOnly = True
-          TabOrder = 6
-          Visible = True
-        end
-        object oFecha_Mod: TDBDateTimeEditEh
-          Left = 506
-          Top = 134
-          Width = 130
-          Height = 21
-          DataField = 'den_fecha_modif'
-          DataSource = oDS_Deno
-          DynProps = <>
-          Enabled = False
-          EditButtons = <>
-          Kind = dtkDateTimeEh
-          ReadOnly = True
-          TabOrder = 7
-          Visible = True
         end
       end
       object oGrpPruevas: TGroupBox
@@ -539,6 +495,92 @@ object fDenom: TfDenom
           OnClick = oChkSalidaClick
           OnExit = oChkSalidaExit
         end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Auditor'#237'a'
+      ImageIndex = 1
+      object Label16: TLabel
+        Left = 27
+        Top = 32
+        Width = 69
+        Height = 13
+        Caption = 'Fecha de Alta:'
+      end
+      object Label32: TLabel
+        Left = 27
+        Top = 64
+        Width = 64
+        Height = 13
+        Caption = 'Usuario Creo:'
+      end
+      object Label17: TLabel
+        Left = 27
+        Top = 96
+        Width = 76
+        Height = 13
+        Caption = 'Fecha '#218'lt. Mod.'
+      end
+      object Label33: TLabel
+        Left = 27
+        Top = 128
+        Width = 82
+        Height = 13
+        Caption = 'Usuario Modific'#243':'
+      end
+      object oFecha_Alta: TDBDateTimeEditEh
+        Tag = 3
+        Left = 113
+        Top = 29
+        Width = 142
+        Height = 21
+        DataField = 'den_fecha_alta'
+        DataSource = oDS_Deno
+        DynProps = <>
+        Enabled = False
+        EditButtons = <>
+        Kind = dtkDateTimeEh
+        TabOrder = 0
+        Visible = True
+      end
+      object DBEdit1: TDBEdit
+        Tag = 3
+        Left = 113
+        Top = 61
+        Width = 218
+        Height = 21
+        CharCase = ecUpperCase
+        DataField = 'u_usuario_alta'
+        DataSource = oDS_Deno
+        Enabled = False
+        TabOrder = 1
+      end
+      object oFecha_Mof: TDBDateTimeEditEh
+        Tag = 3
+        Left = 113
+        Top = 93
+        Width = 143
+        Height = 21
+        DataField = 'den_fecha_modif'
+        DataSource = oDS_Deno
+        DynProps = <>
+        Enabled = False
+        EditButtons = <>
+        Kind = dtkDateTimeEh
+        TabOrder = 2
+        Visible = True
+      end
+      object DBEdit2: TDBEdit
+        Tag = 3
+        Left = 113
+        Top = 125
+        Width = 219
+        Height = 21
+        CharCase = ecUpperCase
+        DataField = 'u_usuario_modif'
+        DataSource = oDS_Deno
+        Enabled = False
+        TabOrder = 3
       end
     end
   end
