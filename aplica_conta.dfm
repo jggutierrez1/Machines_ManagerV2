@@ -1448,40 +1448,4 @@ object faplica_conta: Tfaplica_conta
     Left = 135
     Top = 690
   end
-  object RESTClient1: TRESTClient
-    Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
-    AcceptCharset = 'UTF-8, *;q=0.8'
-    BaseURL = 'https://app.interfuerza.com/api'
-    Params = <>
-    HandleRedirects = True
-    RaiseExceptionOn500 = False
-    Left = 432
-    Top = 40
-  end
-  object RESTRequest1: TRESTRequest
-    Client = RESTClient1
-    Method = rmPUT
-    Params = <
-      item
-        Kind = pkHTTPHEADER
-        name = 'X-IFX-Token'
-        Value = 'f0210ebdb504c31b20272772a11c55bf'
-      end
-      item
-        Kind = pkREQUESTBODY
-        name = 'body'
-        Options = [poDoNotEncode]
-        ContentType = ctAPPLICATION_JSON
-      end>
-    Response = RESTResponse1
-    SynchronizedEvents = False
-    Left = 550
-    Top = 40
-  end
-  object RESTResponse1: TRESTResponse
-    ContentType = 'application/json'
-    ContentEncoding = 'UTF-8'
-    Left = 668
-    Top = 40
-  end
 end

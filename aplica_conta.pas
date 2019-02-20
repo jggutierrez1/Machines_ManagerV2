@@ -49,9 +49,6 @@ type
     oDs_Qry_Op: TDataSource;
     oQry_Op: TFDQuery;
     DBGridEh2: TDBGridEh;
-    RESTClient1: TRESTClient;
-    RESTRequest1: TRESTRequest;
-    RESTResponse1: TRESTResponse;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Make_Qry_Det;
@@ -323,21 +320,46 @@ Begin
   result := oJsonResp.Response;
 End;
 
+
 function Tfaplica_conta.Send_Interfuerza(cJson: WideString): String;
 var
   cJsonResp: WideString;
   cResult: string;
+  lrestrequest: TRESTRequest;
+  lRestClient: TRESTClient;
+  lRestResponce: TRESTResponse;
 begin
   cResult := '';
   cJsonResp := '';
   if (trim(cJson) <> '') then
   begin
-    self.RESTRequest1.Params.Clear;
-    self.RESTRequest1.AddParameter('X-IFX-Token', 'f0210ebdb504c31b20272772a11c55bf', TRESTRequestParameterKind.pkHTTPHEADER);
-    self.RESTRequest1.Body.Add(trim(cJson), REST.Types.ContentTypeFromString('application/json'));
-    self.RESTRequest1.Execute;
-    cResult := self.RESTResponse1.StatusText;
-    cJsonResp := self.RESTResponse1.Content;
+
+    lRestClient := TRESTClient.Create('https://app.interfuerza.com/api');
+    try
+      lrestrequest := TRESTRequest.Create(nil);
+      try
+        lRestResponce := TRESTResponse.Create(nil);
+        try
+          lrestrequest.Client := lRestClient;
+          lrestrequest.Response := lRestResponce;
+          lrestrequest.Method := rmPut;
+          lrestrequest.Params.Clear;
+          lrestrequest.Params.AddItem('X-IFX-Token', 'f0210ebdb504c31b20272772a11c55bf', TRESTRequestParameterKind.pkHTTPHEADER);
+          lrestrequest.Body.Add(trim(cJson), REST.Types.ContentTypeFromString('application/json'));
+          lrestrequest.Execute;
+          if not lRestResponce.Status.Success then
+            cResult := lRestResponce.StatusText
+          else
+            cJsonResp := lRestResponce.Content;
+        finally
+          lRestResponce.Free;
+        end;
+      finally
+        lrestrequest.Free
+      end;
+    finally
+      lRestClient.Free;
+    end;
   end;
   result := cJsonResp;
 end;

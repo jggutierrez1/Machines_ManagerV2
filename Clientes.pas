@@ -16,7 +16,13 @@ uses
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef,
-  FireDAC.VCLUI.Wait;
+  FireDAC.VCLUI.Wait,
+  System.JSON,
+  System.JSON.BSON,
+  System.JSON.Writers,
+  System.JSON.Builders,
+  IPPeerClient, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope, REST.Response.Adapter,
+  REST.Types;
 
 type
   TfClientes = class(TForm)
@@ -94,6 +100,7 @@ type
     oFecha_Mof: TDBDateTimeEditEh;
     Label33: TLabel;
     DBEdit6: TDBEdit;
+    oBtn_UpWeb: TPngBitBtn;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -129,6 +136,10 @@ type
     procedure oLst_MinucipioKeyPress(Sender: TObject; var Key: Char);
     procedure octe_id_interfKeyPress(Sender: TObject; var Key: Char);
     procedure octe_id_interfExit(Sender: TObject);
+    procedure oBtn_UpWebClick(Sender: TObject);
+    function Make_Json_Clientes(pdsClientes: TDataSet): WideString;
+    function Send_Interfuerza(cJson: WideString): String;
+    function Parse_JSonValue(cJson: WideString): boolean;
   private
     { Private declarations }
     iOption: integer;
@@ -136,8 +147,15 @@ type
     { Public declarations }
   end;
 
+type
+  TJsonResp = object
+    Response: boolean;
+    OperNumb: string;
+  end;
+
 var
   fClientes: TfClientes;
+  oJsonResp: TJsonResp;
 
 implementation
 
@@ -352,6 +370,157 @@ begin
   self.Activa_Objetos(false);
   self.PageControl1.ActivePageIndex := 0;
   self.iOption := 0;
+end;
+
+procedure TfClientes.oBtn_UpWebClick(Sender: TObject);
+var
+  cJsonBody: WideString;
+  cJsonResp: WideString;
+  cSql_Ln: string;
+  cCte_id: string;
+begin
+  self.oBtn_UpWeb.Enabled := false;
+
+  self.otClientes.Filtered := false;
+  self.otClientes.Filter := '';
+  self.otClientes.First;
+
+  self.otClientes.Filter := '(cte_emp_id=0 or cte_emp_id=1) AND (cte_inactivo=0) ';
+  self.otClientes.Filtered := true;
+  self.otClientes.First;
+  while not self.otClientes.Eof do
+  begin
+    cCte_id := trim(self.otClientes.FieldByName('cte_id').AsString);
+    if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '')) then
+    begin
+      cJsonBody := self.Make_Json_Clientes(self.otClientes);
+
+      cJsonResp := self.Send_Interfuerza(cJsonBody);
+      if (self.Parse_JSonValue(cJsonResp) = true) then
+      begin
+        cSql_Ln := '';
+        cSql_Ln := cSql_Ln + 'UPDATE clientes SET ';
+        cSql_Ln := cSql_Ln + '  cte_id_interf="' + trim(oJsonResp.OperNumb) + '" ';
+        cSql_Ln := cSql_Ln + 'WHERE (cte_id="' + cCte_id + '") ';
+        UtilesV20.Execute_SQL_Command(cSql_Ln);
+        sleep(500);
+      end;
+    end;
+    self.otClientes.Next;
+  end;
+  self.otClientes.Filter := '';
+  self.otClientes.Filtered := false;
+  self.otClientes.First;
+  ShowMessage('PROCESO FINALIZADO:..');
+  self.oBtn_UpWeb.Enabled := true;
+end;
+
+function TfClientes.Parse_JSonValue(cJson: WideString): boolean;
+var
+  JSonObject: TJSonObject;
+  JSonValue: TJSonValue;
+  // st: string;
+Begin
+  // st := '{"class": "PUT","action": "invoice","response": {"response": "Success", "id": "00012"}}';
+  JSonObject := TJSonObject.Create;
+  JSonValue := JSonObject.ParseJSONValue(cJson);
+  JSonValue := (JSonValue as TJSonObject).Get('response').JSonValue;
+  oJsonResp.Response := fUtilesV20.iif(UpperCase(JSonValue.GetValue<string>('response')) = UpperCase('Success'), true, false);
+  oJsonResp.OperNumb := JSonValue.GetValue<string>('id');
+  JSonObject.Free;
+  result := oJsonResp.Response;
+End;
+
+function TfClientes.Send_Interfuerza(cJson: WideString): String;
+var
+  cJsonResp: WideString;
+  cResult: string;
+  lrestrequest: TRESTRequest;
+  lRestClient: TRESTClient;
+  lRestResponce: TRESTResponse;
+begin
+  cResult := '';
+  cJsonResp := '';
+  if (trim(cJson) <> '') then
+  begin
+
+    lRestClient := TRESTClient.Create('https://app.interfuerza.com/api');
+    try
+      lrestrequest := TRESTRequest.Create(nil);
+      try
+        lRestResponce := TRESTResponse.Create(nil);
+        try
+          lrestrequest.Client := lRestClient;
+          lrestrequest.Response := lRestResponce;
+          lrestrequest.Method := rmPut;
+          lrestrequest.Params.Clear;
+          lrestrequest.Params.AddItem('X-IFX-Token', 'f0210ebdb504c31b20272772a11c55bf', TRESTRequestParameterKind.pkHTTPHEADER);
+          lrestrequest.Body.Add(trim(cJson), REST.Types.ContentTypeFromString('application/json'));
+          lrestrequest.Execute;
+          if not lRestResponce.Status.Success then
+            cResult := lRestResponce.StatusText
+          else
+            cJsonResp := lRestResponce.Content;
+        finally
+          lRestResponce.Free;
+        end;
+      finally
+        lrestrequest.Free
+      end;
+    finally
+      lRestClient.Free;
+    end;
+  end;
+  result := cJsonResp;
+end;
+
+function TfClientes.Make_Json_Clientes(pdsClientes: TDataSet): WideString;
+var
+  oOMain: TJSonObject;
+  oOLines: TJSonObject;
+  cResult: WideString;
+begin
+  oOMain := TJSonObject.Create;
+  oOLines := TJSonObject.Create;
+
+  oOLines.AddPair('Tipo', 'CLIENTE');
+  oOLines.AddPair('RUC', '');
+  oOLines.AddPair('DV', '');
+  oOLines.AddPair('Empresa', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_nombre_com').AsString));
+  oOLines.AddPair('Email', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_email').AsString));
+  oOLines.AddPair('Status', 'ACTIVE');
+  oOLines.AddPair('Telefono_1', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_telefono1').AsString));
+  oOLines.AddPair('Telefono_2', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_telefono2').AsString));
+  oOLines.AddPair('Cellular', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_contacto_movil').AsString));
+  oOLines.AddPair('Direccion', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_direccion').AsString));
+  oOLines.AddPair('Ciudad', 'PANAMA');
+  oOLines.AddPair('Estado', 'PANAMA');
+  oOLines.AddPair('Pais', 'PANAMA');
+  oOLines.AddPair('Empleados', '1');
+  oOLines.AddPair('Industria', '');
+  oOLines.AddPair('Credit_Term', 'CREDIT');
+  oOLines.AddPair('Due_Days', '0');
+  oOLines.AddPair('Credit_Amount_Limit', '0');
+  oOLines.AddPair('Vendedor', '');
+  oOLines.AddPair('BirthDate', '2000-01-01');
+  oOLines.AddPair('Taxable', 'false');
+  oOLines.AddPair('Tipo_Contribuyente', '');
+  oOLines.AddPair('Clase', 'Juridica');
+  oOLines.AddPair('Name_First', '');
+  oOLines.AddPair('Name_Second', '');
+  oOLines.AddPair('LastName_First', '');
+  oOLines.AddPair('LastName_Second', '');
+
+  oOMain.AddPair('class', 'PUT');
+  oOMain.AddPair('action', 'customers');
+  oOMain.AddPair('data', oOLines);
+
+  cResult := cResult + oOMain.ToString;
+
+  if (oOLines <> nil) then
+    oOLines.Free;
+  oOMain := nil;
+  result := cResult;
 end;
 
 procedure TfClientes.octe_id_interfExit(Sender: TObject);
@@ -646,7 +815,7 @@ procedure TfClientes.BitBtn1Click(Sender: TObject);
 begin
   Application.CreateForm(TfMunicipios, fMunicipios);
   fMunicipios.ShowModal;
-  fMunicipios.free;
+  fMunicipios.Free;
   self.otMunicipios.Refresh;
 end;
 
@@ -654,7 +823,7 @@ procedure TfClientes.BitBtn2Click(Sender: TObject);
 begin
   Application.CreateForm(TfRutas, fRutas);
   fRutas.ShowModal;
-  fRutas.free;
+  fRutas.Free;
   self.otRutas.Refresh;
 end;
 

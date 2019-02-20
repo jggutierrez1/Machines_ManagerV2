@@ -364,6 +364,8 @@ function Execute_SQL_Query(var oQry: TFDQuery; sSql: TStringList; oQryExec: Bool
 function Is_Super_User(): Boolean;
 function RepeatString(const S: string; Count: cardinal): string;
 function CenterString(aStr: String; Len: integer): String;
+function RemoveQuote(FixString: string): string;
+function StripUnwantedText(cText: string): string;
 
 implementation
 
@@ -4589,6 +4591,22 @@ begin
     posStr := (Len - Length(aStr)) div 2;
     Result := Format('%*s', [Len, aStr + Format('%-*s', [posStr, ''])]);
   end;
+end;
+
+function StripUnwantedText(cText: string): string;
+var
+  cResult: string;
+begin
+  cResult := StringReplace(cText, #13, '', [rfReplaceAll]);
+  cResult := StringReplace(cResult, #10, '', [rfReplaceAll]);
+  cResult := StringReplace(cResult, #9, '', [rfReplaceAll]);
+  cResult := StringReplace(cResult, #13 + #10, '', [rfReplaceAll]);
+  Result := cResult
+end;
+
+function RemoveQuote(FixString: string): string;
+begin
+  Result := StringReplace(FixString, '''', ' ', [rfReplaceAll, rfIgnoreCase]);
 end;
 
 end.
