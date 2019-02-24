@@ -43,6 +43,7 @@ object fMain: TfMain
   OnClose = FormClose
   OnCreate = FormCreate
   OnPaint = FormPaint
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object StatusBar1: TStatusBar
@@ -99,6 +100,10 @@ object fMain: TfMain
         Caption = 'M'#225'quinas'
         OnClick = cHAPAS1Click
       end
+      object P1: TMenuItem
+        Caption = 'M'#225'quinas Proveedores'
+        OnClick = P1Click
+      end
       object Denominaciones1: TMenuItem
         Caption = 'Denominacion'
         OnClick = Denominaciones1Click
@@ -113,6 +118,18 @@ object fMain: TfMain
       object Usuarios1: TMenuItem
         Caption = 'Usuarios'
         OnClick = Usuarios1Click
+      end
+      object c1: TMenuItem
+        Caption = 'Claves Autom'#225'ticas'
+        OnClick = c1Click
+      end
+      object A1: TMenuItem
+        Caption = 'Aplicar Colectas'
+        OnClick = A1Click
+      end
+      object A2: TMenuItem
+        Caption = 'Aplicra Interfuerza'
+        OnClick = A2Click
       end
     end
     object Operaciones1: TMenuItem

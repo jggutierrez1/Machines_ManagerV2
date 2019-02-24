@@ -1,7 +1,7 @@
 object fMain: TfMain
   Left = 0
   Top = 0
-  Caption = 'Machine Manager V.1.0 [Menu principal]'
+  Caption = 'Machine Manager V.3.0 [Menu principal]'
   ClientHeight = 620
   ClientWidth = 812
   Color = clBtnFace
