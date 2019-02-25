@@ -1,10 +1,10 @@
 object FRepJCJ_1: TFRepJCJ_1
   Left = 0
   Top = 0
-  BorderIcons = [biSystemMenu, biMinimize]
-  Caption = 'Teportes de Producci'#243'n TIPO C.'
+  BorderIcons = []
+  Caption = 'Reportes de Producci'#243'n TIPO C.'
   ClientHeight = 541
-  ClientWidth = 485
+  ClientWidth = 494
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -70,26 +70,44 @@ object FRepJCJ_1: TFRepJCJ_1
     Caption = 'Hasta:'
   end
   object olCliente: TLabel
-    Left = 18
-    Top = 389
-    Width = 37
-    Height = 13
+    Left = 28
+    Top = 405
+    Width = 44
+    Height = 16
     Caption = 'Cliente:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
   end
   object olRuta: TLabel
     Left = 493
     Top = 259
-    Width = 32
-    Height = 13
+    Width = 37
+    Height = 16
     Caption = 'Rutas:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     Visible = False
   end
   object olModelos: TLabel
     Left = 486
     Top = 286
-    Width = 39
-    Height = 13
-    Caption = 'Modelos'
+    Width = 38
+    Height = 16
+    Caption = 'Juego:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     Visible = False
   end
   object Shape1: TShape
@@ -102,13 +120,6 @@ object FRepJCJ_1: TFRepJCJ_1
   object Shape2: TShape
     Left = 0
     Top = 267
-    Width = 508
-    Height = 2
-    Pen.Color = clDefault
-  end
-  object Shape3: TShape
-    Left = 0
-    Top = 380
     Width = 508
     Height = 2
     Pen.Color = clDefault
@@ -134,16 +145,44 @@ object FRepJCJ_1: TFRepJCJ_1
     ParentFont = False
     Transparent = True
   end
+  object Label2: TLabel
+    Left = 25
+    Top = 335
+    Width = 47
+    Height = 16
+    Caption = 'Chapas:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    Visible = False
+  end
+  object Label4: TLabel
+    Left = 13
+    Top = 370
+    Width = 59
+    Height = 16
+    Caption = 'M'#225'quinas:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    Visible = False
+  end
   object StatusBar1: TStatusBar
     Left = 0
     Top = 522
-    Width = 485
+    Width = 494
     Height = 19
     Panels = <
       item
         Width = 50
       end>
-    ExplicitWidth = 488
+    ExplicitWidth = 485
   end
   object oOpt1: TRadioButton
     Tag = 1
@@ -634,10 +673,16 @@ object FRepJCJ_1: TFRepJCJ_1
     Left = 34
     Top = 296
     Width = 106
-    Height = 21
+    Height = 24
     DynProps = <>
     EditButtons = <>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
     Kind = dtkDateEh
+    ParentFont = False
     TabOrder = 13
     Visible = True
   end
@@ -645,111 +690,165 @@ object FRepJCJ_1: TFRepJCJ_1
     Left = 301
     Top = 296
     Width = 106
-    Height = 21
+    Height = 24
     DynProps = <>
     EditButtons = <>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
     Kind = dtkDateEh
+    ParentFont = False
     TabOrder = 14
     Visible = True
   end
   object oChapa: TEdit
-    Left = 134
-    Top = 344
+    Left = 79
+    Top = 335
     Width = 102
-    Height = 21
+    Height = 24
     Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 15
   end
   object oAll_Chapas: TCheckBox
-    Left = 18
-    Top = 346
-    Width = 97
+    Left = 206
+    Top = 339
+    Width = 126
     Height = 17
     Caption = 'Todas las Chapa:'
     Checked = True
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     State = cbChecked
-    TabOrder = 16
+    TabOrder = 18
     OnClick = oAll_ChapasClick
   end
   object oLst_Rutas: TDBLookupComboboxEh
     Left = 531
     Top = 256
     Width = 102
-    Height = 21
+    Height = 24
     DynProps = <>
     DataField = ''
     Enabled = False
     EditButtons = <>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
     KeyField = 'rut_id'
     ListField = 'rut_nombre'
     ListSource = oDS_Rutas
-    TabOrder = 17
+    ParentFont = False
+    TabOrder = 19
     Visible = False
   end
   object oLst_Ctes: TDBLookupComboboxEh
-    Left = 18
-    Top = 408
+    Left = 79
+    Top = 399
     Width = 254
-    Height = 21
+    Height = 24
     DynProps = <>
     DataField = ''
     Enabled = False
     EditButtons = <>
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
     KeyField = 'cte_id'
     ListField = 'cte_nombre_loc'
     ListSource = oDS_Ctes
-    TabOrder = 18
+    ParentFont = False
+    TabOrder = 20
     Visible = True
   end
   object oAll_Ctes: TCheckBox
-    Left = 278
-    Top = 410
+    Left = 348
+    Top = 403
     Width = 127
     Height = 17
     Caption = 'Todos los clientes.'
     Checked = True
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     State = cbChecked
-    TabOrder = 19
+    TabOrder = 21
     OnClick = oAll_CtesClick
   end
   object oAll_Routes: TCheckBox
     Left = 639
     Top = 260
-    Width = 97
+    Width = 121
     Height = 17
     Caption = 'Todas las rutas.'
     Checked = True
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     State = cbChecked
-    TabOrder = 20
+    TabOrder = 22
     Visible = False
     OnClick = oAll_RoutesClick
   end
-  object oLst_Modelos: TDBLookupComboboxEh
+  object oLst_Juegos: TDBLookupComboboxEh
     Left = 531
     Top = 283
     Width = 102
-    Height = 21
+    Height = 24
     DynProps = <>
     DataField = ''
     Enabled = False
     EditButtons = <>
-    KeyField = 'maqtc_modelo'
-    ListField = 'maqtc_modelo'
-    ListSource = oDS_Model
-    TabOrder = 21
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    KeyField = 'jueg_cod'
+    ListField = 'jueg_nombre'
+    ListSource = oDS_Juegos
+    ParentFont = False
+    TabOrder = 23
     Visible = False
   end
-  object oAll_Modelos: TCheckBox
+  object oAll_Juegos: TCheckBox
     Left = 639
-    Top = 285
-    Width = 97
+    Top = 283
+    Width = 121
     Height = 17
-    Caption = 'Todas los modelos.'
+    Caption = 'Todas los Juegos.'
     Checked = True
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     State = cbChecked
-    TabOrder = 22
+    TabOrder = 24
     Visible = False
-    OnClick = oAll_ModelosClick
+    OnClick = oAll_JuegosClick
   end
   object oLst_emp: TDBLookupComboboxEh
     Left = 84
@@ -768,7 +867,7 @@ object FRepJCJ_1: TFRepJCJ_1
     ListField = 'emp_descripcion'
     ListSource = oDs_Emp
     ParentFont = False
-    TabOrder = 23
+    TabOrder = 25
     Visible = True
     OnCloseUp = oLst_empCloseUp
     OnExit = oLst_empExit
@@ -779,7 +878,7 @@ object FRepJCJ_1: TFRepJCJ_1
     Width = 286
     Height = 17
     Caption = 'Presentar datos de todas las empresas.'
-    TabOrder = 24
+    TabOrder = 26
     OnClick = oAll_EmpClick
   end
   object oOpt11: TRadioButton
@@ -789,7 +888,7 @@ object FRepJCJ_1: TFRepJCJ_1
     Width = 225
     Height = 17
     Caption = 'Informe Resumido M'#225'quina'
-    TabOrder = 25
+    TabOrder = 27
     OnClick = oOpt11Click
   end
   object oOpt12: TRadioButton
@@ -799,7 +898,7 @@ object FRepJCJ_1: TFRepJCJ_1
     Width = 225
     Height = 17
     Caption = 'Informe Gr'#225'fico Detalle [Local/M'#225'quinas]'
-    TabOrder = 26
+    TabOrder = 28
     OnClick = oOpt12Click
   end
   object oOpt13: TRadioButton
@@ -809,7 +908,7 @@ object FRepJCJ_1: TFRepJCJ_1
     Width = 225
     Height = 17
     Caption = 'Informe Gr'#225'fico Resumen [Local]'
-    TabOrder = 27
+    TabOrder = 29
     OnClick = oOpt13Click
   end
   object oOpt14: TRadioButton
@@ -819,7 +918,7 @@ object FRepJCJ_1: TFRepJCJ_1
     Width = 225
     Height = 17
     Caption = 'Informe J.C.J. Detalle'
-    TabOrder = 28
+    TabOrder = 30
     OnClick = oOpt14Click
   end
   object oOpt15: TRadioButton
@@ -829,8 +928,39 @@ object FRepJCJ_1: TFRepJCJ_1
     Width = 225
     Height = 17
     Caption = 'Informe NETWIN'
-    TabOrder = 29
+    TabOrder = 31
     OnClick = oOpt15Click
+  end
+  object oAll_Maq: TCheckBox
+    Left = 206
+    Top = 369
+    Width = 126
+    Height = 17
+    Caption = 'Todas las M'#225'quinas'
+    Checked = True
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    State = cbChecked
+    TabOrder = 16
+    OnClick = oAll_MaqClick
+  end
+  object oCod_Maq: TEdit
+    Left = 79
+    Top = 367
+    Width = 102
+    Height = 24
+    Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 17
   end
   object oDS_Rutas: TDataSource
     DataSet = otRutas
@@ -842,8 +972,8 @@ object FRepJCJ_1: TFRepJCJ_1
     Left = 488
     Top = 428
   end
-  object oDS_Model: TDataSource
-    DataSet = oQry_Modelos
+  object oDS_Juegos: TDataSource
+    DataSet = oQry_Juegos
     Left = 488
     Top = 488
   end
@@ -879,14 +1009,13 @@ object FRepJCJ_1: TFRepJCJ_1
     Left = 544
     Top = 369
   end
-  object oQry_Modelos: TFDQuery
+  object oQry_Juegos: TFDQuery
     Connection = oConection
     SQL.Strings = (
-      'SELECT '
-      #9'maqtc_modelo '
-      'FROM maquinastc '
-      'GROUP BY maqtc_modelo '
-      'ORDER BY maqtc_modelo;')
+      'SELECT jueg_cod, UCASE(trim(jueg_nombre)) AS  jueg_nombre'
+      'FROM maquinas_juegos'
+      'WHERE (jueg_inactivo=0)'
+      'ORDER BY UCASE(trim(jueg_nombre));')
     Left = 544
     Top = 488
   end

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="5.6.1" DotMatrixReport="False" EngineOptions.SilentMode="True" EngineOptions.NewSilentMode="simSilent" EngineOptions.UseFileCache="True" IniFile="\Software\Fast Reports" PreviewOptions.Buttons="4095" PreviewOptions.Zoom="1" PrintOptions.Printer="Por defecto" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="39909.6339638773" ReportOptions.Description.Text="" ReportOptions.LastChange="43521.1190229514" ScriptLanguage="PascalScript" ScriptText.Text="begin&#13;&#10;&#13;&#10;end." ShowProgress="False">
+  <Datasets>
+    <item DataSetName="dsEmpresa"/>
+    <item DataSetName="dsMaquinas"/>
+  </Datasets>
+  <Variables>
+    <item Name="Fecha_desde" Value="'25/02/2000'"/>
+    <item Name="Fecha_hasta" Value="'25/02/2019'"/>
+  </Variables>
+  <TfrxDataPage Name="Data" Height="1000" Left="0" Top="0" Width="1000"/>
+  <TfrxReportPage Name="Page1" Orientation="poLandscape" PaperWidth="279.4" PaperHeight="215.9" PaperSize="1" LeftMargin="10" RightMargin="10" TopMargin="10" BottomMargin="10" ColumnWidth="0" ColumnPositions.Text="" HGuides.Text="" VGuides.Text="">
+    <TfrxReportTitle Name="ReportTitle1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="143.62214" Left="0" Top="18.89765" Width="980.410082">
+      <TfrxMemoView Name="Memo1" Left="272.882066" Top="35.89765" Width="434.64595" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-16" Font.Name="Arial" Font.Style="1" HAlign="haCenter" ParentFont="False" Text="REPORTE GENERAL DE MAQUINAS"/>
+      <TfrxMemoView Name="Memo21" Left="774.22882" Top="35.89765" Width="94.48825" Height="18.89765" DisplayFormat.FormatStr="dd/mm/yyyy" DisplayFormat.Kind="fkDateTime" Font.Charset="1" Font.Color="-16777208" Font.Height="-11" Font.Name="Arial" Font.Style="1" HAlign="haRight" ParentFont="False" Text="Desde:"/>
+      <TfrxMemoView Name="Memo22" Left="774.22882" Top="66.13389" Width="94.48825" Height="18.89765" DisplayFormat.FormatStr="dd/mm/yyyy" DisplayFormat.Kind="fkDateTime" Font.Charset="1" Font.Color="-16777208" Font.Height="-11" Font.Name="Arial" Font.Style="1" HAlign="haRight" ParentFont="False" Text="Hasta:"/>
+      <TfrxMemoView Name="Fecha_desde" Left="876.85096" Top="35.89765" Width="79.37013" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[Fecha_desde]"/>
+      <TfrxMemoView Name="Fecha_hasta" Left="876.85096" Top="66.13389" Width="79.37013" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[Fecha_hasta]"/>
+      <TfrxMemoView Name="dsEmpresaemp_descripcion" Left="272.882066" Top="66.13389" Width="434.64595" Height="18.89765" DataField="emp_descripcion" DataSetName="dsEmpresa" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" HAlign="haCenter" ParentFont="False" Text="[dsEmpresa.&#34;emp_descripcion&#34;]"/>
+      <TfrxMemoView Name="Date" Left="11.33859" Top="0" Width="245.66945" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Fecha Actual: [Date] [Time]"/>
+      <TfrxMemoView Name="Page" Left="752.12647" Top="0" Width="204.09462" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" HAlign="haRight" ParentFont="False" Text="Página [Page] de [TotalPages#]"/>
+      <TfrxMemoView Name="Memo2" Left="4.11812" Top="117.16543" Width="56.69295" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Máquina"/>
+      <TfrxMemoView Name="Memo3" Left="64.82684" Top="117.16543" Width="79.37013" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Chapa"/>
+      <TfrxMemoView Name="Memo5" Left="271.46475" Top="117.16543" Width="79.37013" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Serie"/>
+      <TfrxMemoView Name="Memo6" Left="354.63018" Top="117.16543" Width="49.13389" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Inactivo"/>
+      <TfrxLineView Name="Line1" Left="0" Top="139.84261" Width="1046.92981" Height="0" Color="0" Frame.Typ="4"/>
+      <TfrxMemoView Name="Memo7" Left="148.21274" Top="117.16543" Width="117.16543" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Nombre del Juego"/>
+      <TfrxMemoView Name="Memo9" Left="407.97681" Top="117.16543" Width="154.96073" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Cliente"/>
+      <TfrxMemoView Name="Memo11" Left="568.34694" Top="117.16543" Width="83.14966" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Fecha Creac."/>
+      <TfrxMemoView Name="Memo12" Left="655.05566" Top="117.16543" Width="83.14966" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Fecha Modif."/>
+      <TfrxMemoView Name="Memo4" Left="744.56741" Top="117.16543" Width="83.14966" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Ult. Colecta"/>
+      <TfrxMemoView Name="Memo8" Left="832.80365" Top="117.16543" Width="86.92919" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="Ult. Factura"/>
+    </TfrxReportTitle>
+    <TfrxMasterData Name="MasterData1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="30.23624" Left="0" Top="222.99227" Width="980.410082" ColumnWidth="0" ColumnGap="0" DataSetName="dsMaquinas" RowCount="0">
+      <TfrxMemoView Name="dsMaquinasmaqtc_id" Left="4.11812" Top="3" Width="56.69295" Height="18.89765" DataField="maqtc_id" DataSetName="dsMaquinas" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;maqtc_id&#34;]"/>
+      <TfrxMemoView Name="dsMaquinasmaqtc_chapa" Left="64.82684" Top="3" Width="79.37013" Height="18.89765" DataField="maqtc_chapa" DataSetName="dsMaquinas" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;maqtc_chapa&#34;]"/>
+      <TfrxMemoView Name="dsMaquinasmaqtc_modelo" Left="148.21274" Top="3" Width="117.16543" Height="18.89765" DataField="jueg_nombre" DataSetName="dsMaquinas" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;jueg_nombre&#34;]"/>
+      <TfrxMemoView Name="dsMaquinasmaqtc_serie" Left="271.46475" Top="3" Width="79.37013" Height="18.89765" DataField="maqtc_serie" DataSetName="dsMaquinas" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;maqtc_serie&#34;]"/>
+      <TfrxCheckBoxView Name="CheckBox1" Left="384.86642" Top="3" Width="18.89765" Height="18.89765" CheckColor="0" CheckStyle="csCross" DataField="maqtc_inactivo" DataSetName="dsMaquinas"/>
+      <TfrxMemoView Name="dsMaquinascte_nombre_loc" Left="407.97681" Top="3" Width="154.96073" Height="18.89765" DataField="cte_nombre_loc" DataSetName="dsMaquinas" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;cte_nombre_loc&#34;]"/>
+      <TfrxMemoView Name="dsMaquinasmaqtc_fecha_alta" Left="568.34694" Top="3" Width="83.14966" Height="18.89765" DataSetName="dsMaquinas" DisplayFormat.FormatStr="mm-dd-yyyy" DisplayFormat.Kind="fkDateTime" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;maqtc_fecha_alta&#34;]"/>
+      <TfrxMemoView Name="Memo10" Left="655.05566" Top="3" Width="83.14966" Height="18.89765" DataField="maqtc_fecha_modif" DataSetName="dsMaquinas" DisplayFormat.FormatStr="mm-dd-yyyy" DisplayFormat.Kind="fkDateTime" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;maqtc_fecha_modif&#34;]"/>
+      <TfrxMemoView Name="dsMaquinasmaqtc_mfecha_act" Left="741.56741" Top="3" Width="83.14966" Height="18.89765" DataField="maqtc_mfecha_act" DataSetName="dsMaquinas" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;maqtc_mfecha_act&#34;]"/>
+      <TfrxMemoView Name="dsMaquinasmaqtc_fact_act" Left="828.80365" Top="3" Width="86.92919" Height="18.89765" DataField="maqtc_fact_act" DataSetName="dsMaquinas" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" Text="[dsMaquinas.&#34;maqtc_fact_act&#34;]"/>
+    </TfrxMasterData>
+    <TfrxReportSummary Name="ReportSummary1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Height="41.57483" Left="0" Top="313.70099" Width="980.410082">
+      <TfrxSysMemoView Name="SysMemo2" Left="3.77953" Top="11.33859" Width="249.44898" Height="18.89765" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="1" ParentFont="False" Text="Total de Máquinas: [COUNT(MasterData1,2)]"/>
+      <TfrxLineView Name="Line2" Left="3.77953" Top="0" Width="1039.37075" Height="0" Color="0" Frame.Typ="4"/>
+    </TfrxReportSummary>
+  </TfrxReportPage>
+</TfrxReport>

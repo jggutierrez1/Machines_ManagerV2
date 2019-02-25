@@ -46,13 +46,12 @@ type
     olRuta: TLabel;
     oAll_Ctes: TCheckBox;
     oAll_Routes: TCheckBox;
-    oDS_Model: TDataSource;
+    oDS_Juegos: TDataSource;
     olModelos: TLabel;
-    oLst_Modelos: TDBLookupComboboxEh;
-    oAll_Modelos: TCheckBox;
+    oLst_Juegos: TDBLookupComboboxEh;
+    oAll_Juegos: TCheckBox;
     Shape1: TShape;
     Shape2: TShape;
-    Shape3: TShape;
     Shape4: TShape;
     Label3: TLabel;
     oLst_emp: TDBLookupComboboxEh;
@@ -61,13 +60,17 @@ type
     oConection: TFDConnection;
     oQry_Empresa: TFDQuery;
     otRutas: TFDTable;
-    oQry_Modelos: TFDQuery;
+    oQry_Juegos: TFDQuery;
     oOpt11: TRadioButton;
     oOpt12: TRadioButton;
     oOpt13: TRadioButton;
     oOpt14: TRadioButton;
     oQry_Ctes: TFDQuery;
     oOpt15: TRadioButton;
+    oAll_Maq: TCheckBox;
+    oCod_Maq: TEdit;
+    Label2: TLabel;
+    Label4: TLabel;
     procedure Make_report(iOpt: integer);
     procedure oBtn_PreviewClick(Sender: TObject);
     procedure oBtn_PrintClick(Sender: TObject);
@@ -90,7 +93,7 @@ type
     procedure oOpt7Click(Sender: TObject);
     procedure oOpt9Click(Sender: TObject);
     procedure oOpt10Click(Sender: TObject);
-    procedure oAll_ModelosClick(Sender: TObject);
+    procedure oAll_JuegosClick(Sender: TObject);
     procedure oOpt6Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure oAll_EmpClick(Sender: TObject);
@@ -108,6 +111,7 @@ type
     Function Generic_Qry(sOrder: string): Widestring;
     Function JCJ_Qry(): Widestring;
     Function NETWIN_Qry(): Widestring;
+    procedure oAll_MaqClick(Sender: TObject);
   private
     iOption: integer;
     cSql_Cte: string;
@@ -154,15 +158,11 @@ begin
   otRutas.Connection := fUtilesV20.oPublicCnn;
   otRutas.open;
 
-  // otClientes.Connection := fUtilesV20.oPublicCnn;
-  // otClientes.Filtered := false;
-  // otClientes.open;
-
   self.oQry_Ctes.Connection := fUtilesV20.oPublicCnn;
   self.oQry_Ctes.Close;
 
-  oQry_Modelos.Connection := fUtilesV20.oPublicCnn;
-  oQry_Modelos.open;
+  oQry_Juegos.Connection := fUtilesV20.oPublicCnn;
+  oQry_Juegos.open;
 
   self.oQry_Empresa.Connection := fUtilesV20.oPublicCnn;
   self.oQry_Empresa.open;
@@ -205,11 +205,10 @@ begin
   FormatSettings.LongTimeFormat := 'hh:nn:ss';
   FormatSettings.CurrencyString := '$';
 
-  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' +
-    fUtilesV20.oPublicCnn.Params.Values['Database'];
+  self.StatusBar1.Panels[0].Text := 'Servidor: ' + fUtilesV20.oPublicCnn.Params.Values['Server'] + '/' + fUtilesV20.oPublicCnn.Params.Values
+    ['Database'];
 
-  if fUtilesV20.query_selectgen_result('SELECT u_acceso1 FROM usuarios WHERE u_usuario=' +
-    QuotedStr(trim(UtilesV20.sUserName))) = '1' then
+  if fUtilesV20.query_selectgen_result('SELECT u_acceso1 FROM usuarios WHERE u_usuario=' + QuotedStr(trim(UtilesV20.sUserName))) = '1' then
   begin
     self.oLst_emp.Enabled := true;
     self.oAll_Emp.Enabled := true;
@@ -223,6 +222,13 @@ begin
   self.oLst_empExit(self);
   self.oAll_EmpClick(self);
 
+  self.oAll_Juegos.Checked := true;
+  self.oAll_Chapas.Checked := true;
+  self.oAll_Ctes.Checked := true;
+  self.oAll_JuegosClick(self);
+  self.oAll_MaqClick(self);
+  self.oAll_CtesClick(self);
+
   self.Lee_ini;
 end;
 
@@ -234,7 +240,7 @@ end;
 
 procedure TFRepJCJ_1.oAll_ChapasClick(Sender: TObject);
 begin
-  if self.oAll_Chapas.Checked = true then
+  if (self.oAll_Chapas.Checked = true) then
     self.oChapa.Enabled := false
   else
   begin
@@ -245,7 +251,7 @@ end;
 
 procedure TFRepJCJ_1.oAll_CtesClick(Sender: TObject);
 begin
-  if self.oAll_Ctes.Checked = true then
+  if (self.oAll_Ctes.Checked = true) then
   begin
     self.oLst_Ctes.Enabled := false;
   end
@@ -255,17 +261,29 @@ begin
   end;
 end;
 
-procedure TFRepJCJ_1.oAll_ModelosClick(Sender: TObject);
+procedure TFRepJCJ_1.oAll_JuegosClick(Sender: TObject);
 begin
-  if self.oAll_Modelos.Checked = true then
-    self.oLst_Modelos.Enabled := false
+  if (self.oAll_Juegos.Checked = true) then
+    self.oLst_Juegos.Enabled := false
   else
-    self.oLst_Modelos.Enabled := true;
+    self.oLst_Juegos.Enabled := true;
+end;
+
+procedure TFRepJCJ_1.oAll_MaqClick(Sender: TObject);
+begin
+  if (self.oAll_Maq.Checked = true) then
+    self.oCod_Maq.Enabled := false
+  else
+  begin
+    self.oCod_Maq.Enabled := true;
+    self.oCod_Maq.SetFocus;
+  end;
+
 end;
 
 procedure TFRepJCJ_1.oAll_RoutesClick(Sender: TObject);
 begin
-  if self.oAll_Routes.Checked = true then
+  if (self.oAll_Routes.Checked = true) then
     self.oLst_Rutas.Enabled := false
   else
     self.oLst_Rutas.Enabled := true;
@@ -303,20 +321,22 @@ begin
   cSql_Cte := '';
   if (self.oAll_Ctes.Checked = true) then
   begin
-    cSql_Cte := cSql_Cte + 'SELECT ct.* ';
+    cSql_Cte := cSql_Cte + 'SELECT ct.cte_id, UCASE(trim(ct.cte_nombre_loc)) AS cte_nombre_loc ';
     cSql_Cte := cSql_Cte + 'FROM clientes ct ';
-    cSql_Cte := cSql_Cte + 'WHERE ct.cte_inactivo=0 ';
-    cSql_Cte := cSql_Cte + 'ORDER BY ct.cte_nombre_loc ';
+    // cSql_Cte := cSql_Cte + 'WHERE (ct.cte_inactivo=0) ';
+    cSql_Cte := cSql_Cte + 'ORDER BY UCASE(trim(ct.cte_nombre_loc)) ';
   end
   else
   begin
-    cSql_Cte := cSql_Cte + 'SELECT ct.* ';
+    cSql_Cte := cSql_Cte + 'SELECT ct.cte_id, UCASE(trim(ct.cte_nombre_loc)) AS cte_nombre_loc ';
     cSql_Cte := cSql_Cte + 'FROM clientes ct ';
-    cSql_Cte := cSql_Cte + 'LEFT JOIN maquinas_lnk ml ON ct.cte_id = ml.cte_id ';
-    cSql_Cte := cSql_Cte + 'WHERE ct.cte_inactivo = 0 ';
-    cSql_Cte := cSql_Cte + 'AND   ml.emp_id = ' + QuotedStr(trim(iEmp)) + ' ';
-    cSql_Cte := cSql_Cte + 'GROUP BY ml.cte_id ';
-    cSql_Cte := cSql_Cte + 'ORDER BY ct.cte_nombre_loc ';
+    // cSql_Cte := cSql_Cte + 'LEFT JOIN maquinas_lnk ml ON ct.cte_id = ml.cte_id ';
+    cSql_Cte := cSql_Cte + 'WHERE (1=1) ';
+    // cSql_Cte := cSql_Cte + 'WHERE (ct.cte_inactivo = 0) ';
+    // cSql_Cte := cSql_Cte + 'AND  (ml.emp_id = ' + QuotedStr(trim(iEmp)) + ') ';
+    cSql_Cte := cSql_Cte + 'AND  ((ct.cte_emp_id=0) or (cte_emp_id = ' + QuotedStr(trim(iEmp)) + ')) ';
+    // cSql_Cte := cSql_Cte + 'GROUP BY ml.cte_id ';
+    cSql_Cte := cSql_Cte + 'ORDER BY UCASE(trim(ct.cte_nombre_loc)) ';
   end;
   oQry_Ctes.Close;
   oQry_Ctes.Connection := fUtilesV20.oPublicCnn;
@@ -328,22 +348,6 @@ begin
 
   self.oLst_Ctes.Refresh;
   self.oLst_Ctes.Value := oQry_Ctes.FieldByName('cte_id').Value;
-
-  { if (self.oAll_Ctes.Checked = true) then
-    begin
-    self.otClientes.Filtered := false;
-    self.otClientes.Filter := '';
-    end
-    else
-    begin
-    self.otClientes.Filtered := false;
-    self.otClientes.Filter := 'cte_emp_id=' + QuotedStr(trim(iEmp)) + ' ';
-    self.otClientes.Filtered := true;
-    end;
-    self.otClientes.First;
-    self.otClientes.Refresh;
-    self.oLst_Ctes.Value := self.otClientes.FieldByName('cte_id').Value;
-  }
 end;
 
 procedure TFRepJCJ_1.oOpt10Click(Sender: TObject);
@@ -378,8 +382,8 @@ begin
     self.oAll_RoutesClick(self);
 
     self.Visible_Modelos(false);
-    self.oAll_Modelos.Checked := true;
-    self.oAll_ModelosClick(self);
+    self.oAll_Juegos.Checked := true;
+    self.oAll_JuegosClick(self);
 
     self.oAll_Chapas.Checked := true;
     self.oAll_ChapasClick(self);
@@ -407,14 +411,19 @@ begin
     self.oAll_RoutesClick(self);
 
     self.Visible_Modelos(false);
-    self.oAll_Modelos.Checked := true;
-    self.oAll_ModelosClick(self);
+    self.oAll_Juegos.Checked := true;
+    self.oAll_JuegosClick(self);
 
     self.oAll_Chapas.Checked := true;
     self.oAll_ChapasClick(self);
     self.oAll_Chapas.Visible := false;
 
+    self.oAll_Maq.Checked := true;
+    self.oAll_MaqClick(self);
+    self.oAll_Maq.Visible := false;
+
     self.oChapa.Text := '';
+    self.oCod_Maq.Text := '';
     self.oChapa.Visible := false;
   end;
 
@@ -437,14 +446,19 @@ begin
     self.oAll_RoutesClick(self);
 
     self.Visible_Modelos(false);
-    self.oAll_Modelos.Checked := true;
-    self.oAll_ModelosClick(self);
+    self.oAll_Juegos.Checked := true;
+    self.oAll_JuegosClick(self);
 
     self.oAll_Chapas.Checked := true;
     self.oAll_ChapasClick(self);
     self.oAll_Chapas.Visible := false;
 
+    self.oAll_Maq.Checked := true;
+    self.oAll_MaqClick(self);
+    self.oAll_Maq.Visible := false;
+
     self.oChapa.Text := '';
+    self.oCod_Maq.Text := '';
     self.oChapa.Visible := false;
   end;
 end;
@@ -625,27 +639,27 @@ Procedure TFRepJCJ_1.Visible_Modelos(bFlag: boolean);
 begin
   self.olModelos.Caption := 'Lista de los Modelos disponibles:';
 
-  oLst_Modelos.TOP := oLst_Ctes.TOP;
-  oLst_Modelos.LEFT := oLst_Ctes.LEFT;
-  oLst_Modelos.WIDTH := oLst_Ctes.WIDTH;
-  oLst_Modelos.HEIGHT := oLst_Ctes.HEIGHT;
+  oLst_Juegos.TOP := oLst_Ctes.TOP;
+  oLst_Juegos.LEFT := oLst_Ctes.LEFT;
+  oLst_Juegos.WIDTH := oLst_Ctes.WIDTH;
+  oLst_Juegos.HEIGHT := oLst_Ctes.HEIGHT;
 
   olModelos.TOP := olCliente.TOP;
   olModelos.LEFT := olCliente.LEFT;
   olModelos.WIDTH := olCliente.WIDTH;
   olModelos.HEIGHT := olCliente.HEIGHT;
 
-  oAll_Modelos.TOP := oAll_Ctes.TOP;
-  oAll_Modelos.LEFT := oAll_Ctes.LEFT;
-  oAll_Modelos.WIDTH := oAll_Ctes.WIDTH;
-  oAll_Modelos.HEIGHT := oAll_Ctes.HEIGHT;
+  oAll_Juegos.TOP := oAll_Ctes.TOP;
+  oAll_Juegos.LEFT := oAll_Ctes.LEFT;
+  oAll_Juegos.WIDTH := oAll_Ctes.WIDTH;
+  oAll_Juegos.HEIGHT := oAll_Ctes.HEIGHT;
 
   self.olModelos.Visible := bFlag;
-  self.oLst_Modelos.Visible := bFlag;
-  self.oAll_Modelos.Visible := bFlag;
-  self.oLst_Modelos.ListFieldIndex := 1;
-  self.oAll_Modelos.Checked := true;
-  self.oAll_ModelosClick(self);
+  self.oLst_Juegos.Visible := bFlag;
+  self.oAll_Juegos.Visible := bFlag;
+  self.oLst_Juegos.ListFieldIndex := 1;
+  self.oAll_Juegos.Checked := true;
+  self.oAll_JuegosClick(self);
 end;
 
 Procedure TFRepJCJ_1.Visible_Rutas(bFlag: boolean);
@@ -700,7 +714,7 @@ Function TFRepJCJ_1.Generic_Qry(sOrder: string): Widestring;
 var
   sFecha_Ini: string;
   sFecha_Fin: string;
-  cSql_Ln, sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Modelo: string;
+  cSql_Ln, sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Juego, sCod_Maqui: string;
 begin
   FormatSettings.ShortDateFormat := 'yyyy-MM-dd';
   sFecha_Ini := DateToStr(self.oFecha1.Value);
@@ -709,8 +723,9 @@ begin
 
   sCod_Cte := fUtilesV20.iif(self.oAll_Ctes.Checked = true, '%', self.oLst_Ctes.KeyValue);
   sCod_Ruta := fUtilesV20.iif(self.oAll_Routes.Checked = true, '%', self.oLst_Rutas.KeyValue);
-  sCod_Modelo := fUtilesV20.iif(self.oAll_Modelos.Checked = true, '%', self.oLst_Modelos.KeyValue);
+  sCod_Juego := fUtilesV20.iif(self.oAll_Juegos.Checked = true, '%', self.oLst_Juegos.KeyValue);
   sCod_Chapa := fUtilesV20.iif(self.oAll_Chapas.Checked = true, '%', self.oChapa.Text);
+  sCod_Maqui := fUtilesV20.iif(self.oAll_Maq.Checked = true, '%', self.oCod_Maq.Text);
 
   cSql_Ln := '';
   cSql_Ln := cSql_Ln + 'SELECT a.* FROM (';
@@ -723,15 +738,14 @@ begin
   cSql_Ln := cSql_Ln + '	IF(TRIM(op.cte_nombre_loc)="",ct.cte_nombre_loc,op.cte_nombre_loc) AS LOCAL2, ';
   cSql_Ln := cSql_Ln + '	op.*, ';
   cSql_Ln := cSql_Ln + '	IF(op.op_tot_colect=0,0,(op.op_tot_cred/op.op_tot_colect)*100) AS Porc_Pag, ';
-  cSql_Ln := cSql_Ln + '	rutas.rut_nombre, ';
-  cSql_Ln := cSql_Ln + '	mt.maqtc_modelo ';
+  cSql_Ln := cSql_Ln + '	rutas.rut_nombre ';
   cSql_Ln := cSql_Ln + 'FROM operacion op ';
-  cSql_Ln := cSql_Ln + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
-  cSql_Ln := cSql_Ln + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
-  cSql_Ln := cSql_Ln + 'LEFT JOIN rutas         ON ct.rut_id   = rutas.rut_id ';
-  cSql_Ln := cSql_Ln + 'WHERE (op.maqtc_tipomaq =1) ';
-  cSql_Ln := cSql_Ln + 'AND   (ct.cte_inactivo  =0) ';
-  cSql_Ln := cSql_Ln + 'AND   (mt.maqtc_inactivo=0) ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN clientes ct ON (op.cte_id = ct.cte_id) ';
+  // cSql_Ln := cSql_Ln + 'LEFT JOIN maquinastc mt ON (op.maqtc_id = mt.maqtc_id) ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN rutas       ON (ct.rut_id = rutas.rut_id) ';
+  cSql_Ln := cSql_Ln + 'WHERE (op.maqtc_tipomaq = 1) ';
+  // cSql_Ln := cSql_Ln + 'AND   (ct.cte_inactivo  =0) ';
+  // cSql_Ln := cSql_Ln + 'AND   (mt.maqtc_inactivo=0) ';
 
   if (self.oAll_Emp.Checked = false) then
     cSql_Ln := cSql_Ln + 'AND (op.op_emp_id = "' + trim(self.oLst_emp.Value) + '") ';
@@ -740,6 +754,12 @@ begin
   begin
     if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
       cSql_Ln := cSql_Ln + 'AND (op.op_chapa="' + trim(sCod_Chapa) + '") ';
+  end;
+
+  if (self.oAll_Maq.Checked = false) then
+  begin
+    if not((trim(sCod_Maqui) = '%') or (trim(sCod_Maqui) = '')) then
+      cSql_Ln := cSql_Ln + 'AND (op.maqtc_id="' + trim(sCod_Maqui) + '") ';
   end;
 
   if (self.oAll_Ctes.Checked = false) then
@@ -754,10 +774,10 @@ begin
       cSql_Ln := cSql_Ln + 'AND   (ct.rut_id="' + trim(sCod_Ruta) + '") ';
   end;
 
-  if (self.oAll_Modelos.Checked = false) then
+  if (self.oAll_Juegos.Checked = false) then
   begin
-    if not((trim(sCod_Modelo) = '%') or (trim(sCod_Modelo) = '')) then
-      cSql_Ln := cSql_Ln + 'AND   (TRIM(op.op_modelo)="' + trim(sCod_Modelo) + '") ';
+    if not((trim(sCod_Juego) = '%') or (trim(sCod_Juego) = '')) then
+      cSql_Ln := cSql_Ln + 'AND   (TRIM(op.jueg_cod)="' + trim(sCod_Juego) + '") ';
   end;
 
   cSql_Ln := cSql_Ln + 'AND   (';
@@ -778,7 +798,7 @@ begin
     5:
       cSql_Ln := cSql_Ln + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
     6:
-      cSql_Ln := cSql_Ln + 'ORDER BY  a.maqtc_modelo, a.op_chapa ';
+      cSql_Ln := cSql_Ln + 'ORDER BY  a.op_modelo, a.op_chapa ';
     7:
       cSql_Ln := cSql_Ln + 'ORDER BY  a.MasterO, a.LOCAL2, a.op_chapa ';
     8:
@@ -789,7 +809,7 @@ begin
       cSql_Ln := cSql_Ln + 'ORDER BY  a.rut_nombre, a.LOCAL2, a.op_chapa ';
     11:
       BEGIN
-        cSql_Ln := cSql_Ln + 'GROUP BY  a.LOCAL2, a.op_chapa ';
+        cSql_Ln := cSql_Ln + 'GROUP BY  a.LOCAL2, a.maqtc_id ';
         cSql_Ln := cSql_Ln + 'ORDER BY  a.LOCAL2, a.op_chapa ';
       END;
   end;
@@ -798,7 +818,7 @@ end;
 
 Function TFRepJCJ_1.JCJ_Qry(): Widestring;
 var
-  cSql_Ln, sCod_Chapa: string;
+  cSql_Ln, sCod_Chapa, sCod_Maqui: string;
   myYear, myMonth, myDay: Word;
 BEGIN
   DecodeDate(self.oFecha1.Value, myYear, myMonth, myDay);
@@ -817,30 +837,38 @@ BEGIN
   cSql_Ln := cSql_Ln + '	op.*, ';
   cSql_Ln := cSql_Ln + '	IF(op.op_tot_colect=0,0,(op.op_tot_cred/op.op_tot_colect)*100) AS Porc_Pag ';
   cSql_Ln := cSql_Ln + 'FROM operacion op ';
-  cSql_Ln := cSql_Ln + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
-  cSql_Ln := cSql_Ln + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
-  cSql_Ln := cSql_Ln + 'LEFT JOIN rutas         ON ct.rut_id   = rutas.rut_id ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN clientes ct ON (op.cte_id = ct.cte_id) ';
+  // cSql_Ln := cSql_Ln + 'LEFT JOIN maquinastc mt ON (op.maqtc_id = mt.maqtc_id) ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN rutas       ON (ct.rut_id = rutas.rut_id) ';
   cSql_Ln := cSql_Ln + 'WHERE (op.maqtc_tipomaq =1) ';
-  cSql_Ln := cSql_Ln + 'AND   (ct.cte_inactivo  =0) ';
-  cSql_Ln := cSql_Ln + 'AND   (mt.maqtc_inactivo=0) ';
+  // cSql_Ln := cSql_Ln + 'AND   (ct.cte_inactivo  =0) ';
+  // cSql_Ln := cSql_Ln + 'AND   (mt.maqtc_inactivo=0) ';
 
   if (self.oAll_Emp.Checked = false) then
     cSql_Ln := cSql_Ln + 'AND (op.op_emp_id = ' + QuotedStr(trim(self.oLst_emp.Value)) + ') ';
 
   cSql_Ln := cSql_Ln + 'AND   (YEAR(op.op_fecha) =' + QuotedStr(IntToStr(myYear)) + ') ';
   cSql_Ln := cSql_Ln + 'AND 	(MONTH(op.op_fecha)=' + QuotedStr(IntToStr(myMonth)) + ') ';
+
   if (self.oAll_Chapas.Checked = false) then
   begin
     if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
       cSql_Ln := cSql_Ln + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
   end;
+
+  if (self.oAll_Maq.Checked = false) then
+  begin
+    if not((trim(sCod_Maqui) = '%') or (trim(sCod_Maqui) = '')) then
+      cSql_Ln := cSql_Ln + 'AND (op.maqtc_id="' + trim(sCod_Maqui) + '") ';
+  end;
+
   cSql_Ln := cSql_Ln + 'ORDER BY op.op_chapa ';
   result := cSql_Ln;
 END;
 
 Function TFRepJCJ_1.NETWIN_Qry(): Widestring;
 var
-  cSql_Ln, sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Modelo: string;
+  cSql_Ln, sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Juego, sCod_Maqui: string;
   myYear, myMonth, myDay: Word;
 BEGIN
   DecodeDate(self.oFecha1.Value, myYear, myMonth, myDay);
@@ -848,8 +876,9 @@ BEGIN
 
   sCod_Cte := fUtilesV20.iif(self.oAll_Ctes.Checked = true, '%', self.oLst_Ctes.KeyValue);
   sCod_Ruta := fUtilesV20.iif(self.oAll_Routes.Checked = true, '%', self.oLst_Rutas.KeyValue);
-  sCod_Modelo := fUtilesV20.iif(self.oAll_Modelos.Checked = true, '%', self.oLst_Modelos.KeyValue);
+  sCod_Juego := fUtilesV20.iif(self.oAll_Juegos.Checked = true, '%', self.oLst_Juegos.KeyValue);
   sCod_Chapa := fUtilesV20.iif(self.oAll_Chapas.Checked = true, '%', self.oChapa.Text);
+  sCod_Maqui := fUtilesV20.iif(self.oAll_Maq.Checked = true, '%', self.oCod_Maq.Text);
 
   cSql_Ln := '';
   cSql_Ln := cSql_Ln + 'SELECT a.*, ';
@@ -858,12 +887,12 @@ BEGIN
   cSql_Ln := cSql_Ln + '	ROUND((a.No_Semanas*37.50),2) 		AS ImpSem ';
   cSql_Ln := cSql_Ln + 'FROM ( ';
   cSql_Ln := cSql_Ln + '	SELECT ';
-  cSql_Ln := cSql_Ln +
-    '		@FechaIni := DATE(CONCAT(YEAR(op.op_fecha),"-",MONTH(op.op_fecha),"-01")) 										 AS FechaIni, ';
+  cSql_Ln := cSql_Ln + '		@FechaIni := DATE(CONCAT(YEAR(op.op_fecha),"-",MONTH(op.op_fecha),"-01")) 										 AS FechaIni, ';
   cSql_Ln := cSql_Ln +
     '		@FechaFin := DATE_ADD( DATE(CONCAT(YEAR(op.op_fecha),"-",MONTH(op.op_fecha)+1,"-01")), INTERVAL -1 DAY) AS FechaFin, ';
   cSql_Ln := cSql_Ln + '		op.op_chapa, ';
   cSql_Ln := cSql_Ln + '		op.op_modelo, ';
+  cSql_Ln := cSql_Ln + '		op.maqtc_id, ';
   cSql_Ln := cSql_Ln + '		IF(TRIM(op.cte_nombre_loc)="",ct.cte_nombre_loc,op.cte_nombre_loc) AS LOCAL2, ';
   cSql_Ln := cSql_Ln + '		FLOOR((DATEDIFF(@FechaFin,@FechaIni)+1)/7) AS No_Semanas, ';
   cSql_Ln := cSql_Ln + '		COUNT(op.op_chapa)      AS No_Colect, ';
@@ -874,16 +903,14 @@ BEGIN
   cSql_Ln := cSql_Ln + '		SUM(op.op_tot_sub)      AS op_tot_sub, ';
   cSql_Ln := cSql_Ln + '		SUM(op.op_tot_netoemp)  AS op_tot_netoemp, ';
   cSql_Ln := cSql_Ln + '		SUM(op.op_tot_brutoemp) AS op_tot_brutoemp, ';
-  cSql_Ln := cSql_Ln +
-    '		IF(SUM(op.op_tot_colect)=0,0,(SUM(op.op_tot_cred)/SUM(op.op_tot_colect))*100) AS Porc_Pag, ';
-  cSql_Ln := cSql_Ln +
-    '		@NetWin := ROUND(IF(SUM(op.op_tot_colect)=0,0.00,(SUM(op.op_tot_colect)-SUM(op.op_tot_cred))),2) AS NetWinM ';
+  cSql_Ln := cSql_Ln + '		IF(SUM(op.op_tot_colect)=0,0,(SUM(op.op_tot_cred)/SUM(op.op_tot_colect))*100) AS Porc_Pag, ';
+  cSql_Ln := cSql_Ln + '		@NetWin := ROUND(IF(SUM(op.op_tot_colect)=0,0.00,(SUM(op.op_tot_colect)-SUM(op.op_tot_cred))),2) AS NetWinM ';
   cSql_Ln := cSql_Ln + '	FROM operacion op ';
-  cSql_Ln := cSql_Ln + '	LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
-  cSql_Ln := cSql_Ln + '	LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
-  cSql_Ln := cSql_Ln + '	WHERE (op.maqtc_tipomaq =1)  ';
-  cSql_Ln := cSql_Ln + '	AND   (ct.cte_inactivo  =0) ';
-  cSql_Ln := cSql_Ln + '	AND   (mt.maqtc_inactivo=0) ';
+  cSql_Ln := cSql_Ln + '	LEFT JOIN clientes   ct ON (op.cte_id = ct.cte_id) ';
+  // cSql_Ln := cSql_Ln + '	LEFT JOIN maquinastc mt ON (op.maqtc_id = mt.maqtc_id) ';
+  cSql_Ln := cSql_Ln + '	WHERE (op.maqtc_tipomaq = 1)  ';
+  // cSql_Ln := cSql_Ln + '	AND   (ct.cte_inactivo  =0) ';
+  // cSql_Ln := cSql_Ln + '	AND   (mt.maqtc_inactivo=0) ';
   cSql_Ln := cSql_Ln + '  AND   (YEAR(op.op_fecha) =' + QuotedStr(IntToStr(myYear)) + ') ';
   cSql_Ln := cSql_Ln + '  AND 	(MONTH(op.op_fecha)=' + QuotedStr(IntToStr(myMonth)) + ') ';
 
@@ -902,19 +929,25 @@ BEGIN
       cSql_Ln := cSql_Ln + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
   end;
 
+  if (self.oAll_Maq.Checked = false) then
+  begin
+    if not((trim(sCod_Maqui) = '%') or (trim(sCod_Maqui) = '')) then
+      cSql_Ln := cSql_Ln + 'AND (op.maqtc_id="' + trim(sCod_Maqui) + '") ';
+  end;
+
   if (self.oAll_Routes.Checked = false) then
   begin
     if not((trim(sCod_Ruta) = '%') or (trim(sCod_Ruta) = '')) then
       cSql_Ln := cSql_Ln + 'AND   (ct.rut_id=' + QuotedStr(trim(sCod_Ruta)) + ') ';
   end;
 
-  if (self.oAll_Modelos.Checked = false) then
+  if (self.oAll_Juegos.Checked = false) then
   begin
-    if not((trim(sCod_Modelo) = '%') or (trim(sCod_Modelo) = '')) then
-      cSql_Ln := cSql_Ln + 'AND   (TRIM(op.op_modelo)=' + QuotedStr(trim(sCod_Modelo)) + ') ';
+    if not((trim(sCod_Juego) = '%') or (trim(sCod_Juego) = '')) then
+      cSql_Ln := cSql_Ln + 'AND   (TRIM(op.jueg_cod)=' + QuotedStr(trim(sCod_Juego)) + ') ';
   end;
 
-  cSql_Ln := cSql_Ln + '	GROUP BY  op.op_chapa) a ';
+  cSql_Ln := cSql_Ln + '	GROUP BY  op.maqtc_id) a ';
   cSql_Ln := cSql_Ln + 'ORDER BY a.op_chapa ';
   result := cSql_Ln;
 END;
@@ -926,7 +959,7 @@ var
   sOrder: string;
   sLn1: Widestring;
   sLn2: string;
-  sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Modelo: string;
+  sCod_Chapa, sCod_Cte, sCod_Ruta, sCod_Juego, sCod_Maqui: string;
   sFecha_Ini: string;
   sFecha_Fin: string;
   dFech_Ini: Tdatetime;
@@ -937,7 +970,7 @@ begin
   FormatSettings.ShortDateFormat := 'yyyy-mm-dd';
   reportes.Initialize;
   if (self.oFecha1.EditFormat <> 'MM/YYYY') then
-  BEGIN
+  begin
     sFecha_Ini := DateToStr(self.oFecha1.Value) + ' 01:00:00';
     sFecha_Fin := DateToStr(self.oFecha2.Value) + ' 23:59:59';
 
@@ -945,7 +978,7 @@ begin
     reportes.Report.Vars[1].Value := FormatDateTime('dd/mm/yyyy', self.oFecha1.Value);
     reportes.Report.Vars[2].Name := 'Fecha_hasta';
     reportes.Report.Vars[2].Value := FormatDateTime('dd/mm/yyyy', self.oFecha2.Value);
-  END
+  end
   else
   begin
     // self.oFecha2.Value := self.oFecha1.Value;
@@ -965,8 +998,7 @@ begin
     reportes.Report.Vars[2].Value := FormatDateTime('dd/mm/yyyy', dFech_Fin);
   end;
   reportes.oFrom := FRepJCJ_1;
-  sLn1 := 'SELECT * FROM empresas WHERE emp_id= ' + QuotedStr(IntToStr(UtilesV20.iId_Empresa)) +
-    ' ORDER BY emp_descripcion ';
+  sLn1 := 'SELECT * FROM empresas WHERE emp_id= ' + QuotedStr(IntToStr(UtilesV20.iId_Empresa)) + ' ORDER BY emp_descripcion ';
   reportes.Queries[1].active := true;
   reportes.Queries[1].Sql_String := sLn1;
   reportes.Queries[1].DB_DSName := 'dsEmpresa';
@@ -974,11 +1006,12 @@ begin
 
   sCod_Cte := fUtilesV20.iif(self.oAll_Ctes.Checked = true, '%', self.oLst_Ctes.KeyValue);
   sCod_Ruta := fUtilesV20.iif(self.oAll_Routes.Checked = true, '%', self.oLst_Rutas.KeyValue);
-  sCod_Modelo := fUtilesV20.iif(self.oAll_Modelos.Checked = true, '%', self.oLst_Modelos.KeyValue);
+  sCod_Juego := fUtilesV20.iif(self.oAll_Juegos.Checked = true, '%', self.oLst_Juegos.KeyValue);
   sCod_Chapa := fUtilesV20.iif(self.oAll_Chapas.Checked = true, '%', self.oChapa.Text);
+  sCod_Maqui := fUtilesV20.iif(self.oAll_Maq.Checked = true, '%', self.oCod_Maq.Text);
 
-  if ((oOpt1.Checked = true) OR (oOpt2.Checked = true) OR (oOpt3.Checked = true) OR (oOpt5.Checked = true) OR
-    (oOpt6.Checked = true) OR (oOpt7.Checked = true) OR (oOpt9.Checked = true) OR (oOpt10.Checked = true)) then
+  if ((oOpt1.Checked = true) OR (oOpt2.Checked = true) OR (oOpt3.Checked = true) OR (oOpt5.Checked = true) OR (oOpt6.Checked = true) OR
+    (oOpt7.Checked = true) OR (oOpt9.Checked = true) OR (oOpt10.Checked = true)) then
   begin
 
     if ((oOpt1.Checked = true) OR (oOpt5.Checked = true)) then
@@ -1048,6 +1081,7 @@ begin
     sLn2 := sLn2 + 'SELECT a.* FROM (';
     sLn2 := sLn2 + '  SELECT ';
     sLn2 := sLn2 + '	  op.op_chapa, ';
+    sLn2 := sLn2 + '	  op.maqtc_id, ';
     sLn2 := sLn2 + '	  op.op_modelo, ';
     sLn2 := sLn2 + '	  IF(TRIM(op.cte_nombre_loc)="",ct.cte_nombre_loc,op.cte_nombre_loc) AS LOCAL2, ';
     sLn2 := sLn2 + '	  COUNT(op.op_chapa)		  AS No_Colect, ';
@@ -1061,26 +1095,38 @@ begin
     sLn2 := sLn2 + '	  IF(SUM(op.op_tot_colect)=0,0,(SUM(op.op_tot_cred)/SUM(op.op_tot_colect))*100) AS Porc_Pag, ';
     sLn2 := sLn2 + '	  FLOOR(DATEDIFF("' + sFecha_Fin + '","' + sFecha_Ini + '")/7)*37.50 as ImpSem ';
     sLn2 := sLn2 + 'FROM operacion op ';
-    sLn2 := sLn2 + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
-    sLn2 := sLn2 + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
+    sLn2 := sLn2 + 'LEFT JOIN clientes   ct ON (op.cte_id   = ct.cte_id) ';
+    // sLn2 := sLn2 + 'LEFT JOIN maquinastc mt ON (op.maqtc_id = mt.maqtc_id) ';
     sLn2 := sLn2 + 'WHERE (op.maqtc_tipomaq =1) ';
-    sLn2 := sLn2 + 'AND   (ct.cte_inactivo  =0) ';
-    sLn2 := sLn2 + 'AND   (mt.maqtc_inactivo=0) ';
+    // sLn2 := sLn2 + 'AND   (ct.cte_inactivo  =0) ';
+    // sLn2 := sLn2 + 'AND   (mt.maqtc_inactivo=0) ';
 
     if (self.oAll_Emp.Checked = false) then
       sLn2 := sLn2 + 'AND (op.op_emp_id = ' + QuotedStr(trim(self.oLst_emp.Value)) + ') ';
 
-    if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
-      sLn2 := sLn2 + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
+    if (self.oAll_Chapas.Checked = false) then
+    begin
+      if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
+        sLn2 := sLn2 + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
+    end;
 
-    if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
-      sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
+    if (self.oAll_Maq.Checked = false) then
+    begin
+      if not((trim(sCod_Maqui) = '%') or (trim(sCod_Maqui) = '')) then
+        sLn2 := sLn2 + 'AND (op.maqtc_id="' + trim(sCod_Maqui) + '") ';
+    end;
+
+    if (self.oAll_Ctes.Checked = false) then
+    begin
+      if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
+        sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
+    end;
 
     sLn2 := sLn2 + 'AND   (';
     sLn2 := sLn2 + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") >= "' + sFecha_Ini + '") AND ';
     sLn2 := sLn2 + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") <= "' + sFecha_Fin + '") ';
     sLn2 := sLn2 + '      )  ';
-    sLn2 := sLn2 + 'GROUP BY  op.op_chapa ';
+    sLn2 := sLn2 + 'GROUP BY  op.maqtc_id ';
 
     sLn2 := sLn2 + ') a ';
     sLn2 := sLn2 + 'ORDER BY  a.op_chapa ';
@@ -1096,32 +1142,45 @@ begin
     sLn2 := sLn2 + '		op.op_chapa, ';
     sLn2 := sLn2 + '		op.op_modelo, ';
     sLn2 := sLn2 + '		DATE_FORMAT(op.op_fecha,"%d/%m/%y") AS op_fecha, ';
+    sLn2 := sLn2 + '		op.maqtc_id,';
     sLn2 := sLn2 + '		op.op_tot_colect,';
     sLn2 := sLn2 + '		op.op_tot_cred, ';
     sLn2 := sLn2 + '		op.op_tot_sub, ';
     sLn2 := sLn2 + '		IF(op.op_tot_colect=0,0,(op.op_tot_cred/op.op_tot_colect)*100) AS Porc_Pag ';
     sLn2 := sLn2 + 'FROM operacion op ';
-    sLn2 := sLn2 + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
-    sLn2 := sLn2 + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
+    sLn2 := sLn2 + 'LEFT JOIN clientes   ct ON (op.cte_id = ct.cte_id) ';
+    // sLn2 := sLn2 + 'LEFT JOIN maquinastc mt ON (op.maqtc_id = mt.maqtc_id) ';
     sLn2 := sLn2 + 'WHERE (op.maqtc_tipomaq =1) ';
-    sLn2 := sLn2 + 'AND   (ct.cte_inactivo  =0) ';
-    sLn2 := sLn2 + 'AND   (mt.maqtc_inactivo=0) ';
+    // sLn2 := sLn2 + 'AND   (ct.cte_inactivo  =0) ';
+    // sLn2 := sLn2 + 'AND   (mt.maqtc_inactivo=0) ';
 
     if (self.oAll_Emp.Checked = false) then
       sLn2 := sLn2 + 'AND (op.op_emp_id = ' + QuotedStr(trim(self.oLst_emp.Value)) + ') ';
 
-    if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
-      sLn2 := sLn2 + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
+    if (self.oAll_Chapas.Checked = false) then
+    begin
+      if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
+        sLn2 := sLn2 + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
+    end;
 
-    if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
-      sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
+    if (self.oAll_Maq.Checked = false) then
+    begin
+      if not((trim(sCod_Maqui) = '%') or (trim(sCod_Maqui) = '')) then
+        sLn2 := sLn2 + 'AND (op.maqtc_id="' + trim(sCod_Maqui) + '") ';
+    end;
+
+    if (self.oAll_Ctes.Checked = false) then
+    begin
+      if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
+        sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
+    end;
 
     sLn2 := sLn2 + 'AND   (';
     sLn2 := sLn2 + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") >= "' + sFecha_Ini + '") AND ';
     sLn2 := sLn2 + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") <= "' + sFecha_Fin + '") ';
     sLn2 := sLn2 + '      )  ';
 
-    sLn2 := sLn2 + 'ORDER BY  1,2,4 ';
+    sLn2 := sLn2 + 'ORDER BY  1,op_chapa,4 ';
   end
   else if (oOpt13.Checked = true) then
   begin
@@ -1134,23 +1193,34 @@ begin
     sLn2 := sLn2 + '  SUM(op.op_tot_colect) 	AS op_tot_colect, ';
     sLn2 := sLn2 + '  SUM(op.op_tot_cred) 		AS op_tot_cred  , ';
     sLn2 := sLn2 + '	SUM(op.op_tot_sub) 		  AS op_tot_sub   , ';
-    sLn2 := sLn2 +
-      '	ROUND(IF(SUM(op.op_tot_colect)=0,0,(SUM(op.op_tot_cred)/SUM(op.op_tot_colect))*100),2) AS Porc_Pag ';
+    sLn2 := sLn2 + '	ROUND(IF(SUM(op.op_tot_colect)=0,0,(SUM(op.op_tot_cred)/SUM(op.op_tot_colect))*100),2) AS Porc_Pag ';
     sLn2 := sLn2 + 'FROM operacion op ';
-    sLn2 := sLn2 + 'LEFT JOIN clientes   ct ON op.cte_id   = ct.cte_id ';
-    sLn2 := sLn2 + 'LEFT JOIN maquinastc mt ON op.op_chapa = mt.maqtc_chapa ';
+    sLn2 := sLn2 + 'LEFT JOIN clientes   ct ON (op.cte_id   = ct.cte_id) ';
+    // sLn2 := sLn2 + 'LEFT JOIN maquinastc mt ON (op.maqtc_id = mt.maqtc_id) ';
     sLn2 := sLn2 + 'WHERE (op.maqtc_tipomaq =1) ';
-    sLn2 := sLn2 + 'AND   (ct.cte_inactivo  =0) ';
-    sLn2 := sLn2 + 'AND   (mt.maqtc_inactivo=0) ';
+    // sLn2 := sLn2 + 'AND   (ct.cte_inactivo  =0) ';
+    // sLn2 := sLn2 + 'AND   (mt.maqtc_inactivo=0) ';
 
     if (self.oAll_Emp.Checked = false) then
       sLn2 := sLn2 + 'AND (op.op_emp_id = ' + QuotedStr(trim(self.oLst_emp.Value)) + ') ';
 
-    if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
-      sLn2 := sLn2 + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
+    if (self.oAll_Chapas.Checked = false) then
+    begin
+      if not((trim(sCod_Chapa) = '%') or (trim(sCod_Chapa) = '')) then
+        sLn2 := sLn2 + 'AND (op.op_chapa=' + QuotedStr(trim(sCod_Chapa)) + ') ';
+    end;
 
-    if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
-      sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
+    if (self.oAll_Maq.Checked = false) then
+    begin
+      if not((trim(sCod_Maqui) = '%') or (trim(sCod_Maqui) = '')) then
+        sLn2 := sLn2 + 'AND (op.maqtc_id="' + trim(sCod_Maqui) + '") ';
+    end;
+
+    if (self.oAll_Ctes.Checked = false) then
+    begin
+      if not((trim(sCod_Cte) = '%') or (trim(sCod_Cte) = '')) then
+        sLn2 := sLn2 + 'AND (op.cte_id=' + QuotedStr(trim(sCod_Cte)) + ') ';
+    end;
 
     sLn2 := sLn2 + 'AND   (';
     sLn2 := sLn2 + '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") >= "' + sFecha_Ini + '") AND ';
@@ -1191,12 +1261,14 @@ begin
   oFileIni.WriteDate('REPORTS', 'oFecha2', self.oFecha2.Value);
   oFileIni.WriteBool('REPORTS', 'oAll_Chapas', self.oAll_Chapas.Checked);
   oFileIni.WriteString('REPORTS', 'oChapa', self.oChapa.Text);
+  oFileIni.WriteBool('REPORTS', 'oAll_Maq', self.oAll_Maq.Checked);
+  oFileIni.WriteString('REPORTS', 'oCod_Maq', self.oCod_Maq.Text);
   oFileIni.WriteBool('REPORTS', 'oAll_Ctes', self.oAll_Ctes.Checked);
   oFileIni.WriteInteger('REPORTS', 'oLst_Ctes', self.oLst_Ctes.Value);
-  oFileIni.WriteBool('REPORTS', 'oAll_Modelos', self.oAll_Modelos.Checked);
+  oFileIni.WriteBool('REPORTS', 'oAll_Juegos', self.oAll_Juegos.Checked);
   oFileIni.WriteInteger('REPORTS', 'oLst_Rutas', self.oLst_Rutas.Value);
   oFileIni.WriteBool('REPORTS', 'oAll_Routes', self.oAll_Routes.Checked);
-  oFileIni.WriteInteger('REPORTS', 'oLst_Modelos', self.oLst_Rutas.Value);
+  oFileIni.WriteInteger('REPORTS', 'oLst_Juegos', self.oLst_Juegos.Value);
   oFileIni.Free;
 end;
 
@@ -1288,12 +1360,15 @@ begin
 
   self.oAll_Chapas.Checked := oFileIni.ReadBool('REPORTS', 'oAll_Chapas', false);
   self.oChapa.Text := oFileIni.ReadString('REPORTS', 'oChapa', '');
+  self.oAll_Maq.Checked := oFileIni.ReadBool('REPORTS', 'oAll_Maq', false);
+  self.oCod_Maq.Text := oFileIni.ReadString('REPORTS', 'oCod_Maq', '');
   self.oAll_Ctes.Checked := oFileIni.ReadBool('REPORTS', 'oAll_Ctes', false);
   self.oLst_Ctes.Value := oFileIni.ReadInteger('REPORTS', 'oLst_Ctes', 1);
-  self.oAll_Modelos.Checked := oFileIni.ReadBool('REPORTS', 'oAll_Modelos', false);
+  self.oAll_Juegos.Checked := oFileIni.ReadBool('REPORTS', 'oAll_Juegos', false);
   self.oLst_Rutas.Value := oFileIni.ReadInteger('REPORTS', 'oLst_Rutas', 1);
   self.oAll_Routes.Checked := oFileIni.ReadBool('REPORTS', 'oAll_Routes', false);
   self.oLst_Rutas.Value := oFileIni.ReadInteger('REPORTS', 'oLst_Rutas', 1);
+  self.oLst_Juegos.Value := oFileIni.ReadInteger('REPORTS', 'oLst_Juegos', 1);
   oFileIni.Free;
 end;
 

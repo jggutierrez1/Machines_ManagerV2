@@ -207,6 +207,10 @@
             <Form>fProv_Maq</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="ReporteMaquinas.pas">
+            <Form>fReporteMaquinas</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

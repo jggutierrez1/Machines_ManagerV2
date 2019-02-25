@@ -156,6 +156,20 @@ object fMain: TfMain
     end
     object Configuacin1: TMenuItem
       Caption = 'Reportes'
+      object C2: TMenuItem
+        Caption = 'Clientes'
+        Visible = False
+      end
+      object N2: TMenuItem
+        Caption = '-'
+      end
+      object M1: TMenuItem
+        Caption = 'M'#225'quinas'
+        OnClick = M1Click
+      end
+      object N11: TMenuItem
+        Caption = '-'
+      end
       object JCJ2: TMenuItem
         Caption = 'Producci'#243'n Tipo C'
         OnClick = JCJ2Click
@@ -166,9 +180,6 @@ object fMain: TfMain
       object OperacionesporFecha1: TMenuItem
         Caption = 'Adelantos'
         OnClick = OperacionesporFecha1Click
-      end
-      object N6: TMenuItem
-        Caption = '-'
       end
       object Premios2: TMenuItem
         Caption = 'Premios'

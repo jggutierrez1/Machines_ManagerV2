@@ -39,7 +39,8 @@ uses
   aplica_colectas in 'aplica_colectas.pas' {faplica_colectas},
   Aplica_Fecha_Col in 'Aplica_Fecha_Col.pas' {fAplica_Fecha_Col},
   aplica_conta in 'aplica_conta.pas' {faplica_conta},
-  Prov_Maq in 'Prov_Maq.pas' {fProv_Maq};
+  Prov_Maq in 'Prov_Maq.pas' {fProv_Maq},
+  ReporteMaquinas in 'ReporteMaquinas.pas' {fReporteMaquinas};
 
 {$R *.res}
 
