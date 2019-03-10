@@ -22,7 +22,7 @@ object faplica_conta: Tfaplica_conta
     Top = 8
     Width = 1024
     Height = 664
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Pendientes por aplicar'
@@ -126,7 +126,7 @@ object faplica_conta: Tfaplica_conta
             MaxWidth = 50
             MinWidth = 50
             Title.Alignment = taCenter
-            Title.Caption = 'Cod.'
+            Title.Caption = 'C'#243'd. Cte.'
             Title.Font.Charset = DEFAULT_CHARSET
             Title.Font.Color = clWindowText
             Title.Font.Height = -11
@@ -370,6 +370,7 @@ object faplica_conta: Tfaplica_conta
             Title.Font.Height = -11
             Title.Font.Name = 'Tahoma'
             Title.Font.Style = [fsBold]
+            Width = 95
           end
           item
             CellButtons = <>
@@ -805,6 +806,20 @@ object faplica_conta: Tfaplica_conta
             Footers = <>
             Title.Alignment = taCenter
             Title.Caption = 'Imp. J.C.J.'
+          end
+          item
+            CellButtons = <>
+            DisplayFormat = '##,###,##0.00'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'op_tot_porc_cons'
+            Footer.DisplayFormat = '##,###,##0.00'
+            Footer.FieldName = 'op_tot_porc_cons'
+            Footer.Value = '0.00'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            Title.Alignment = taCenter
+            Title.Caption = 'Consesi'#243'n'
           end
           item
             CellButtons = <>
@@ -1300,7 +1315,6 @@ object faplica_conta: Tfaplica_conta
       'Server=localhost'
       'User_Name=root'
       'Database=one2009_1')
-    Connected = True
     LoginPrompt = False
     Left = 8
     Top = 690
@@ -1360,6 +1374,7 @@ object faplica_conta: Tfaplica_conta
       '`op_modelo`,'
       '`op_tot_colect`,'
       '`op_tot_impjcj`,'
+      '`op_tot_porc_cons`,'
       '`op_tot_tec`,'
       '`op_tot_dev`,'
       '`op_tot_otros`,'
@@ -1414,7 +1429,6 @@ object faplica_conta: Tfaplica_conta
     Top = 690
   end
   object oQry_Op: TFDQuery
-    Active = True
     Connection = oConection
     SQL.Strings = (
       'SELECT'
@@ -1433,41 +1447,5 @@ object faplica_conta: Tfaplica_conta
       'ORDER BY op.op_emp_id, op.op_fecha, op.cte_id')
     Left = 135
     Top = 690
-  end
-  object RESTClient1: TRESTClient
-    Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
-    AcceptCharset = 'UTF-8, *;q=0.8'
-    BaseURL = 'https://app.interfuerza.com/api'
-    Params = <>
-    HandleRedirects = True
-    RaiseExceptionOn500 = False
-    Left = 432
-    Top = 40
-  end
-  object RESTRequest1: TRESTRequest
-    Client = RESTClient1
-    Method = rmPUT
-    Params = <
-      item
-        Kind = pkHTTPHEADER
-        name = 'X-IFX-Token'
-        Value = 'f0210ebdb504c31b20272772a11c55bf'
-      end
-      item
-        Kind = pkREQUESTBODY
-        name = 'body'
-        Options = [poDoNotEncode]
-        ContentType = ctAPPLICATION_JSON
-      end>
-    Response = RESTResponse1
-    SynchronizedEvents = False
-    Left = 550
-    Top = 40
-  end
-  object RESTResponse1: TRESTResponse
-    ContentType = 'application/json'
-    ContentEncoding = 'UTF-8'
-    Left = 668
-    Top = 40
   end
 end

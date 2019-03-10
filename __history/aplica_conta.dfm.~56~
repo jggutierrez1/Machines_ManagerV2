@@ -159,6 +159,18 @@ object faplica_conta: Tfaplica_conta
           end
           item
             CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'op_fact_global'
+            Footers = <>
+            MaxWidth = 80
+            MinWidth = 80
+            Title.Alignment = taCenter
+            Title.Caption = '#Global'
+            Width = 80
+          end
+          item
+            CellButtons = <>
             Color = 9632618
             DisplayFormat = '##,###,##0.00'
             DynProps = <>
@@ -370,6 +382,7 @@ object faplica_conta: Tfaplica_conta
             Title.Font.Height = -11
             Title.Font.Name = 'Tahoma'
             Title.Font.Style = [fsBold]
+            Width = 95
           end
           item
             CellButtons = <>
@@ -808,6 +821,20 @@ object faplica_conta: Tfaplica_conta
           end
           item
             CellButtons = <>
+            DisplayFormat = '##,###,##0.00'
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'op_tot_porc_cons'
+            Footer.DisplayFormat = '##,###,##0.00'
+            Footer.FieldName = 'op_tot_porc_cons'
+            Footer.Value = '0.00'
+            Footer.ValueType = fvtSum
+            Footers = <>
+            Title.Alignment = taCenter
+            Title.Caption = 'Consesi'#243'n'
+          end
+          item
+            CellButtons = <>
             Color = 9632618
             DisplayFormat = '##,###,##0.00'
             DynProps = <>
@@ -995,6 +1022,12 @@ object faplica_conta: Tfaplica_conta
             Title.Alignment = taCenter
             Title.Caption = 'Baja Prod.'
             Width = 70
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            Footers = <>
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1300,7 +1333,6 @@ object faplica_conta: Tfaplica_conta
       'Server=localhost'
       'User_Name=root'
       'Database=one2009_1')
-    Connected = True
     LoginPrompt = False
     Left = 8
     Top = 690
@@ -1360,6 +1392,7 @@ object faplica_conta: Tfaplica_conta
       '`op_modelo`,'
       '`op_tot_colect`,'
       '`op_tot_impjcj`,'
+      '`op_tot_porc_cons`,'
       '`op_tot_tec`,'
       '`op_tot_dev`,'
       '`op_tot_otros`,'
@@ -1374,8 +1407,7 @@ object faplica_conta: Tfaplica_conta
       'FROM '#9'operacion'
       'WHERE (op_aplica_interf =0)'
       'ORDER BY op_emp_id,op_fecha, cte_id, op_chapa'
-      'LIMIT 50'
-      '')
+      'LIMIT 50')
     Left = 263
     Top = 690
   end
@@ -1414,7 +1446,6 @@ object faplica_conta: Tfaplica_conta
     Top = 690
   end
   object oQry_Op: TFDQuery
-    Active = True
     Connection = oConection
     SQL.Strings = (
       'SELECT'
@@ -1423,8 +1454,8 @@ object faplica_conta: Tfaplica_conta
         'c`, `op_tot_colect`, `op_tot_impjcj`, `op_tot_porc_cons`, `op_to' +
         't_tec`, `op_tot_dev`, `op_tot_otros`, `op_tot_cred`, `op_cal_cre' +
         'd`, `op_tot_sub`, `op_tot_itbm`, `op_tot_tot`,`op_tot_brutoemp`,' +
-        ' `op_tot_netoemp`'
-      'FROM operacionG op'
+        ' `op_tot_netoemp`,`op_fact_global`'
+      'FROM operaciong op'
       'WHERE (op.op_aplica_interf =0)'
       'AND (op.cte_id="42")'
       
@@ -1433,41 +1464,5 @@ object faplica_conta: Tfaplica_conta
       'ORDER BY op.op_emp_id, op.op_fecha, op.cte_id')
     Left = 135
     Top = 690
-  end
-  object RESTClient1: TRESTClient
-    Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
-    AcceptCharset = 'UTF-8, *;q=0.8'
-    BaseURL = 'https://app.interfuerza.com/api'
-    Params = <>
-    HandleRedirects = True
-    RaiseExceptionOn500 = False
-    Left = 432
-    Top = 40
-  end
-  object RESTRequest1: TRESTRequest
-    Client = RESTClient1
-    Method = rmPUT
-    Params = <
-      item
-        Kind = pkHTTPHEADER
-        name = 'X-IFX-Token'
-        Value = 'f0210ebdb504c31b20272772a11c55bf'
-      end
-      item
-        Kind = pkREQUESTBODY
-        name = 'body'
-        Options = [poDoNotEncode]
-        ContentType = ctAPPLICATION_JSON
-      end>
-    Response = RESTResponse1
-    SynchronizedEvents = False
-    Left = 550
-    Top = 40
-  end
-  object RESTResponse1: TRESTResponse
-    ContentType = 'application/json'
-    ContentEncoding = 'UTF-8'
-    Left = 668
-    Top = 40
   end
 end

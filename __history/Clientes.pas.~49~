@@ -20,7 +20,9 @@ uses
   System.JSON,
   System.JSON.BSON,
   System.JSON.Writers,
-  System.JSON.Builders, IPPeerClient, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope;
+  System.JSON.Builders,
+  IPPeerClient, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope, REST.Response.Adapter,
+  REST.Types;
 
 type
   TfClientes = class(TForm)
@@ -98,10 +100,8 @@ type
     oFecha_Mof: TDBDateTimeEditEh;
     Label33: TLabel;
     DBEdit6: TDBEdit;
+    oBtn_UpWebAll: TPngBitBtn;
     oBtn_UpWeb: TPngBitBtn;
-    RESTResponse1: TRESTResponse;
-    RESTRequest1: TRESTRequest;
-    RESTClient1: TRESTClient;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -137,10 +137,12 @@ type
     procedure oLst_MinucipioKeyPress(Sender: TObject; var Key: Char);
     procedure octe_id_interfKeyPress(Sender: TObject; var Key: Char);
     procedure octe_id_interfExit(Sender: TObject);
-    procedure oBtn_UpWebClick(Sender: TObject);
+    procedure oBtn_UpWebAllClick(Sender: TObject);
     function Make_Json_Clientes(pdsClientes: TDataSet): WideString;
     function Send_Interfuerza(cJson: WideString): String;
     function Parse_JSonValue(cJson: WideString): boolean;
+    procedure oBtn_UpWebClick(Sender: TObject);
+    procedure oDBNavClick(Sender: TObject; Button: TNavigateBtn);
   private
     { Private declarations }
     iOption: integer;
@@ -373,13 +375,15 @@ begin
   self.iOption := 0;
 end;
 
-procedure TfClientes.oBtn_UpWebClick(Sender: TObject);
+procedure TfClientes.oBtn_UpWebAllClick(Sender: TObject);
 var
   cJsonBody: WideString;
   cJsonResp: WideString;
   cSql_Ln: string;
   cCte_id: string;
 begin
+  self.oBtn_UpWebAll.Enabled := false;
+
   self.otClientes.Filtered := false;
   self.otClientes.Filter := '';
   self.otClientes.First;
@@ -389,19 +393,24 @@ begin
   self.otClientes.First;
   while not self.otClientes.Eof do
   begin
-    cCte_id := trim(self.otClientes.FieldByName('cte_id_interf').AsString);
-    if ((self.otClientes.FieldByName('cte_id_interf').AsString <> '') or (self.otClientes.FieldByName('cte_id_interf').isnull)) then
+    cCte_id := trim(self.otClientes.FieldByName('cte_id').AsString);
+    if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '') or
+      (self.otClientes.FieldByName('cte_id_interf').AsString = '0')) then
     begin
       cJsonBody := self.Make_Json_Clientes(self.otClientes);
 
       cJsonResp := self.Send_Interfuerza(cJsonBody);
       if (self.Parse_JSonValue(cJsonResp) = true) then
       begin
-        cSql_Ln := '';
-        cSql_Ln := cSql_Ln + 'UPDATE clientes SET ';
-        cSql_Ln := cSql_Ln + '  cte_id_interf="' + trim(oJsonResp.OperNumb) + '" ';
-        cSql_Ln := cSql_Ln + 'WHERE (cte_id="' + cCte_id + '") ';
-        UtilesV20.Execute_SQL_Command(cSql_Ln);
+        if (trim(oJsonResp.OperNumb) <> '') then
+        begin
+          cSql_Ln := '';
+          cSql_Ln := cSql_Ln + 'UPDATE clientes SET ';
+          cSql_Ln := cSql_Ln + '  cte_id_interf="' + trim(oJsonResp.OperNumb) + '" ';
+          cSql_Ln := cSql_Ln + 'WHERE (cte_id="' + cCte_id + '") ';
+          UtilesV20.Execute_SQL_Command(cSql_Ln);
+          sleep(500);
+        end;
       end;
     end;
     self.otClientes.Next;
@@ -409,6 +418,41 @@ begin
   self.otClientes.Filter := '';
   self.otClientes.Filtered := false;
   self.otClientes.First;
+  ShowMessage('PROCESO FINALIZADO:..');
+  self.oBtn_UpWebAll.Enabled := true;
+end;
+
+procedure TfClientes.oBtn_UpWebClick(Sender: TObject);
+var
+  cJsonBody: WideString;
+  cJsonResp: WideString;
+  cSql_Ln: string;
+  cCte_id: string;
+begin
+  self.oBtn_UpWeb.Enabled := false;
+
+  cCte_id := trim(self.otClientes.FieldByName('cte_id').AsString);
+  if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '') or
+    (self.otClientes.FieldByName('cte_id_interf').AsString = '0')) then
+  begin
+    cJsonBody := self.Make_Json_Clientes(self.otClientes);
+
+    cJsonResp := self.Send_Interfuerza(cJsonBody);
+    if (self.Parse_JSonValue(cJsonResp) = true) then
+    begin
+      if (trim(oJsonResp.OperNumb) <> '') then
+      begin
+        cSql_Ln := '';
+        cSql_Ln := cSql_Ln + 'UPDATE clientes SET ';
+        cSql_Ln := cSql_Ln + '  cte_id_interf="' + trim(oJsonResp.OperNumb) + '" ';
+        cSql_Ln := cSql_Ln + 'WHERE (cte_id="' + cCte_id + '") ';
+        UtilesV20.Execute_SQL_Command(cSql_Ln);
+        sleep(500);
+        ShowMessage('PROCESO FINALIZADO:..');
+      end;
+    end;
+  end;
+  self.oBtn_UpWeb.Enabled := true;
 end;
 
 function TfClientes.Parse_JSonValue(cJson: WideString): boolean;
@@ -431,17 +475,41 @@ function TfClientes.Send_Interfuerza(cJson: WideString): String;
 var
   cJsonResp: WideString;
   cResult: string;
+  lrestrequest: TRESTRequest;
+  lRestClient: TRESTClient;
+  lRestResponce: TRESTResponse;
 begin
   cResult := '';
   cJsonResp := '';
   if (trim(cJson) <> '') then
   begin
-    self.RESTRequest1.Params.Clear;
-    self.RESTRequest1.AddParameter('X-IFX-Token', 'f0210ebdb504c31b20272772a11c55bf', TRESTRequestParameterKind.pkHTTPHEADER);
-    self.RESTRequest1.Body.Add(trim(cJson), REST.Types.ContentTypeFromString('application/json'));
-    self.RESTRequest1.Execute;
-    cResult := self.RESTResponse1.StatusText;
-    cJsonResp := self.RESTResponse1.Content;
+
+    lRestClient := TRESTClient.Create('https://app.interfuerza.com/api');
+    try
+      lrestrequest := TRESTRequest.Create(nil);
+      try
+        lRestResponce := TRESTResponse.Create(nil);
+        try
+          lrestrequest.Client := lRestClient;
+          lrestrequest.Response := lRestResponce;
+          lrestrequest.Method := rmPut;
+          lrestrequest.Params.Clear;
+          lrestrequest.Params.AddItem('X-IFX-Token', 'f0210ebdb504c31b20272772a11c55bf', TRESTRequestParameterKind.pkHTTPHEADER);
+          lrestrequest.Body.Add(trim(cJson), REST.Types.ContentTypeFromString('application/json'));
+          lrestrequest.Execute;
+          if not lRestResponce.Status.Success then
+            cResult := lRestResponce.StatusText
+          else
+            cJsonResp := lRestResponce.Content;
+        finally
+          lRestResponce.Free;
+        end;
+      finally
+        lrestrequest.Free
+      end;
+    finally
+      lRestClient.Free;
+    end;
   end;
   result := cJsonResp;
 end;
@@ -458,13 +526,13 @@ begin
   oOLines.AddPair('Tipo', 'CLIENTE');
   oOLines.AddPair('RUC', '');
   oOLines.AddPair('DV', '');
-  oOLines.AddPair('Empresa', pdsClientes.FieldByName('cte_nombre_com').AsString);
-  oOLines.AddPair('Email', pdsClientes.FieldByName('cte_email').AsString);
+  oOLines.AddPair('Empresa', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_nombre_com').AsString));
+  oOLines.AddPair('Email', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_email').AsString));
   oOLines.AddPair('Status', 'ACTIVE');
-  oOLines.AddPair('Telefono_1', pdsClientes.FieldByName('cte_telefono1').AsString);
-  oOLines.AddPair('Telefono_2', pdsClientes.FieldByName('cte_telefono2').AsString);
-  oOLines.AddPair('Cellular', pdsClientes.FieldByName('cte_contacto_movil').AsString);
-  oOLines.AddPair('Direccion', pdsClientes.FieldByName('cte_direccion').AsString);
+  oOLines.AddPair('Telefono_1', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_telefono1').AsString));
+  oOLines.AddPair('Telefono_2', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_telefono2').AsString));
+  oOLines.AddPair('Cellular', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_contacto_movil').AsString));
+  oOLines.AddPair('Direccion', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_direccion').AsString));
   oOLines.AddPair('Ciudad', 'PANAMA');
   oOLines.AddPair('Estado', 'PANAMA');
   oOLines.AddPair('Pais', 'PANAMA');
@@ -516,6 +584,13 @@ begin
     Key := #0; { eat enter key }
     Perform(WM_NEXTDLGCTL, 0, 0); { move to next control }
   end
+end;
+
+procedure TfClientes.oDBNavClick(Sender: TObject; Button: TNavigateBtn);
+begin
+
+  oBtn_UpWeb
+
 end;
 
 procedure TfClientes.oEmailKeyPress(Sender: TObject; var Key: Char);

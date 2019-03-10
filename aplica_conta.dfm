@@ -159,6 +159,18 @@ object faplica_conta: Tfaplica_conta
           end
           item
             CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            FieldName = 'op_fact_global'
+            Footers = <>
+            MaxWidth = 80
+            MinWidth = 80
+            Title.Alignment = taCenter
+            Title.Caption = '#Global'
+            Width = 80
+          end
+          item
+            CellButtons = <>
             Color = 9632618
             DisplayFormat = '##,###,##0.00'
             DynProps = <>
@@ -1010,6 +1022,12 @@ object faplica_conta: Tfaplica_conta
             Title.Alignment = taCenter
             Title.Caption = 'Baja Prod.'
             Width = 70
+          end
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            Footers = <>
           end>
         object RowDetailData: TRowDetailPanelControlEh
         end
@@ -1389,8 +1407,7 @@ object faplica_conta: Tfaplica_conta
       'FROM '#9'operacion'
       'WHERE (op_aplica_interf =0)'
       'ORDER BY op_emp_id,op_fecha, cte_id, op_chapa'
-      'LIMIT 50'
-      '')
+      'LIMIT 50')
     Left = 263
     Top = 690
   end
@@ -1437,8 +1454,8 @@ object faplica_conta: Tfaplica_conta
         'c`, `op_tot_colect`, `op_tot_impjcj`, `op_tot_porc_cons`, `op_to' +
         't_tec`, `op_tot_dev`, `op_tot_otros`, `op_tot_cred`, `op_cal_cre' +
         'd`, `op_tot_sub`, `op_tot_itbm`, `op_tot_tot`,`op_tot_brutoemp`,' +
-        ' `op_tot_netoemp`'
-      'FROM operacionG op'
+        ' `op_tot_netoemp`,`op_fact_global`'
+      'FROM operaciong op'
       'WHERE (op.op_aplica_interf =0)'
       'AND (op.cte_id="42")'
       

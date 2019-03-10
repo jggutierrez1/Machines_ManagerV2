@@ -100,6 +100,7 @@ type
     oFecha_Mof: TDBDateTimeEditEh;
     Label33: TLabel;
     DBEdit6: TDBEdit;
+    oBtn_UpWebAll: TPngBitBtn;
     oBtn_UpWeb: TPngBitBtn;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
@@ -136,10 +137,12 @@ type
     procedure oLst_MinucipioKeyPress(Sender: TObject; var Key: Char);
     procedure octe_id_interfKeyPress(Sender: TObject; var Key: Char);
     procedure octe_id_interfExit(Sender: TObject);
-    procedure oBtn_UpWebClick(Sender: TObject);
+    procedure oBtn_UpWebAllClick(Sender: TObject);
     function Make_Json_Clientes(pdsClientes: TDataSet): WideString;
     function Send_Interfuerza(cJson: WideString): String;
     function Parse_JSonValue(cJson: WideString): boolean;
+    procedure oBtn_UpWebClick(Sender: TObject);
+    procedure oDBNavClick(Sender: TObject; Button: TNavigateBtn);
   private
     { Private declarations }
     iOption: integer;
@@ -248,6 +251,16 @@ begin
   self.PageControl1.ActivePageIndex := 0;
   self.Action_Control(6);
   self.Activa_Objetos(false);
+
+  if (self.otClientes.State in [dsBrowse]) then
+  begin
+    if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '') or
+      (self.otClientes.FieldByName('cte_id_interf').AsString = '0')) then
+      self.oBtn_UpWeb.Visible := true
+    else
+      self.oBtn_UpWeb.Visible := false;
+  end;
+
 end;
 
 procedure TfClientes.oBtnAbortClick(Sender: TObject);
@@ -372,14 +385,14 @@ begin
   self.iOption := 0;
 end;
 
-procedure TfClientes.oBtn_UpWebClick(Sender: TObject);
+procedure TfClientes.oBtn_UpWebAllClick(Sender: TObject);
 var
   cJsonBody: WideString;
   cJsonResp: WideString;
   cSql_Ln: string;
   cCte_id: string;
 begin
-  self.oBtn_UpWeb.Enabled := false;
+  self.oBtn_UpWebAll.Enabled := false;
 
   self.otClientes.Filtered := false;
   self.otClientes.Filter := '';
@@ -391,19 +404,23 @@ begin
   while not self.otClientes.Eof do
   begin
     cCte_id := trim(self.otClientes.FieldByName('cte_id').AsString);
-    if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '')) then
+    if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '') or
+      (self.otClientes.FieldByName('cte_id_interf').AsString = '0')) then
     begin
       cJsonBody := self.Make_Json_Clientes(self.otClientes);
 
       cJsonResp := self.Send_Interfuerza(cJsonBody);
       if (self.Parse_JSonValue(cJsonResp) = true) then
       begin
-        cSql_Ln := '';
-        cSql_Ln := cSql_Ln + 'UPDATE clientes SET ';
-        cSql_Ln := cSql_Ln + '  cte_id_interf="' + trim(oJsonResp.OperNumb) + '" ';
-        cSql_Ln := cSql_Ln + 'WHERE (cte_id="' + cCte_id + '") ';
-        UtilesV20.Execute_SQL_Command(cSql_Ln);
-        sleep(500);
+        if (trim(oJsonResp.OperNumb) <> '') then
+        begin
+          cSql_Ln := '';
+          cSql_Ln := cSql_Ln + 'UPDATE clientes SET ';
+          cSql_Ln := cSql_Ln + '  cte_id_interf="' + trim(oJsonResp.OperNumb) + '" ';
+          cSql_Ln := cSql_Ln + 'WHERE (cte_id="' + cCte_id + '") ';
+          UtilesV20.Execute_SQL_Command(cSql_Ln);
+          sleep(500);
+        end;
       end;
     end;
     self.otClientes.Next;
@@ -412,7 +429,48 @@ begin
   self.otClientes.Filtered := false;
   self.otClientes.First;
   ShowMessage('PROCESO FINALIZADO:..');
-  self.oBtn_UpWeb.Enabled := true;
+  self.oBtn_UpWebAll.Enabled := true;
+end;
+
+procedure TfClientes.oBtn_UpWebClick(Sender: TObject);
+var
+  cJsonBody: WideString;
+  cJsonResp: WideString;
+  cSql_Ln: string;
+  cCte_id: string;
+  nResp: integer;
+begin
+  nResp := MessageDlg
+    ('ESTA OPERACION SUBIRA EL CLIENTE A LA NUBE DE INTERFUERZA (CONTABILIDAD) Y LE ASIGNARA EL CODIGO DE CONTABLE, ESTA SEGURO DE QUE DESEA CONTINUAR CON ESTA OPERACION?',
+    mtConfirmation, [mbYes, mbNo], 0);
+  If (nResp = mrYes) Then
+  begin
+
+    self.oBtn_UpWeb.Enabled := false;
+
+    cCte_id := trim(self.otClientes.FieldByName('cte_id').AsString);
+    if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '') or
+      (self.otClientes.FieldByName('cte_id_interf').AsString = '0')) then
+    begin
+      cJsonBody := self.Make_Json_Clientes(self.otClientes);
+
+      cJsonResp := self.Send_Interfuerza(cJsonBody);
+      if (self.Parse_JSonValue(cJsonResp) = true) then
+      begin
+        if (trim(oJsonResp.OperNumb) <> '') then
+        begin
+          cSql_Ln := '';
+          cSql_Ln := cSql_Ln + 'UPDATE clientes SET ';
+          cSql_Ln := cSql_Ln + '  cte_id_interf="' + trim(oJsonResp.OperNumb) + '" ';
+          cSql_Ln := cSql_Ln + 'WHERE (cte_id="' + cCte_id + '") ';
+          UtilesV20.Execute_SQL_Command(cSql_Ln);
+          sleep(500);
+          ShowMessage('PROCESO FINALIZADO:..');
+        end;
+      end;
+    end;
+    self.oBtn_UpWeb.Enabled := true;
+  end;
 end;
 
 function TfClientes.Parse_JSonValue(cJson: WideString): boolean;
@@ -546,6 +604,18 @@ begin
   end
 end;
 
+procedure TfClientes.oDBNavClick(Sender: TObject; Button: TNavigateBtn);
+begin
+  if (self.otClientes.State in [dsBrowse]) then
+  begin
+    if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '') or
+      (self.otClientes.FieldByName('cte_id_interf').AsString = '0')) then
+      self.oBtn_UpWeb.Visible := true
+    else
+      self.oBtn_UpWeb.Visible := false;
+  end;
+end;
+
 procedure TfClientes.oEmailKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then { if it's an enter key }
@@ -642,13 +712,15 @@ begin
       abort;
     end;
 
-    if fUtilesV20.isEmpty(DataSet.FieldByName('cte_id_interf').AsString) then
-    begin
+    {
+      if fUtilesV20.isEmpty(DataSet.FieldByName('cte_id_interf').AsString) then
+      begin
       ShowMessage('En de obligación colocar el código de cliente INTERFUERZA WEB.');
       self.PageControl1.TabIndex := 0;
       self.octe_id_interf.SetFocus;
       abort;
-    end;
+      end;
+    }
 
     if (DataSet.State = dsEdit) then
     begin
@@ -717,7 +789,6 @@ begin
     oBtnAbort.Visible := true;
     oBtnSave.Visible := true;
     oBtnExit.Visible := false;
-
   end;
 
   if ((pOption = 6) or (pOption = 7)) then
@@ -740,7 +811,6 @@ begin
     oBtnExit.Visible := true;
 
   end;
-
 end;
 
 procedure TfClientes.Activa_Objetos(bPar: boolean);

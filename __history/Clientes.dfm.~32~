@@ -5,7 +5,7 @@ object fClientes: TfClientes
   BorderStyle = bsSingle
   Caption = 'Secci'#243'n de Mantenimiento [Clientes].'
   ClientHeight = 520
-  ClientWidth = 779
+  ClientWidth = 713
   Color = clBtnFace
   DefaultMonitor = dmDesktop
   Font.Charset = DEFAULT_CHARSET
@@ -746,10 +746,9 @@ object fClientes: TfClientes
   object StatusBar1: TStatusBar
     Left = 0
     Top = 501
-    Width = 779
+    Width = 713
     Height = 19
     Panels = <>
-    ExplicitWidth = 713
   end
   object oBtnExit: TPngBitBtn
     Tag = 8
@@ -1822,7 +1821,6 @@ object fClientes: TfClientes
       'MetaDefCatalog=one2009_1'
       'MetaCurCatalog=one2009_1'
       'DriverID=MySQL')
-    Connected = True
     LoginPrompt = False
     Left = 715
     Top = 27
@@ -1830,6 +1828,9 @@ object fClientes: TfClientes
   object otClientes: TFDTable
     AfterInsert = otClientesAfterInsert
     BeforePost = otClientesBeforePost
+    Filter = 
+      'cte_id_interf<>'#39#39' and (cte_inactivo=0) and (cte_emp_id=0 or cte_' +
+      'emp_id=1)'
     IndexName = 'cte_nombre_loc'
     Connection = oConection
     FormatOptions.AssignedValues = [fvDataSnapCompatibility, fvQuoteIdentifiers]

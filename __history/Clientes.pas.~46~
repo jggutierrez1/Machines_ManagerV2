@@ -20,7 +20,9 @@ uses
   System.JSON,
   System.JSON.BSON,
   System.JSON.Writers,
-  System.JSON.Builders, IPPeerClient, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope;
+  System.JSON.Builders,
+  IPPeerClient, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope, REST.Response.Adapter,
+  REST.Types;
 
 type
   TfClientes = class(TForm)
@@ -99,9 +101,6 @@ type
     Label33: TLabel;
     DBEdit6: TDBEdit;
     oBtn_UpWeb: TPngBitBtn;
-    RESTResponse1: TRESTResponse;
-    RESTRequest1: TRESTRequest;
-    RESTClient1: TRESTClient;
     procedure Action_Control(pOption: integer);
     procedure oBtnNewClick(Sender: TObject);
     procedure oBtnEditClick(Sender: TObject);
@@ -380,6 +379,8 @@ var
   cSql_Ln: string;
   cCte_id: string;
 begin
+  self.oBtn_UpWeb.Enabled := false;
+
   self.otClientes.Filtered := false;
   self.otClientes.Filter := '';
   self.otClientes.First;
@@ -390,7 +391,7 @@ begin
   while not self.otClientes.Eof do
   begin
     cCte_id := trim(self.otClientes.FieldByName('cte_id').AsString);
-    if ((self.otClientes.FieldByName('cte_id_interf').AsString <> '') or (self.otClientes.FieldByName('cte_id_interf').isnull)) then
+    if ((self.otClientes.FieldByName('cte_id_interf').IsNull = true) or (self.otClientes.FieldByName('cte_id_interf').AsString = '')) then
     begin
       cJsonBody := self.Make_Json_Clientes(self.otClientes);
 
@@ -402,6 +403,7 @@ begin
         cSql_Ln := cSql_Ln + '  cte_id_interf="' + trim(oJsonResp.OperNumb) + '" ';
         cSql_Ln := cSql_Ln + 'WHERE (cte_id="' + cCte_id + '") ';
         UtilesV20.Execute_SQL_Command(cSql_Ln);
+        sleep(500);
       end;
     end;
     self.otClientes.Next;
@@ -409,6 +411,8 @@ begin
   self.otClientes.Filter := '';
   self.otClientes.Filtered := false;
   self.otClientes.First;
+  ShowMessage('PROCESO FINALIZADO:..');
+  self.oBtn_UpWeb.Enabled := true;
 end;
 
 function TfClientes.Parse_JSonValue(cJson: WideString): boolean;
@@ -431,17 +435,41 @@ function TfClientes.Send_Interfuerza(cJson: WideString): String;
 var
   cJsonResp: WideString;
   cResult: string;
+  lrestrequest: TRESTRequest;
+  lRestClient: TRESTClient;
+  lRestResponce: TRESTResponse;
 begin
   cResult := '';
   cJsonResp := '';
   if (trim(cJson) <> '') then
   begin
-    self.RESTRequest1.Params.Clear;
-    self.RESTRequest1.AddParameter('X-IFX-Token', 'f0210ebdb504c31b20272772a11c55bf', TRESTRequestParameterKind.pkHTTPHEADER);
-    self.RESTRequest1.Body.Add(trim(cJson), REST.Types.ContentTypeFromString('application/json'));
-    self.RESTRequest1.Execute;
-    cResult := self.RESTResponse1.StatusText;
-    cJsonResp := self.RESTResponse1.Content;
+
+    lRestClient := TRESTClient.Create('https://app.interfuerza.com/api');
+    try
+      lrestrequest := TRESTRequest.Create(nil);
+      try
+        lRestResponce := TRESTResponse.Create(nil);
+        try
+          lrestrequest.Client := lRestClient;
+          lrestrequest.Response := lRestResponce;
+          lrestrequest.Method := rmPut;
+          lrestrequest.Params.Clear;
+          lrestrequest.Params.AddItem('X-IFX-Token', 'f0210ebdb504c31b20272772a11c55bf', TRESTRequestParameterKind.pkHTTPHEADER);
+          lrestrequest.Body.Add(trim(cJson), REST.Types.ContentTypeFromString('application/json'));
+          lrestrequest.Execute;
+          if not lRestResponce.Status.Success then
+            cResult := lRestResponce.StatusText
+          else
+            cJsonResp := lRestResponce.Content;
+        finally
+          lRestResponce.Free;
+        end;
+      finally
+        lrestrequest.Free
+      end;
+    finally
+      lRestClient.Free;
+    end;
   end;
   result := cJsonResp;
 end;
@@ -458,13 +486,13 @@ begin
   oOLines.AddPair('Tipo', 'CLIENTE');
   oOLines.AddPair('RUC', '');
   oOLines.AddPair('DV', '');
-  oOLines.AddPair('Empresa', pdsClientes.FieldByName('cte_nombre_com').AsString);
-  oOLines.AddPair('Email', pdsClientes.FieldByName('cte_email').AsString);
+  oOLines.AddPair('Empresa', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_nombre_com').AsString));
+  oOLines.AddPair('Email', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_email').AsString));
   oOLines.AddPair('Status', 'ACTIVE');
-  oOLines.AddPair('Telefono_1', pdsClientes.FieldByName('cte_telefono1').AsString);
-  oOLines.AddPair('Telefono_2', pdsClientes.FieldByName('cte_telefono2').AsString);
-  oOLines.AddPair('Cellular', pdsClientes.FieldByName('cte_contacto_movil').AsString);
-  oOLines.AddPair('Direccion', pdsClientes.FieldByName('cte_direccion').AsString);
+  oOLines.AddPair('Telefono_1', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_telefono1').AsString));
+  oOLines.AddPair('Telefono_2', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_telefono2').AsString));
+  oOLines.AddPair('Cellular', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_contacto_movil').AsString));
+  oOLines.AddPair('Direccion', UtilesV20.StripUnwantedText(pdsClientes.FieldByName('cte_direccion').AsString));
   oOLines.AddPair('Ciudad', 'PANAMA');
   oOLines.AddPair('Estado', 'PANAMA');
   oOLines.AddPair('Pais', 'PANAMA');

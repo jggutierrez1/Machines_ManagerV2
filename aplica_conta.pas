@@ -225,7 +225,7 @@ begin
   cSql_Ln := cSql_Ln + ' op.`op_tot_tot`,op.`op_tot_brutoemp`, op.`op_tot_netoemp`, op.`op_baja_prod`, ';
   cSql_Ln := cSql_Ln + ' op.`id_device`,op.`id_group`,ct.`cte_id_interf` ';
   cSql_Ln := cSql_Ln + 'FROM operacion op ';
-  cSql_Ln := cSql_Ln + 'INNER JOIN clientes ct ON (op.`cte_id`= ct.`cte_id`) ';
+  cSql_Ln := cSql_Ln + 'LEFT JOIN clientes ct ON (op.`cte_id`= ct.`cte_id`) ';
   cSql_Ln := cSql_Ln + 'WHERE (IFNULL(op.`op_aplica_interf`,0) =0) ';
   cSql_Ln := cSql_Ln + 'AND   (op.`op_emp_id`="' + trim(cEmp_Id) + '") ';
   cSql_Ln := cSql_Ln + 'AND   (op.`cte_id`   ="' + trim(cCte_Id) + '") ';
@@ -246,8 +246,16 @@ begin
 end;
 
 procedure Tfaplica_conta.oBtnApply_InterfuerzaClick(Sender: TObject);
+var
+  nResp: integer;
 begin
-  self.Make_Json_Interf();
+  nResp := MessageDlg
+    ('ESTA OPERACION SUBIRA TODAS LAS FACTURAS POR MAQUINAS DE LA FACTURA GLOBAL A LA NUBE DE DE INTERFUERZA (CONTABILIDAD), ESTA SEGURO DE QUE DESEA CONTINUAR CON ESTA OPERACION?',
+    mtConfirmation, [mbYes, mbNo], 0);
+  If (nResp = mrYes) Then
+  begin
+    self.Make_Json_Interf();
+  end;
 end;
 
 procedure Tfaplica_conta.oBtnExitClick(Sender: TObject);
@@ -285,22 +293,31 @@ begin
   self.oJson_Script.Text := '';
   while not self.oQry_Det.eof do
   begin
-    cOp_id := self.oQry_Det.FieldByName('id_op').AsString;
-    cChapa := self.oQry_Det.FieldByName('op_chapa').AsString;
     cJsonBody := self.Make_Json_Fact;
     cJsonResp := self.Send_Interfuerza(cJsonBody);
     if (self.Parse_JSonValue(cJsonResp) = true) then
     begin
+      cOp_id := self.oQry_Det.FieldByName('id_op').AsString;
+      cChapa := self.oQry_Det.FieldByName('op_chapa').AsString;
+
       cSql_Ln := '';
       cSql_Ln := cSql_Ln + 'UPDATE operacion SET ';
       cSql_Ln := cSql_Ln + '  op_aplica_interf=1, ';
       cSql_Ln := cSql_Ln + '  op_aplica_num="' + trim(oJsonResp.OperNumb) + '" ';
       cSql_Ln := cSql_Ln + 'WHERE (id_op="' + cOp_id + '") ';
       Utilesv20.Execute_SQL_Command(cSql_Ln);
+
+      cOp_id := self.oQry_Op.FieldByName('id_autoin').AsString;
+      cSql_Ln := '';
+      cSql_Ln := cSql_Ln + 'UPDATE operaciong SET ';
+      cSql_Ln := cSql_Ln + '  op_aplica_interf=1 ';
+      cSql_Ln := cSql_Ln + 'WHERE (id_autoin="' + cOp_id + '") ';
+      Utilesv20.Execute_SQL_Command(cSql_Ln);
+
+      cValue := 'CHAPA[' + cChapa + ']->' + fUtilesV20.iif(oJsonResp.Response = true, 'Enviada:[' + trim(oJsonResp.OperNumb) + ']',
+        'Falló el envío:.');
+      self.oJson_Script.Lines.Add(cValue);
     end;
-    cValue := 'CHAPA[' + cChapa + ']->' + fUtilesV20.iif(oJsonResp.Response = true, 'Enviada:[' + trim(oJsonResp.OperNumb) + ']',
-      'Falló el envío:.');
-    self.oJson_Script.Lines.Add(cValue);
     self.oQry_Det.Next;
   end;
 end;
@@ -631,8 +648,6 @@ begin
       oOLines5.Free;
     if (oOLines6 <> nil) then
       oOLines6.Free;
-    if (oOData <> nil) then
-      oOData.Free;
     oOMain := nil;
     oALines := nil;
 

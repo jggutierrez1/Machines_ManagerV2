@@ -183,7 +183,7 @@ begin
   cSql_Ln := cSql_Ln + ' opg.`op_tot_colect`, opg.`op_tot_impjcj`, opg.`op_tot_porc_cons`, opg.`op_tot_tec`,';
   cSql_Ln := cSql_Ln + ' opg.`op_tot_dev`, opg.`op_tot_otros`, opg.`op_tot_cred`, opg.`op_cal_cred`, opg.`op_tot_sub`, opg.`op_tot_itbm`,';
   cSql_Ln := cSql_Ln + ' opg.`op_tot_tot`, opg.`op_tot_brutoemp`, opg.`op_tot_netoemp`, ';
-  cSql_Ln := cSql_Ln + ' opg.`id_device`, opg.`id_group`, ct.cte_id_interf  ';
+  cSql_Ln := cSql_Ln + ' opg.`id_device`, opg.`id_group`, ct.cte_id_interf ,opg.`op_fact_global` ';
   cSql_Ln := cSql_Ln + 'FROM operaciong opg ';
   cSql_Ln := cSql_Ln + 'LEFT JOIN clientes ct ON  (ct.cte_id = opg.cte_id) ';
   cSql_Ln := cSql_Ln + 'WHERE (ifnull(opg.`op_aplica_interf`,0) =0) ';
@@ -246,8 +246,16 @@ begin
 end;
 
 procedure Tfaplica_conta.oBtnApply_InterfuerzaClick(Sender: TObject);
+var
+  nResp: integer;
 begin
-  self.Make_Json_Interf();
+  nResp := MessageDlg
+    ('ESTA OPERACION SUBIRA TODAS LAS FACTURAS POR MAQUINAS DE LA FACTURA GLOBAL A LA NUBE DE DE INTERFUERZA (CONTABILIDAD), ESTA SEGURO DE QUE DESEA CONTINUAR CON ESTA OPERACION?',
+    mtConfirmation, [mbYes, mbNo], 0);
+  If (nResp = mrYes) Then
+  begin
+    self.Make_Json_Interf();
+  end;
 end;
 
 procedure Tfaplica_conta.oBtnExitClick(Sender: TObject);
@@ -372,7 +380,8 @@ var
   oOLines1, oOLines2, oOLines3, oOLines4, oOLines5, oOLines6: TJSonObject;
   fMonSub, fMonImp, fMonCon, fMonTot: extended;
   fLinVal: extended;
-  cLinVal: String;
+  cLinValP: String;
+  cLinValT: String;
   cLineNo: string;
   iLineNo: integer;
   cFactNo: string;
@@ -410,18 +419,19 @@ begin
     fMonTot := self.oQry_Det.FieldByName('op_tot_sub').AsFloat + self.oQry_Op.FieldByName('op_tot_impjcj').AsFloat;
     cCod_Maq := self.oQry_Det.FieldByName('maqtc_id').AsString;
 
-    oOData.AddPair('id', cFactNo);
     oOData.AddPair('Cliente', trim(self.oQry_Op.FieldByName('cte_id_interf').AsString));
-    // oOData.AddPair('Cliente', 'C0014');
+    oOData.AddPair('Nombre', trim(self.oQry_Op.FieldByName('cte_nombre_loc').AsString));
+    oOData.AddPair('Pais', 'PANAMA');
+    oOData.AddPair('Credit_Term', 'C.O.D.');
     oOData.AddPair('Bodega', 'Bodega Principal');
-    oOData.AddPair('Status', 'ACTIVE');
+    oOData.AddPair('Status', 'DELIVERED');
     oOData.AddPair('Date', FormatDateTime('YYYY-MM-DD', self.oQry_Op.FieldByName('op_fecha').AsDateTime));
     oOData.AddPair('Expira', FormatDateTime('YYYY-MM-DD', self.oQry_Op.FieldByName('op_fecha').AsDateTime));
-    oOData.AddPair('Comentario', 'DOCUMENTO DE PRUEBAS');
-    oOData.AddPair('SubTotal', fMonSub);
-    oOData.AddPair('Discount', 0.00);
-    oOData.AddPair('Taxes', 0.00);
-    oOData.AddPair('Total', fMonSub);
+    oOData.AddPair('Comentario', trim(self.oQry_Op.FieldByName('op_fact_global').AsString));
+    oOData.AddPair('SubTotal', trim(fUtilesV20.FloatToStr3(fMonSub, 2)));
+    oOData.AddPair('Discount', '0.00');
+    oOData.AddPair('Taxes', '0.00');
+    oOData.AddPair('Total', trim(fUtilesV20.FloatToStr3(fMonSub, 2)));
     oOData.AddPair('Reservar_Productos', 'NO');
     oOData.AddPair('Type', 'SALES-TEAM');
     oOData.AddPair('Vendedor', 'GERENCIA@MCENTENARIO.COM');
@@ -438,54 +448,85 @@ begin
         inc(iLineNo);
         cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
         fLinVal := self.oQry_Det.FieldByName('op_tot_colect').AsFloat;
-        cLinVal := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        cLinValP := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        cLinValT := trim(fUtilesV20.FloatToStr3(fLinVal, 2));
 
-        oOLines1.AddPair('Item_Number', cLineNo);
         oOLines1.AddPair('Codigo', 'PS0000001');
         oOLines1.AddPair('Descripcion', 'Colecta por Maquina Tipo C');
+        oOLines1.AddPair('Item_Number', 'Colecta Tipo C');
         oOLines1.AddPair('Nombre', 'Colecta por Maquina Tipo C');
-        oOLines1.AddPair('Precio_Unitario', fLinVal);
-        oOLines1.AddPair('Total', fLinVal);
         oOLines1.AddPair('Marca', '');
         oOLines1.AddPair('Category_L1', '');
         oOLines1.AddPair('Category_L2', '');
         oOLines1.AddPair('Category_L3', '');
-        oOLines1.AddPair('Unidades', 1.00);
-        oOLines1.AddPair('Discount', 0.00);
-        oOLines1.AddPair('DiscountFactor', 0.00);
+        oOLines1.AddPair('Unidades', '1.000');
+        oOLines1.AddPair('Precio_Unitario', cLinValP);
+        oOLines1.AddPair('Discount', '0.00');
+        oOLines1.AddPair('DiscountFactor', '0.00');
         oOLines1.AddPair('TaxID', '2');
         oOLines1.AddPair('TaxName', 'EXENTO');
-        oOLines1.AddPair('TaxFactor', 0.00);
-        oOLines1.AddPair('TaxValue', 0.0000);
-
+        oOLines1.AddPair('TaxFactor', '0.00');
+        oOLines1.AddPair('TaxValue', '0.0000');
+        oOLines1.AddPair('Total', cLinValT);
+        oOLines1.AddPair('Account', 'ACC00001');
         oALines.Add(oOLines1);
+      end;
+
+      if self.oQry_Det.FieldByName('op_tot_cred').AsFloat > 0 then
+      begin
+        inc(iLineNo);
+        cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
+        fLinVal := (-1 * abs(self.oQry_Det.FieldByName('op_tot_cred').AsFloat));
+        cLinValP := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        cLinValT := trim(fUtilesV20.FloatToStr3(fLinVal, 2));
+
+        oOLines4.AddPair('Codigo', 'PS0000002');
+        oOLines4.AddPair('Item_Number', 'Premios Pagados');
+        oOLines4.AddPair('Descripcion', 'Premios Pagados');
+        oOLines4.AddPair('Nombre', 'Premios Pagados');
+        oOLines4.AddPair('Marca', '');
+        oOLines4.AddPair('Category_L1', '');
+        oOLines4.AddPair('Category_L2', '');
+        oOLines4.AddPair('Category_L3', '');
+        oOLines4.AddPair('Unidades', '1.00');
+        oOLines4.AddPair('Precio_Unitario', cLinValP);
+        oOLines4.AddPair('Discount', '0.00');
+        oOLines4.AddPair('DiscountFactor', '0.00');
+        oOLines4.AddPair('TaxID', '2');
+        oOLines4.AddPair('TaxName', 'EXENTO');
+        oOLines4.AddPair('TaxFactor', '0.00');
+        oOLines4.AddPair('Total', cLinValT);
+        oOLines4.AddPair('TaxValue', '0.0000');
+        oOLines4.AddPair('Account', 'ACC0081');
+        oALines.Add(oOLines4);
       end;
 
       if self.oQry_Det.FieldByName('op_tot_impjcj').AsFloat > 0 then
       begin
         inc(iLineNo);
         cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
-        fLinVal := self.oQry_Det.FieldByName('op_tot_impjcj').AsFloat;
-        cLinVal := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        fLinVal := (-1 * abs(self.oQry_Det.FieldByName('op_tot_impjcj').AsFloat));
+        cLinValP := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        cLinValT := trim(fUtilesV20.FloatToStr3(fLinVal, 2));
 
-        oOLines2.AddPair('Item_Number', cLineNo);
         oOLines2.AddPair('Codigo', 'PS0000003');
         oOLines2.AddPair('Descripcion', 'Impuesto Junta de Control de Juegos');
+        oOLines2.AddPair('Item_Number', 'Impuesto JCJ');
         oOLines2.AddPair('Nombre', 'Impuesto Junta de Control de Juegos');
-        oOLines2.AddPair('Precio_Unitario', fLinVal);
-        oOLines2.AddPair('Total', fLinVal);
         oOLines2.AddPair('Marca', '');
         oOLines2.AddPair('Category_L1', '');
         oOLines2.AddPair('Category_L2', '');
         oOLines2.AddPair('Category_L3', '');
-        oOLines2.AddPair('Unidades', 1.00);
-        oOLines2.AddPair('Discount', 0.00);
-        oOLines2.AddPair('DiscountFactor', 0.00);
+        oOLines2.AddPair('Unidades', '1.00');
+        oOLines2.AddPair('Precio_Unitario', cLinValP);
+        oOLines2.AddPair('Discount', '0.00');
+        oOLines2.AddPair('DiscountFactor', '0.00');
         oOLines2.AddPair('TaxID', '2');
         oOLines2.AddPair('TaxName', 'EXENTO');
-        oOLines2.AddPair('TaxFactor', 0.00);
-        oOLines2.AddPair('TaxValue', 0.0000);
-
+        oOLines2.AddPair('TaxFactor', '0.00');
+        oOLines2.AddPair('TaxValue', '0.0000');
+        oOLines2.AddPair('Total', cLinValT);
+        oOLines2.AddPair('Account', 'ACC00011');
         oALines.Add(oOLines2);
       end;
 
@@ -493,121 +534,96 @@ begin
       begin
         inc(iLineNo);
         cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
-        fLinVal := (-1 * self.oQry_Det.FieldByName('op_tot_dev').AsFloat);
-        cLinVal := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        fLinVal := (-1 * abs(self.oQry_Det.FieldByName('op_tot_dev').AsFloat));
+        cLinValP := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        cLinValT := trim(fUtilesV20.FloatToStr3(fLinVal, 2));
 
-        oOLines3.AddPair('Item_Number', cLineNo);
         oOLines3.AddPair('Codigo', 'PS0000004');
         oOLines3.AddPair('Descripcion', 'Devoluciones');
+        oOLines3.AddPair('Item_Number', 'Devoluciones');
         oOLines3.AddPair('Nombre', 'Devoluciones');
-        oOLines3.AddPair('Precio_Unitario', fLinVal);
-        oOLines3.AddPair('Total', fLinVal);
         oOLines3.AddPair('Marca', '');
         oOLines3.AddPair('Category_L1', '');
         oOLines3.AddPair('Category_L2', '');
         oOLines3.AddPair('Category_L3', '');
-        oOLines3.AddPair('Unidades', 1.00);
-        oOLines3.AddPair('Discount', 0.00);
-        oOLines3.AddPair('DiscountFactor', 0.00);
+        oOLines3.AddPair('Unidades', '1.00');
+        oOLines3.AddPair('Precio_Unitario', cLinValP);
+        oOLines3.AddPair('Discount', '0.00');
+        oOLines3.AddPair('DiscountFactor', '0.00');
         oOLines3.AddPair('TaxID', '2');
         oOLines3.AddPair('TaxName', 'EXENTO');
-        oOLines3.AddPair('TaxFactor', 0.00);
-        oOLines3.AddPair('TaxValue', 0.0000);
-
+        oOLines3.AddPair('TaxFactor', '0.00');
+        oOLines3.AddPair('TaxValue', '0.0000');
+        oOLines3.AddPair('Total', cLinValT);
+        oOLines3.AddPair('Account', 'ACC0089');
         oALines.Add(oOLines3);
-      end;
-
-      if self.oQry_Det.FieldByName('op_tot_cred').AsFloat > 0 then
-      begin
-        inc(iLineNo);
-        cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
-        fLinVal := (-1 * self.oQry_Det.FieldByName('op_tot_cred').AsFloat);
-        cLinVal := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
-
-        oOLines4.AddPair('Item_Number', cLineNo);
-        oOLines4.AddPair('Codigo', 'PS0000002');
-        oOLines4.AddPair('Descripcion', 'Premios Pagados');
-        oOLines4.AddPair('Nombre', 'Premios Pagados');
-        oOLines4.AddPair('Precio_Unitario', fLinVal);
-        oOLines4.AddPair('Total', fLinVal);
-        oOLines4.AddPair('Marca', '');
-        oOLines4.AddPair('Category_L1', '');
-        oOLines4.AddPair('Category_L2', '');
-        oOLines4.AddPair('Category_L3', '');
-        oOLines4.AddPair('Unidades', 1.00);
-        oOLines4.AddPair('Discount', 0.00);
-        oOLines4.AddPair('DiscountFactor', 0.00);
-        oOLines4.AddPair('TaxID', '2');
-        oOLines4.AddPair('TaxName', 'EXENTO');
-        oOLines4.AddPair('TaxFactor', 0.00);
-        oOLines4.AddPair('TaxValue', 0.0000);
-
-        oALines.Add(oOLines4);
-      end;
-
-      if self.oQry_Det.FieldByName('op_tot_otros').AsFloat > 0 then
-      begin
-        inc(iLineNo);
-        cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
-        fLinVal := self.oQry_Det.FieldByName('op_tot_otros').AsFloat;
-        cLinVal := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
-
-        oOLines5.AddPair('Item_Number', cLineNo);
-        oOLines5.AddPair('Codigo', 'PS0000006');
-        oOLines5.AddPair('Descripcion', 'Otros Gastos');
-        oOLines5.AddPair('Nombre', 'Otros Gastos');
-        oOLines5.AddPair('Precio_Unitario', fLinVal);
-        oOLines5.AddPair('Total', fLinVal);
-        oOLines5.AddPair('Marca', '');
-        oOLines5.AddPair('Category_L1', '');
-        oOLines5.AddPair('Category_L2', '');
-        oOLines5.AddPair('Category_L3', '');
-        oOLines5.AddPair('Unidades', 1.00);
-        oOLines5.AddPair('Discount', 0.00);
-        oOLines5.AddPair('DiscountFactor', 0.00);
-        oOLines5.AddPair('TaxID', '2');
-        oOLines5.AddPair('TaxName', 'EXENTO');
-        oOLines5.AddPair('TaxFactor', 0.00);
-        oOLines5.AddPair('TaxValue', 0.0000);
-
-        oALines.Add(oOLines5);
       end;
 
       if self.oQry_Det.FieldByName('op_tot_porc_cons').AsFloat > 0 then
       begin
         inc(iLineNo);
         cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
-        fLinVal := self.oQry_Det.FieldByName('op_tot_porc_cons').AsFloat;
-        cLinVal := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        fLinVal := (-1 * abs(self.oQry_Det.FieldByName('op_tot_porc_cons').AsFloat));
+        cLinValP := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        cLinValT := trim(fUtilesV20.FloatToStr3(fLinVal, 2));
 
-        oOLines6.AddPair('Item_Number', cLineNo);
         oOLines6.AddPair('Codigo', 'PS0000005');
         oOLines6.AddPair('Descripcion', 'Comision - Local');
+        oOLines6.AddPair('Item_Number', 'Comision - Local');
         oOLines6.AddPair('Nombre', 'Comision - Local');
-        oOLines6.AddPair('Precio_Unitario', fLinVal);
-        oOLines6.AddPair('Total', fLinVal);
         oOLines6.AddPair('Marca', '');
         oOLines6.AddPair('Category_L1', '');
         oOLines6.AddPair('Category_L2', '');
         oOLines6.AddPair('Category_L3', '');
-        oOLines6.AddPair('Unidades', 1.00);
-        oOLines6.AddPair('Discount', 0.00);
-        oOLines6.AddPair('DiscountFactor', 0.00);
+        oOLines6.AddPair('Unidades', '1.00');
+        oOLines6.AddPair('Precio_Unitario', cLinValP);
+        oOLines6.AddPair('Discount', '0.00');
+        oOLines6.AddPair('DiscountFactor', '0.00');
         oOLines6.AddPair('TaxID', '2');
         oOLines6.AddPair('TaxName', 'EXENTO');
-        oOLines6.AddPair('TaxFactor', 0.00);
-        oOLines6.AddPair('TaxValue', 0.00);
+        oOLines6.AddPair('TaxFactor', '0.00');
+        oOLines6.AddPair('TaxValue', '0.0000');
+        oOLines6.AddPair('Total', cLinValT);
+        oOLines6.AddPair('Account', 'ACC00012');
 
         oALines.Add(oOLines6);
       end;
 
+      if self.oQry_Det.FieldByName('op_tot_otros').AsFloat > 0 then
+      begin
+        inc(iLineNo);
+        cLineNo := fUtilesV20.PadL(trim(IntToStr(iLineNo)), 4, '0');
+        fLinVal := (-1 * abs(self.oQry_Det.FieldByName('op_tot_otros').AsFloat));
+        cLinValP := trim(fUtilesV20.FloatToStr3(fLinVal, 4));
+        cLinValT := trim(fUtilesV20.FloatToStr3(fLinVal, 2));
+
+        oOLines5.AddPair('Codigo', 'PS0000006');
+        oOLines5.AddPair('Descripcion', 'Otros Gastos');
+        oOLines5.AddPair('Item_Number', 'Otros Gastos');
+        oOLines5.AddPair('Nombre', 'Otros Gastos');
+        oOLines5.AddPair('Marca', '');
+        oOLines5.AddPair('Category_L1', '');
+        oOLines5.AddPair('Category_L2', '');
+        oOLines5.AddPair('Category_L3', '');
+        oOLines5.AddPair('Unidades', '1.00');
+        oOLines5.AddPair('Precio_Unitario', cLinValP);
+        oOLines5.AddPair('Discount', '0.00');
+        oOLines5.AddPair('DiscountFactor', '0.00');
+        oOLines5.AddPair('TaxID', '2');
+        oOLines5.AddPair('TaxName', 'EXENTO');
+        oOLines5.AddPair('TaxFactor', '0.00');
+        oOLines5.AddPair('TaxValue', '0.0000');
+        oOLines5.AddPair('Total', cLinValT);
+        oOLines5.AddPair('Account', 'ACC0141');
+        oALines.Add(oOLines5);
+      end;
       // oQry_Det.Next;
     end;
+    oOData.AddPair('Lines', oALines);
 
     oOMain.AddPair('class', 'PUT');
     oOMain.AddPair('action', 'invoice');
     oOMain.AddPair('data', oOData);
-    oOMain.AddPair('Lines', oALines);
 
     cResult := cResult + oOMain.ToString;
 
@@ -623,8 +639,6 @@ begin
       oOLines5.Free;
     if (oOLines6 <> nil) then
       oOLines6.Free;
-    if (oOData <> nil) then
-      oOData.Free;
     oOMain := nil;
     oALines := nil;
 
