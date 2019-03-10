@@ -21,7 +21,7 @@ object faplica_colectas: Tfaplica_colectas
     Top = 8
     Width = 1024
     Height = 664
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Pendientes por aplicar'
@@ -172,11 +172,6 @@ object faplica_colectas: Tfaplica_colectas
             DynProps = <>
             EditButtons = <>
             FieldName = 'op_tot_porc_cons'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'Tahoma'
-            Font.Style = []
             Footer.DisplayFormat = '##,###,##0.00'
             Footer.FieldName = 'op_tot_porc_cons'
             Footer.Value = '0.00'

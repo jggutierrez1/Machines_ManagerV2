@@ -123,9 +123,15 @@ object fMain: TfMain
         Caption = 'Claves Autom'#225'ticas'
         OnClick = c1Click
       end
+      object N12: TMenuItem
+        Caption = '-'
+      end
       object A1: TMenuItem
         Caption = 'Aplicar Colectas'
         OnClick = A1Click
+      end
+      object N6: TMenuItem
+        Caption = '-'
       end
       object A2: TMenuItem
         Caption = 'Aplicra Interfuerza'

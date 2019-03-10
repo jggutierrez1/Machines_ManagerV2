@@ -53,8 +53,6 @@ type
     C2: TMenuItem;
     N2: TMenuItem;
     N11: TMenuItem;
-    N6: TMenuItem;
-    N12: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure Salir1Click(Sender: TObject);
     procedure Acercade1Click(Sender: TObject);
