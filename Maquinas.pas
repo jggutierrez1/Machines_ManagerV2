@@ -165,7 +165,7 @@ var
 
 implementation
 
-USES BuscarGenM2, Denominaciones, utilesV20, acceso1;
+USES BuscarGenM2, Denominaciones, utilesV20, acceso1,Prov_Maq;
 {$R *.dfm}
 
 procedure TfMaquinas.FormCreate(Sender: TObject);
@@ -507,9 +507,9 @@ end;
 
 procedure TfMaquinas.oBtn_ProvClick(Sender: TObject);
 begin
-  Application.CreateForm(TfDenom, fDenom);
-  fDenom.ShowModal;
-  fDenom.free;
+  Application.CreateForm(TfProv_Maq, fProv_Maq);
+  fProv_Maq.ShowModal;
+  fProv_Maq.free;
   self.oDenom.Refresh;
 end;
 
