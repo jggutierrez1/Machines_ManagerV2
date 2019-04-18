@@ -49,10 +49,12 @@ type
     oDs_Qry_Op: TDataSource;
     oQry_Op: TFDQuery;
     DBGridEh2: TDBGridEh;
+    oQry_Det_Verif: TFDQuery;
+    oBtn_Fnd_Ctes: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Make_Qry_Det;
-    procedure Load_Ctes(iEmp: string);
+    procedure Load_Ctes(cEmp: string);
     PROCEDURE Busca_Op;
     procedure oBtn_PreviewClick(Sender: TObject);
     procedure oBtnExitClick(Sender: TObject);
@@ -62,6 +64,12 @@ type
     procedure oBtnApply_InterfuerzaClick(Sender: TObject);
     function Send_Interfuerza(cJson: WideString): String;
     function Parse_JSonValue(cJson: WideString): boolean;
+    procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure Verifica_Aplicado;
+    procedure oBtn_Fnd_CtesClick(Sender: TObject);
+    procedure oLst_empExit(Sender: TObject);
+    procedure oLst_CtesExit(Sender: TObject);
+    procedure clic_grid();
   private
     { Private declarations }
   public
@@ -80,9 +88,81 @@ var
 
 implementation
 
-uses Utilesv20;
+uses Utilesv20, BuscarGenM2;
 
 {$R *.dfm}
+
+procedure Tfaplica_conta.DBGridEh1CellClick(Column: TColumnEh);
+begin
+  self.clic_grid();
+end;
+
+procedure Tfaplica_conta.clic_grid();
+begin
+  if (self.oQry_Op.RecordCount > 0) then
+  begin
+    self.Make_Qry_Det();
+    if (self.oQry_Det.RecordCount > 0) then
+    begin
+      self.TabSheet2.TabVisible := true;
+      self.PageControl1.ActivePageIndex := 1;
+      self.oBtnApply_Interfuerza.Enabled := true;
+      self.DBGridEh2.Refresh;
+    end;
+  end
+  else
+  begin
+    self.TabSheet2.TabVisible := false;
+    self.PageControl1.ActivePageIndex := 0;
+    self.oBtnApply_Interfuerza.Enabled := false;
+  end;
+end;
+
+procedure Tfaplica_conta.Verifica_Aplicado;
+var
+  cSql_Ln: WideString;
+  sFecha_Ini, sFecha_Fin: string;
+  sCod_Emp, sCod_Cte: string;
+  iRecs: integer;
+  cAutoin: string;
+  cDevice, cEmp_Id, cCte_Id, cGrp_Id: string;
+begin
+  if (self.oQry_Op.RecordCount <= 0) then
+  begin
+    exit;
+  end;
+
+  cDevice := trim(self.oQry_Op.FieldByName('id_device').AsString);
+  cEmp_Id := trim(self.oQry_Op.FieldByName('op_emp_id').AsString);
+  cCte_Id := trim(self.oQry_Op.FieldByName('cte_id').AsString);
+  cGrp_Id := trim(self.oQry_Op.FieldByName('id_group').AsString);
+
+  cSql_Ln := '';
+  cSql_Ln := cSql_Ln + 'SELECT ';
+  cSql_Ln := cSql_Ln + ' COUNT(op.`id_op`) AS cnt_tot, ';
+  cSql_Ln := cSql_Ln + ' SUM(IF(IFNULL(op.`op_aplica_num`,"")="",0 ,1 )) AS cnt_apl,';
+  cSql_Ln := cSql_Ln + ' op.`op_aplica_interf` ';
+  cSql_Ln := cSql_Ln + 'FROM operacion op ';
+  cSql_Ln := cSql_Ln + 'WHERE (1=1) ';
+  cSql_Ln := cSql_Ln + 'AND   (op.`op_emp_id`="' + trim(cEmp_Id) + '") ';
+  cSql_Ln := cSql_Ln + 'AND   (op.`cte_id`   ="' + trim(cCte_Id) + '") ';
+  cSql_Ln := cSql_Ln + 'AND   (op.`id_device`="' + trim(cDevice) + '") ';
+  cSql_Ln := cSql_Ln + 'AND   (op.`id_group` ="' + trim(cGrp_Id) + '") ';
+
+  self.oQry_Det_Verif.close;
+  Utilesv20.Exec_Select_SQL(self.oQry_Det_Verif, cSql_Ln);
+  if (self.oQry_Det_Verif.RecordCount > 0) then
+  begin
+    if (self.oQry_Det_Verif.FieldByName('cnt_tot').AsInteger = self.oQry_Det_Verif.FieldByName('cnt_apl').AsInteger) then
+    begin
+      cAutoin := trim(self.oQry_Op.FieldByName('id_autoin').AsString);
+      cSql_Ln := 'UPDATE operaciong SET op_aplica_interf=1 WHERE id_autoin="' + trim(cAutoin) + '"';
+      Utilesv20.Execute_SQL_Command(cSql_Ln);
+      MessageDlg('LAS FACTURAS DEL CLIENTE YA HAN SIDO APLICADAS', mtWarning, [mboK], 0);
+    end;
+  end;
+
+end;
 
 procedure Tfaplica_conta.FormCreate(Sender: TObject);
 begin
@@ -107,6 +187,8 @@ begin
 end;
 
 procedure Tfaplica_conta.FormShow(Sender: TObject);
+var
+  cCod_Emp: string;
 begin
   FormatSettings.DecimalSeparator := '.';
   FormatSettings.ThousandSeparator := ',';
@@ -122,10 +204,12 @@ begin
   FormatSettings.CurrencyString := '$';
   self.oQry_Op.close;
   self.oQry_Det.close;
-  self.Load_Ctes('1');
+  cCod_Emp := trim(self.oQry_Empresa.FieldByName('emp_id').AsString);
+  self.oLst_emp.KeyValue := cCod_Emp;
+  self.Load_Ctes(cCod_Emp);
 end;
 
-procedure Tfaplica_conta.Load_Ctes(iEmp: string);
+procedure Tfaplica_conta.Load_Ctes(cEmp: string);
 var
   cSql_Ln: string;
   cSql_Cte: string;
@@ -137,7 +221,7 @@ begin
   cSql_Cte := cSql_Cte + 'SELECT ct.cte_id, ct.cte_nombre_com  ';
   cSql_Cte := cSql_Cte + 'FROM clientes ct ';
   cSql_Cte := cSql_Cte + 'WHERE ct.cte_inactivo = 0 ';
-  cSql_Cte := cSql_Cte + 'AND   (ct.cte_emp_id=0) OR (ct.cte_emp_id= ' + QuotedStr(trim(iEmp)) + ') ';
+  cSql_Cte := cSql_Cte + 'AND   (ct.cte_emp_id=0) OR (ct.cte_emp_id= ' + QuotedStr(trim(cEmp)) + ') ';
   cSql_Cte := cSql_Cte + 'ORDER BY UCASE(TRIM(ct.cte_nombre_com)) ';
 
   {
@@ -162,7 +246,48 @@ begin
   self.oLst_Ctes.Enabled := true;
 end;
 
-PROCEDURE Tfaplica_conta.Busca_Op;
+procedure Tfaplica_conta.oBtn_Fnd_CtesClick(Sender: TObject);
+var
+  cCod_Emp: string;
+begin
+  if self.oLst_emp.Value = null then
+    exit;
+
+  cCod_Emp := self.oLst_emp.Value;
+
+  self.oBtn_Fnd_Ctes.Enabled := false;
+  Application.CreateForm(TfBuscarGenM2, fBuscarGenM2);
+  fBuscarGenM2.Hide;
+  fBuscarGenM2.oLst_campos.Clear;
+
+  BuscarGenM2.oListData[1].Texto := 'Código';
+  BuscarGenM2.oListData[1].Campo := 'cte_id';
+  BuscarGenM2.oListData[1].LLave := true;
+
+  BuscarGenM2.oListData[2].Texto := 'Nombre Comercial';
+  BuscarGenM2.oListData[2].Campo := 'cte_nombre_com';
+  BuscarGenM2.oListData[2].LLave := false;
+
+  BuscarGenM2.oListData[3].Texto := 'Nombre Fiscal';
+  BuscarGenM2.oListData[3].Campo := 'cte_nombre_loc';
+  BuscarGenM2.oListData[3].LLave := false;
+
+  BuscarGenM2.oListData[4].Texto := 'Empresa';
+  BuscarGenM2.oListData[4].Campo := 'emp_abrev';
+  BuscarGenM2.oListData[4].LLave := false;
+
+  fBuscarGenM2.oSql1.Clear;
+  fBuscarGenM2.oSql1.Lines.Add
+    ('SELECT cte_id,UCASE(cte_nombre_com) as cte_nombre_com,UCASE(cte_nombre_loc) as cte_nombre_loc,empresas.emp_abrev FROM clientes LEFT JOIN empresas ON clientes.cte_emp_id= empresas.emp_id WHERE ((clientes.cte_emp_id="0") or (clientes.cte_emp_id="'
+    + trim(cCod_Emp) + '")) ');
+  fBuscarGenM2.ShowModal;
+  if BuscarGenM2.vFindResult <> '' then
+    self.oLst_Ctes.KeyValue := BuscarGenM2.vFindResult;
+  freeandnil(fBuscarGenM2);
+  self.oBtn_Fnd_Ctes.Enabled := true;
+end;
+
+procedure Tfaplica_conta.Busca_Op;
 var
   cSql_Ln: WideString;
   sFecha_Ini, sFecha_Fin: string;
@@ -187,6 +312,7 @@ begin
   cSql_Ln := cSql_Ln + 'FROM operaciong opg ';
   cSql_Ln := cSql_Ln + 'LEFT JOIN clientes ct ON  (ct.cte_id = opg.cte_id) ';
   cSql_Ln := cSql_Ln + 'WHERE (ifnull(opg.`op_aplica_interf`,0) =0) ';
+  cSql_Ln := cSql_Ln + 'AND   (opg.`op_emp_id`="' + IntToStr(self.oLst_emp.KeyValue) + '") ';
 
   if not((trim(sCod_Cte) = '%') or (sCod_Cte = '')) then
     cSql_Ln := cSql_Ln + 'AND (opg.`cte_id`="' + sCod_Cte + '") ';
@@ -195,13 +321,13 @@ begin
   cSql_Ln := cSql_Ln + '(DATE_FORMAT(opg.`op_fecha`, "%Y-%m-%d") >= "' + sFecha_Ini + '") AND ';
   cSql_Ln := cSql_Ln + '(DATE_FORMAT(opg.`op_fecha`, "%Y-%m-%d") <= "' + sFecha_Fin + '") ';
   cSql_Ln := cSql_Ln + '      )  ';
-  cSql_Ln := cSql_Ln + 'ORDER BY opg.`op_emp_id`, opg.`op_fecha`, opg.`cte_id` LIMIT 20';
-
+  cSql_Ln := cSql_Ln + 'ORDER BY opg.`op_emp_id`, opg.`op_fecha` DESC, opg.`cte_id` LIMIT 20';
   // cSql_Ln := cSql_Ln + 'LIMIT 50 ';
+
   self.oQry_Op.close;
   Utilesv20.Exec_Select_SQL(self.oQry_Op, cSql_Ln);
   self.oDs_Qry_Op.DataSet := self.oQry_Op;
-  iRecs := self.oQry_Op.RecordCount;
+  self.oQry_Det.close;
   self.DBGridEh1.Refresh;
 end;
 
@@ -223,7 +349,7 @@ begin
     ' op.`jueg_cod`,op.`op_nodoc`,op.`op_modelo`,op.`op_tot_colect`,op.`op_tot_impjcj`,op.`op_tot_porc_cons`,op.`op_tot_tec`,';
   cSql_Ln := cSql_Ln + ' op.`op_tot_dev`,op.`op_tot_otros`,op.`op_tot_cred`,op.`op_cal_cred`,op.`op_tot_sub`,op.`op_tot_itbm`,';
   cSql_Ln := cSql_Ln + ' op.`op_tot_tot`,op.`op_tot_brutoemp`, op.`op_tot_netoemp`, op.`op_baja_prod`, ';
-  cSql_Ln := cSql_Ln + ' op.`id_device`,op.`id_group`,ct.`cte_id_interf` ';
+  cSql_Ln := cSql_Ln + ' op.`id_device`,op.`id_group`,ct.`cte_id_interf`, op.`op_aplica_interf`,op.`op_aplica_num` ';
   cSql_Ln := cSql_Ln + 'FROM operacion op ';
   cSql_Ln := cSql_Ln + 'LEFT JOIN clientes ct ON (op.`cte_id`= ct.`cte_id`) ';
   cSql_Ln := cSql_Ln + 'WHERE (IFNULL(op.`op_aplica_interf`,0) =0) ';
@@ -236,13 +362,6 @@ begin
   self.oQry_Det.close;
   Utilesv20.Exec_Select_SQL(self.oQry_Det, cSql_Ln);
   self.oDs_Qry_Det.DataSet := self.oQry_Det;
-  iRecs := self.oQry_Det.RecordCount;
-  if (iRecs > 0) then
-    self.oBtnApply_Interfuerza.Enabled := true
-  else
-    self.oBtnApply_Interfuerza.Enabled := false;
-
-  self.DBGridEh2.Refresh;
 end;
 
 procedure Tfaplica_conta.oBtnApply_InterfuerzaClick(Sender: TObject);
@@ -256,6 +375,9 @@ begin
   begin
     self.Make_Json_Interf();
   end;
+  self.oQry_Det.Refresh;
+  self.TabSheet1.PageIndex := 0;
+  self.oQry_Op.Refresh;
 end;
 
 procedure Tfaplica_conta.oBtnExitClick(Sender: TObject);
@@ -264,19 +386,59 @@ begin
 end;
 
 procedure Tfaplica_conta.oBtn_PreviewClick(Sender: TObject);
+begin
+  self.oBtnApply_Interfuerza.Enabled := false;
+  self.PageControl1.ActivePageIndex := 0;
+  self.TabSheet2.TabVisible := false;
+
+  self.Busca_Op();
+  self.Verifica_Aplicado();
+  self.oQry_Op.Refresh;
+  // self.clic_grid()
+end;
+
+procedure Tfaplica_conta.oLst_CtesExit(Sender: TObject);
+begin
+  if (self.oLst_Ctes.KeyValue = null) then
+    exit;
+  if (trim(self.oLst_Ctes.KeyValue) = '') then
+    exit;
+
+  self.oBtn_PreviewClick(self);
+end;
+
+procedure Tfaplica_conta.oLst_empExit(Sender: TObject);
 var
   cCod_Emp: string;
 begin
+  if self.oLst_emp.Value = null then
+    exit;
+  if trim(self.oLst_emp.Value) = '' then
+    exit;
+
   cCod_Emp := self.oLst_emp.Value;
-  self.Busca_Op();
+  self.Load_Ctes(cCod_Emp);
 end;
 
 procedure Tfaplica_conta.TabSheet2Enter(Sender: TObject);
 begin
-  if (self.oQry_Op.RecordCount > 0) then
-  begin
+  {
+    if (self.oQry_Op.RecordCount > 0) then
+    begin
     self.Make_Qry_Det();
-  end;
+    if (self.oQry_Det.RecordCount > 0) then
+    self.oBtnApply_Interfuerza.Enabled := true
+    else
+    self.oBtnApply_Interfuerza.Enabled := false;
+
+    self.DBGridEh2.Refresh;
+    end
+    else
+    begin
+    MessageDlg('No hay facturas relacionadas que mostrar/procesar', mtWarning, [mboK], 0);
+    self.TabSheet1.TabVisible := true;
+    end;
+  }
 end;
 
 procedure Tfaplica_conta.Make_Json_Interf;

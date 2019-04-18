@@ -22,7 +22,7 @@ object faplica_conta: Tfaplica_conta
     Top = 8
     Width = 1024
     Height = 664
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Pendientes por aplicar'
@@ -88,6 +88,7 @@ object faplica_conta: Tfaplica_conta
         RowPanel.Active = True
         SumList.Active = True
         TabOrder = 0
+        OnCellClick = DBGridEh1CellClick
         Columns = <
           item
             CellButtons = <>
@@ -465,7 +466,7 @@ object faplica_conta: Tfaplica_conta
       end
       object oLst_Ctes: TDBLookupComboboxEh
         Left = 243
-        Top = 81
+        Top = 84
         Width = 348
         Height = 24
         DynProps = <>
@@ -483,6 +484,7 @@ object faplica_conta: Tfaplica_conta
         ParentFont = False
         TabOrder = 3
         Visible = True
+        OnExit = oLst_CtesExit
       end
       object oLst_emp: TDBLookupComboboxEh
         Left = 3
@@ -503,6 +505,7 @@ object faplica_conta: Tfaplica_conta
         ParentFont = False
         TabOrder = 4
         Visible = True
+        OnExit = oLst_empExit
       end
       object oBtn_Preview: TPngBitBtn
         Tag = 5
@@ -644,10 +647,20 @@ object faplica_conta: Tfaplica_conta
         TabOrder = 6
         Visible = False
       end
+      object oBtn_Fnd_Ctes: TBitBtn
+        Left = 597
+        Top = 81
+        Width = 75
+        Height = 25
+        Caption = 'Buscardor'
+        TabOrder = 7
+        OnClick = oBtn_Fnd_CtesClick
+      end
     end
     object TabSheet2: TTabSheet
       Caption = 'Detalle de maquinas'
       ImageIndex = 1
+      TabVisible = False
       OnEnter = TabSheet2Enter
       object oJson_Script: TMemo
         Left = 0
@@ -1463,6 +1476,41 @@ object faplica_conta: Tfaplica_conta
         '(DATE_FORMAT(op.op_fecha, "%Y-%m-%d") <= "2019-02-13"))'
       'ORDER BY op.op_emp_id, op.op_fecha, op.cte_id')
     Left = 135
+    Top = 690
+  end
+  object oQry_Det_Verif: TFDQuery
+    Connection = oConection
+    SQL.Strings = (
+      'SELECT'
+      '`id_op`,'
+      '`op_emp_id`,'
+      '`op_fecha`,'
+      '`cte_id`,'
+      '`cte_nombre_loc`,'
+      '`maqtc_id`,'
+      '`op_chapa`,'
+      '`jueg_cod`,'
+      '`op_nodoc`,'
+      '`op_modelo`,'
+      '`op_tot_colect`,'
+      '`op_tot_impjcj`,'
+      '`op_tot_porc_cons`,'
+      '`op_tot_tec`,'
+      '`op_tot_dev`,'
+      '`op_tot_otros`,'
+      '`op_tot_cred`,'
+      '`op_cal_cred`,'
+      '`op_tot_sub`,'
+      '`op_tot_itbm`,'
+      '`op_tot_tot`,'
+      '`op_tot_brutoemp`,'
+      '`op_tot_netoemp`,'
+      '`op_baja_prod`'
+      'FROM '#9'operacion'
+      'WHERE (op_aplica_interf =0)'
+      'ORDER BY op_emp_id,op_fecha, cte_id, op_chapa'
+      'LIMIT 50')
+    Left = 319
     Top = 690
   end
 end
